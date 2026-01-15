@@ -1,0 +1,452 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.others &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Models.others</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">myapp.Models.__init__</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">hashing</span>
+<span class="kn">from</span> <span class="nn">myapp.Models.tables</span> <span class="kn">import</span> <span class="p">(</span>
+									<span class="n">Administrators</span><span class="p">,</span> 
+									<span class="n">Borrowers</span><span class="p">,</span>
+									<span class="n">Corporates</span><span class="p">,</span>
+									<span class="n">LoggedAdmins</span><span class="p">,</span>
+									<span class="n">Roles</span><span class="p">,</span>
+									<span class="n">ScoreTypes</span><span class="p">,</span>
+									<span class="n">Status</span><span class="p">,</span>
+									<span class="n">Users</span>
+								<span class="p">)</span>
+
+<div class="viewcode-block" id="populate_status_roles"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.populate_status_roles">[docs]</a><span class="k">def</span> <span class="nf">populate_status_roles</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Populates the main tables on startup.</span>
+<span class="sd">	</span>
+<span class="sd">	Don&#39;t ever change the order of the two lists below.</span>
+<span class="sd">	Given a list of roles populate the Roles table.</span>
+<span class="sd">	Given a list of status populate the Status table.</span>
+<span class="sd">	Given a list of type of scores, populate the ScoreTypes table.</span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">		None</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		None</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">all_roles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;super_admin&quot;</span><span class="p">,</span> <span class="s2">&quot;infotrace_admin&quot;</span><span class="p">,</span> <span class="s2">&quot;client_admin&quot;</span><span class="p">,</span> 
+					<span class="s2">&quot;client_staff&quot;</span><span class="p">]</span>
+	<span class="n">all_status</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;awaiting_approval&quot;</span><span class="p">,</span> <span class="s2">&quot;approved&quot;</span><span class="p">,</span> <span class="s2">&quot;dormant&quot;</span><span class="p">,</span> <span class="s2">&quot;blocked&quot;</span><span class="p">,</span> 
+					<span class="s2">&quot;decision_rescinded&quot;</span><span class="p">,</span> <span class="s2">&quot;to_be_checked&quot;</span><span class="p">,</span>  <span class="s2">&quot;checked&quot;</span> <span class="p">]</span>
+	<span class="n">all_services</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;premium&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;basic&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">}</span>
+
+	<span class="n">roles_check</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Roles</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">roles_check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_roles</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">insert_item</span> <span class="o">=</span> <span class="n">Roles</span><span class="p">(</span><span class="n">role_name</span> <span class="o">=</span> <span class="n">item</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">insert_item</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="n">status_check</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Status</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">status_check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_status</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">insert_item</span> <span class="o">=</span> <span class="n">Status</span><span class="p">(</span><span class="n">status_name</span> <span class="o">=</span> <span class="n">item</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">insert_item</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="n">service_check</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ScoreTypes</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">service_check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">all_services</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">insert_item</span> <span class="o">=</span> <span class="n">ScoreTypes</span><span class="p">(</span><span class="n">score_name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">cost_of_score</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">insert_item</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="check_corp_by_name"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.check_corp_by_name">[docs]</a><span class="k">def</span> <span class="nf">check_corp_by_name</span><span class="p">(</span><span class="n">corporate_name</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Validates a company by name.</span>
+
+<span class="sd">	Given a corporate name check if the name is in the Corporates</span>
+<span class="sd">	table. If true, return the corporate_id for the given company.</span>
+<span class="sd">	if False rollback and return False.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		corporate_name (str): The name of the company</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		corporate_id (int): The corporate_id of the company</span>
+<span class="sd">		bool: False If the company is not registered.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">is_registered</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">is_registered</span> <span class="o">=</span> <span class="p">(</span>
+						   <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+						   <span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_name</span><span class="o">==</span><span class="n">corporate_name</span><span class="p">)</span><span class="o">.</span>
+						   <span class="n">first</span><span class="p">()</span>
+						<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">is_registered</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">is_registered</span><span class="o">.</span><span class="n">corporate_id</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">is_registered</span></div>
+
+
+
+<div class="viewcode-block" id="check_corp_by_id"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.check_corp_by_id">[docs]</a><span class="k">def</span> <span class="nf">check_corp_by_id</span><span class="p">(</span><span class="n">corporate_id</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Validates a company by corporate_id.</span>
+
+<span class="sd">	Given a corporate id check if the name is in the Corporates</span>
+<span class="sd">	table. If true, return the corporate_id for the given company.</span>
+<span class="sd">	if False rollback and return False.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		corporate_id (int): The name of the company</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		corporate_id (int): The corporate_id of the company</span>
+<span class="sd">		bool: False If the company is not registered.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">is_registered</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">is_registered</span> <span class="o">=</span> <span class="p">(</span>
+						   <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+						   <span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_id</span><span class="o">==</span><span class="n">corporate_id</span><span class="p">)</span><span class="o">.</span>
+						   <span class="n">first</span><span class="p">()</span>
+						<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">is_registered</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">is_registered</span><span class="o">.</span><span class="n">corporate_id</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">is_registered</span></div>
+	
+
+
+<div class="viewcode-block" id="check_score_type"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.check_score_type">[docs]</a><span class="k">def</span> <span class="nf">check_score_type</span><span class="p">(</span><span class="n">score_name</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Checks the database tables for correct names.</span>
+
+<span class="sd">	Given a score name check if the score is in the ScoreTypes</span>
+<span class="sd">	table. </span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">		score_name (str): The name of the score correct</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		obj: Sqlalchemy query object.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="n">is_correct_score</span> <span class="o">=</span> <span class="kc">None</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">is_correct_score</span> <span class="o">=</span> <span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ScoreTypes</span><span class="p">)</span><span class="o">.</span>
+							<span class="nb">filter</span><span class="p">(</span><span class="n">ScoreTypes</span><span class="o">.</span><span class="n">score_name</span> <span class="o">==</span> <span class="n">score_name</span><span class="p">)</span><span class="o">.</span>
+							<span class="n">first</span><span class="p">()</span>
+						<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">is_correct_score</span></div>
+	
+	
+
+<span class="c1">################################################################################</span>
+
+
+<div class="viewcode-block" id="check_borrower"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.check_borrower">[docs]</a><span class="k">def</span> <span class="nf">check_borrower</span><span class="p">(</span><span class="n">borrower_identity</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Validate if a single borrower is registered in the table.</span>
+
+<span class="sd">	Helper function used in the push_kyc_to_db function to check if a</span>
+<span class="sd">	borrower_id is in the Borrowers table and return True if that is the</span>
+<span class="sd">	case and False otherwise.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		borrower_id (int): self explanatory.</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">		bool: True if the borrower is registered false otherwise.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">user</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">user</span> <span class="o">=</span> <span class="n">Borrowers</span><span class="p">()</span><span class="o">.</span><span class="n">borrower_by_identity</span><span class="p">(</span><span class="n">borrower_identity</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">return</span> <span class="kc">False</span></div>
+	
+
+
+<div class="viewcode-block" id="confirm_registred_corporates"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.confirm_registred_corporates">[docs]</a><span class="k">def</span> <span class="nf">confirm_registred_corporates</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Validates a list of Corporates.</span>
+
+<span class="sd">	Used in all functions that send transactional data to the</span>
+<span class="sd">	db to confirm whether corporates in the entire data set are</span>
+<span class="sd">	all registered.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		data(:obj:`json`):  data sent by the request</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		list: An empty list if all corporates are registered.</span>
+<span class="sd">			  A list of unregistered corporates otherwise.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">list_of_corporates</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span>
+	<span class="n">not_registered</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">corporate</span> <span class="ow">in</span> <span class="n">list_of_corporates</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">registered_corporate</span> <span class="o">=</span> <span class="n">Corporates</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">corporate</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">registered_corporate</span><span class="p">:</span>
+			<span class="n">not_registered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">corporate</span><span class="p">)</span>
+	<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">not_registered</span></div>
+	
+
+<div class="viewcode-block" id="confirm_registered_borrower"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.confirm_registered_borrower">[docs]</a><span class="k">def</span> <span class="nf">confirm_registered_borrower</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Validates a list of borrowers.</span>
+
+<span class="sd">	Used in all functions that send transactional data to the</span>
+<span class="sd">	db to confirm whether all borrowere in the entire data set</span>
+<span class="sd">	are all registered.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		data(:obj:`json`):  data sent by the request</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		list: An empty list if all borrowers are registered.</span>
+<span class="sd">			  A list of unregistered borrowers otherwise.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">list_of_borrowers</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;borrower_identity&quot;</span><span class="p">]</span>
+	<span class="n">not_registered</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">borrower</span> <span class="ow">in</span> <span class="n">list_of_borrowers</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">registered_borrower</span> <span class="o">=</span> <span class="n">Borrowers</span><span class="p">()</span><span class="o">.</span><span class="n">borrower_by_identity</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">registered_borrower</span><span class="p">:</span>
+			<span class="n">not_registered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">borrower</span><span class="p">)</span>
+	<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">not_registered</span></div>
+	
+
+
+<div class="viewcode-block" id="save_company_details"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.save_company_details">[docs]</a><span class="k">def</span> <span class="nf">save_company_details</span><span class="p">(</span><span class="n">mydict</span><span class="p">,</span> <span class="n">admin_id</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Saves company details to the database.</span>
+
+<span class="sd">	Given a dictionary containing the corporate details, confirm</span>
+<span class="sd">	that the company is not already registered. If the company is</span>
+<span class="sd">	registered return a string indicating the same. If the company</span>
+<span class="sd">	name is not register the company.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		mydict (dict): A dictionary with company details</span>
+<span class="sd">		admin_id (int): The admin_id for the person registering</span>
+<span class="sd">						the company.</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">		bool: Returns True if the registration is ok.</span>
+<span class="sd">		str: If the company name is taken.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">corp_name</span> <span class="o">=</span> <span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">]</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">is_registered_corp</span> <span class="o">=</span> <span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_name</span><span class="o">==</span><span class="n">corp_name</span><span class="p">)</span><span class="o">.</span>
+								<span class="n">first</span><span class="p">()</span>
+							  <span class="p">)</span>
+		<span class="k">if</span> <span class="n">is_registered_corp</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">ed_user</span> <span class="o">=</span> <span class="n">Corporates</span><span class="p">(</span>
+									<span class="n">corporate_name</span> <span class="o">=</span><span class="n">corp_name</span><span class="p">,</span>
+									<span class="n">corporate_pin</span> <span class="o">=</span> <span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_pin&quot;</span><span class="p">],</span>
+									<span class="n">status_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+									<span class="n">created_by</span> <span class="o">=</span> <span class="n">admin_id</span>
+								<span class="p">)</span>
+			
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_user</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">except</span> <span class="n">exc</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">False</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="s2">&quot;Company already registered.&quot;</span></div>
+
+
+<div class="viewcode-block" id="populate_admin"><a class="viewcode-back" href="../../../myapp.Models.others.html#myapp.Models.others.populate_admin">[docs]</a><span class="k">def</span> <span class="nf">populate_admin</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Insert the first super admin in the db.</span>
+
+<span class="sd">	used in the __init__ of the main application on app start up.</span>
+<span class="sd">	Using default details provided in the function hash the password</span>
+<span class="sd">	and check if the Users table is empty. If so, insert the</span>
+<span class="sd">	user in the User and Administrators table. Also populates the </span>
+<span class="sd">	first company in the Corporates table.</span>
+
+<span class="sd">	Note:</span>
+<span class="sd">		Always remember to use a good password here.</span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">		None</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		bool: Returns True </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">password</span> <span class="o">=</span> <span class="n">hashing</span><span class="o">.</span><span class="n">hash_value</span><span class="p">(</span>
+									<span class="s2">&quot;password&quot;</span><span class="p">,</span> 
+									<span class="n">salt</span><span class="o">=</span><span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+								 <span class="p">)</span>
+	<span class="n">admin_names</span> <span class="o">=</span> <span class="s2">&quot;Wycliffe Sikolia&quot;</span>
+	<span class="n">admin_email</span> <span class="o">=</span> <span class="s2">&quot;sikolia.wycliffe100@gmail.com&quot;</span>
+	<span class="n">user_identity</span> <span class="o">=</span> <span class="mi">27813100</span>
+	<span class="n">user_check</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">user_check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">insert_item</span> <span class="o">=</span> <span class="n">Users</span><span class="p">(</span>
+									<span class="n">user_identity</span><span class="o">=</span><span class="n">user_identity</span><span class="p">,</span>
+									<span class="n">user_names</span><span class="o">=</span><span class="n">admin_names</span>
+								<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">insert_item</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="n">admin_check</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">admin_check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">insert_item</span> <span class="o">=</span> <span class="n">Administrators</span><span class="p">(</span><span class="n">admin_email</span><span class="o">=</span><span class="n">admin_email</span><span class="p">,</span>
+										 <span class="n">admin_password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+										 <span class="n">role_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">status_id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+										 <span class="n">corporate_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">insert_item</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="n">corporate_check</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">corporate_check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">insert_item</span> <span class="o">=</span> <span class="n">Corporates</span><span class="p">(</span><span class="n">corporate_pin</span><span class="o">=</span><span class="s2">&quot;Info1234&quot;</span><span class="p">,</span> <span class="n">created_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+									 <span class="n">corporate_name</span><span class="o">=</span><span class="s2">&quot;InfoTrace Analytics&quot;</span><span class="p">,</span> 
+									 <span class="n">status_id</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">insert_item</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,1186 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.tables &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Models.tables</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="p">(</span>
+							<span class="n">Column</span><span class="p">,</span>
+							<span class="n">Integer</span><span class="p">,</span>
+							<span class="n">String</span><span class="p">,</span>
+							<span class="n">exc</span><span class="p">,</span>
+							<span class="n">Table</span><span class="p">,</span>
+							<span class="n">ForeignKey</span><span class="p">,</span>
+							<span class="n">Float</span><span class="p">,</span> <span class="n">inspect</span><span class="p">,</span>
+							<span class="n">and_</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">relationship</span><span class="p">,</span> <span class="n">sessionmaker</span>
+
+
+<span class="kn">from</span> <span class="nn">myapp.Models.__init__</span> <span class="kn">import</span> <span class="n">db</span>
+
+
+<div class="viewcode-block" id="Roles"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Roles">[docs]</a><span class="k">class</span> <span class="nc">Roles</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This table stores all the roles in the database</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;Roles&#39;</span>
+	<span class="n">role_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">role_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+							<span class="n">default</span><span class="o">=</span><span class="s2">&quot;client_staff&quot;</span><span class="p">,</span>
+							<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+							<span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">role_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+									<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+									<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+								  <span class="p">)</span>
+	<span class="n">role_admins_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;Administrators&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s1">&#39;Roles&#39;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										 <span class="p">)</span>
+<div class="viewcode-block" id="Roles.get_by_role_id"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Roles.get_by_role_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_role_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">role_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		</span>
+<span class="sd">		Query user by their user_id</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			role_id(int): The role id from this table</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			An sqlalchemy query.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Roles</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Roles</span><span class="o">.</span><span class="n">role_id</span><span class="o">==</span><span class="n">role_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> </div></div>
+
+
+<div class="viewcode-block" id="Status"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Status">[docs]</a><span class="k">class</span> <span class="nc">Status</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	</span>
+<span class="sd">	The status id for the application</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;Status&#39;</span>
+	<span class="n">status_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">status_name</span><span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+								<span class="n">default</span><span class="o">=</span><span class="s2">&quot;awaiting_approval&quot;</span><span class="p">,</span>
+								<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+								<span class="n">unique</span><span class="o">=</span><span class="kc">True</span>
+						   <span class="p">)</span>
+	<span class="n">status_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+										<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+								   <span class="p">)</span>
+	<span class="n">status_admins_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;Administrators&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s1">&#39;Status&#39;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											<span class="p">)</span>
+	<span class="n">status_corp_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s1">&#39;Status&#39;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											<span class="p">)</span>
+<div class="viewcode-block" id="Status.get_by_status_id"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Status.get_by_status_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_status_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">status_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query user by their user_id.&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Status</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="o">==</span><span class="n">status_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+<div class="viewcode-block" id="ScoreTypes"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ScoreTypes">[docs]</a><span class="k">class</span> <span class="nc">ScoreTypes</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;ScoreTypes&#39;</span>
+	<span class="n">service_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">score_name</span><span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+								<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+								<span class="n">unique</span><span class="o">=</span><span class="kc">True</span>
+						   <span class="p">)</span>
+	<span class="n">cost_of_score</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">score_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+										<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+								   <span class="p">)</span>
+	<span class="n">score_deductions_rel</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;ClientDeductions&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s1">&#39;ScoreTypes&#39;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											<span class="p">)</span>
+<div class="viewcode-block" id="ScoreTypes.get_by_score_name"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ScoreTypes.get_by_score_name">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_score_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">score_name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query user by their user_id&quot;&quot;&quot;</span>
+		<span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ScoreTypes</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">ScoreTypes</span><span class="o">.</span><span class="n">score_name</span><span class="o">==</span><span class="n">score_name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+<div class="viewcode-block" id="Users"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Users">[docs]</a><span class="k">class</span> <span class="nc">Users</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Stores unique details for every db user administrators and clients.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;Users&#39;</span>
+	<span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">user_identity</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">user_names</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">user_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+									<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+									<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+								  <span class="p">)</span>
+	<span class="n">user_admin_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;Administrators&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Users&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										  <span class="p">)</span>
+	<span class="n">user_client_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;ClientAdmins&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Users&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										  <span class="p">)</span>
+
+<div class="viewcode-block" id="Users.get_by_user_id"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Users.get_by_user_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_user_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query user by their user_id&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span>
+						<span class="nb">filter</span><span class="p">(</span><span class="n">Users</span><span class="o">.</span><span class="n">user_id</span><span class="o">==</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="Users.get_by_user_identity"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Users.get_by_user_identity">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_user_identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_identity</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Querry the user by their identity&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Users</span><span class="o">.</span><span class="n">user_identity</span><span class="o">==</span><span class="n">user_identity</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+<div class="viewcode-block" id="Administrators"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Administrators">[docs]</a><span class="k">class</span> <span class="nc">Administrators</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;Administrators&#39;</span>
+	<span class="n">admin_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">admin_email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">admin_password</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">admin_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+									<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+									<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+								  <span class="p">)</span>
+	<span class="n">role_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Roles.role_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span>
+						<span class="p">)</span>
+	<span class="n">status_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Status.status_id&#39;</span><span class="p">,</span>
+							<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span>
+						  <span class="p">)</span>
+	<span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+							<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span>
+						<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">admins_logged_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;LoggedAdmins&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Administrators&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											 <span class="p">)</span>
+	
+
+<div class="viewcode-block" id="Administrators.get_admin_by_id"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Administrators.get_admin_by_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_admin_by_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">admin_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query user by their user_id&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Administrators</span><span class="o">.</span><span class="n">admin_id</span><span class="o">==</span><span class="n">admin_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="Administrators.get_admin_by_email"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Administrators.get_admin_by_email">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_admin_by_email</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">admin_email</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the Administrators by their email address&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Administrators</span><span class="o">.</span><span class="n">admin_email</span><span class="o">==</span><span class="n">admin_email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+<div class="viewcode-block" id="Corporates"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Corporates">[docs]</a><span class="k">class</span> <span class="nc">Corporates</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Null indicates that a corporate has not been checked or approved.</span>
+<span class="sd">	After being checked or approved the column is updated with</span>
+<span class="sd">	the id for the admin who did the cehcking and approval.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;Corporates&#39;</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">corporate_pin</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">corporate_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">status_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Status.status_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+							<span class="n">default</span><span class="o">=</span><span class="mi">1</span>
+						  <span class="p">)</span>
+
+	<span class="n">created_by</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Administrators.admin_id&#39;</span><span class="p">,</span>
+												<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+								<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+							<span class="p">)</span>
+	<span class="n">corporate_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+										<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+									  <span class="p">)</span>
+	<span class="n">corp_kyc_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;KycData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>	
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										<span class="p">)</span>
+	<span class="n">corp_deposits_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;DepositsData&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											 <span class="p">)</span>
+	<span class="n">corp_savings_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;SavingsData&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											<span class="p">)</span>
+	<span class="n">corp_withdrawals_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;WithdrawalsData&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+												<span class="p">)</span>
+	<span class="n">corp_loans_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;LoansData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										 <span class="p">)</span>
+	<span class="n">corp_installments_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												  <span class="s2">&quot;InstallmentsData&quot;</span><span class="p">,</span>
+												  <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												  <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												  <span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+												<span class="p">)</span>
+	<span class="n">corp_mpesa_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;MpesaData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										  <span class="p">)</span>
+	<span class="n">corp_image_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>	
+											<span class="s2">&quot;ImageData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										  <span class="p">)</span>
+	<span class="n">corp_message_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;MessageData&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">corp_music_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;MusicData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										  <span class="p">)</span>
+	<span class="n">corp_video_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;VideoData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										 <span class="p">)</span>
+	<span class="n">corp_score_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;CreditScores&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+										 <span class="p">)</span>
+	<span class="n">corp_payment_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;ClientPayments&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											<span class="p">)</span>
+	<span class="n">corp_wallet_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;ClientWallet&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											<span class="p">)</span>
+	<span class="n">corp_deduction_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;ClientDeductions&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											  <span class="p">)</span>
+
+<div class="viewcode-block" id="Corporates.get_corporate_by_pin"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Corporates.get_corporate_by_pin">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_corporate_by_pin</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">corporate_pin</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query user by their corporate_pin&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_pin</span><span class="o">==</span><span class="n">corporate_pin</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="Corporates.get_corp_by_name"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Corporates.get_corp_by_name">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_corp_by_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">corporate_name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the Adminostrators by their email address&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_name</span><span class="o">==</span><span class="n">corporate_name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="Corporates.get_corp_by_id"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Corporates.get_corp_by_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_corp_by_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">corporate_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query user by their corporate_pin&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_id</span><span class="o">==</span><span class="n">corporate_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+<div class="viewcode-block" id="ClientAdmins"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ClientAdmins">[docs]</a><span class="k">class</span> <span class="nc">ClientAdmins</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	We cannot add a checked by and an approved by columns to this table</span>
+<span class="sd">	because we need those columns to be related with the admin_id, which</span>
+<span class="sd">	is in this table. </span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;ClientAdmins&#39;</span>
+	<span class="n">client_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">client_email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">client_password</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">client_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+									<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+									<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+								  <span class="p">)</span>
+	<span class="n">role_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Roles.role_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span>
+						<span class="p">)</span>
+	<span class="n">status_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Status.status_id&#39;</span><span class="p">,</span>
+							<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span>
+						  <span class="p">)</span>
+	<span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+							<span class="n">unique</span> <span class="o">=</span> <span class="kc">False</span>
+						<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+									<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+								<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+								<span class="n">unique</span> <span class="o">=</span> <span class="kc">False</span>
+								<span class="p">)</span>
+	<span class="n">corp_client</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Corporates&quot;</span><span class="p">,</span> <span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">corporate_id</span><span class="p">])</span>
+	
+	<span class="n">client_logs_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;LoggedClients&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;ClientAdmins&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											 <span class="p">)</span>
+
+<div class="viewcode-block" id="ClientAdmins.get_client_by_id"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ClientAdmins.get_client_by_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_client_by_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">client_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query user by their corporate_pin&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="o">.</span><span class="n">client_id</span><span class="o">==</span><span class="n">client_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div>
+
+
+<div class="viewcode-block" id="ClientAdmins.get_client_by_email"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ClientAdmins.get_client_by_email">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_client_by_email</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">client_email</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the Adminostrators by their email address&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="o">.</span><span class="n">client_email</span><span class="o">==</span><span class="n">client_email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+<div class="viewcode-block" id="AdminApprovals"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.AdminApprovals">[docs]</a><span class="k">class</span> <span class="nc">AdminApprovals</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This table tells us whether or not a user has been approved and</span>
+<span class="sd">	who made the approval.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;AdminApprovals&#39;</span>
+	<span class="n">approval_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="c1"># who is being approved</span>
+	<span class="n">admin_being_approved</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>		
+									  <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+									  <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+														 <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+									  <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+									  <span class="n">unique</span><span class="o">=</span><span class="kc">False</span>
+									<span class="p">)</span>
+	<span class="sd">&quot;&quot;&quot;Who is doing the approval&quot;&quot;&quot;</span>
+	<span class="n">approver_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>		
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+													<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+								<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+								<span class="n">unique</span><span class="o">=</span><span class="kc">False</span>
+							<span class="p">)</span>
+	<span class="n">approved_from</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="p">))</span>
+	<span class="n">approved_to</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="p">))</span>
+
+	<span class="n">status_approved_from</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">approved_from</span><span class="p">])</span>					  
+	<span class="n">status_approved_to</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">approved_to</span><span class="p">])</span>
+	<span class="n">approval_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+										<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+									  <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AdminChecks"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.AdminChecks">[docs]</a><span class="k">class</span> <span class="nc">AdminChecks</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;This table tells us whether an admin has been checked by an infotrace</span>
+<span class="sd">	employee and who did the checking. A detail is moved to this table</span>
+<span class="sd">	only after the user is checked.&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;AdminChecks&#39;</span>
+	<span class="n">check_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="c1"># Who is being checked</span>
+	<span class="n">client_being_checked</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>		
+										<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+										<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+										<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+										<span class="n">unique</span><span class="o">=</span><span class="kc">False</span>
+									<span class="p">)</span>
+	<span class="c1"># Who is doing the checking</span>
+	<span class="n">checker_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>		
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+								<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+								<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+								<span class="n">unique</span><span class="o">=</span><span class="kc">False</span>
+						   <span class="p">)</span>
+	<span class="n">checked_from</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="p">))</span>
+	<span class="n">checked_to</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="p">))</span>
+
+	<span class="n">status_checked_from</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">,</span>	<span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">checked_from</span><span class="p">])</span>
+	<span class="n">status_checked_to</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">checked_to</span><span class="p">])</span>
+	<span class="n">checked_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span> <span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+									<span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CorporateChecks"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.CorporateChecks">[docs]</a><span class="k">class</span> <span class="nc">CorporateChecks</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This table tells us whether an admin has been checked by an infotrace</span>
+<span class="sd">	employee and who did the checking. A detail is moved to this table</span>
+<span class="sd">	only after the user is checked.&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;CorporateChecks&#39;</span>
+	<span class="n">check_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="c1"># Which company is being checked</span>
+	<span class="n">corp_being_checked</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>		
+										<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+										<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+										<span class="n">unique</span><span class="o">=</span><span class="kc">False</span>
+									<span class="p">)</span>
+	<span class="c1"># Who is doing the checking</span>
+	<span class="n">checker_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>		
+									<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+									<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+									<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+									<span class="n">unique</span><span class="o">=</span><span class="kc">False</span>
+								<span class="p">)</span>
+	<span class="n">checked_from</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="p">))</span>
+	<span class="n">checked_to</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="p">))</span>
+
+	<span class="n">status_checked_from</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">,</span>	<span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">checked_from</span><span class="p">])</span>
+	<span class="n">status_checked_to</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">checked_to</span><span class="p">])</span>
+	<span class="n">checked_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span> <span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+									<span class="p">)</span>
+
+<div class="viewcode-block" id="CorporateChecks.get_by_corp_id"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.CorporateChecks.get_by_corp_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_corp_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">corp_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the Adminostrators by their email address&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span>
+						<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CorporateChecks</span><span class="p">)</span><span class="o">.</span>
+						<span class="nb">filter</span><span class="p">(</span><span class="n">CorporateChecks</span><span class="o">.</span><span class="n">corp_being_checked</span><span class="o">==</span><span class="n">corp_id</span><span class="p">)</span><span class="o">.</span>
+						<span class="n">first</span><span class="p">()</span>
+					<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+<div class="viewcode-block" id="CorporateApprovals"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.CorporateApprovals">[docs]</a><span class="k">class</span> <span class="nc">CorporateApprovals</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This table tells us whether or not a user has been approved and</span>
+<span class="sd">	who made the approval.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;CorporateApprovals&#39;</span>
+	<span class="n">approval_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="c1"># which company is being approved</span>
+	<span class="n">corp_being_approved</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>		
+									  <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+									  <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+														 <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+									  <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+									  <span class="n">unique</span><span class="o">=</span><span class="kc">False</span>
+									<span class="p">)</span>
+	<span class="c1"># Who is doing the approval</span>
+	<span class="n">approver_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>		
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+													<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+								<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+								<span class="n">unique</span><span class="o">=</span><span class="kc">False</span>
+							<span class="p">)</span>
+	<span class="n">approved_from</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="p">))</span>
+	<span class="n">approved_to</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="p">))</span>
+
+	<span class="n">status_approved_from</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;Status&quot;</span><span class="p">,</span>
+											<span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">approved_from</span><span class="p">]</span>
+											<span class="p">)</span>					  
+	<span class="n">status_approved_to</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">foreign_keys</span><span class="o">=</span><span class="p">[</span><span class="n">approved_to</span><span class="p">])</span>
+	<span class="n">approval_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+										<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+										<span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+									  <span class="p">)</span>
+
+<div class="viewcode-block" id="CorporateApprovals.get_by_corp_id"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.CorporateApprovals.get_by_corp_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_corp_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">corp_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the Adminostrators by their email address&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span>	
+						<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CorporateApprovals</span><span class="p">)</span><span class="o">.</span>
+						<span class="nb">filter</span><span class="p">(</span><span class="n">CorporateApprovals</span><span class="o">.</span><span class="n">corp_being_approved</span><span class="o">==</span><span class="n">corp_id</span><span class="p">)</span><span class="o">.</span>
+						<span class="n">first</span><span class="p">()</span>
+				    <span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+
+
+
+<div class="viewcode-block" id="Borrowers"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Borrowers">[docs]</a><span class="k">class</span> <span class="nc">Borrowers</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;Borrowers&#39;</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_identity</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_date_of_birth</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
+	<span class="n">borrower_county</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">borrower_gender</span> <span class="o">=</span>   <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">borrower_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+									  <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+	<span class="n">bor_kyc_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;KycData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+									   <span class="p">)</span>
+	<span class="n">bor_deposits_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;DepositsData&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											<span class="p">)</span>
+	<span class="n">bor_savings_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;SavingsData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										  <span class="p">)</span>
+	<span class="n">bor_withdrawals_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												<span class="s2">&quot;WithdrawalsData&quot;</span><span class="p">,</span>
+												<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+												<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+											  <span class="p">)</span>
+	<span class="n">bor_loans_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;LoansData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										<span class="p">)</span>
+	<span class="n">bor_instals_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;InstallmentsData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										  <span class="p">)</span>
+	<span class="n">bor_mpesa_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;MpesaData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										<span class="p">)</span>
+	<span class="n">bor_image_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;ImageData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										<span class="p">)</span>
+	<span class="n">bor_message_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;MessageData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										   <span class="p">)</span>
+	<span class="n">bor_music_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;MusicData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										<span class="p">)</span>
+	<span class="n">bor_video_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;VideoData&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										<span class="p">)</span>
+	<span class="n">bor_score_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+											<span class="s2">&quot;CreditScores&quot;</span><span class="p">,</span>
+											<span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Borrowers&quot;</span><span class="p">,</span>
+											<span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+											<span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+										<span class="p">)</span>
+<div class="viewcode-block" id="Borrowers.borrower_by_identity"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.Borrowers.borrower_by_identity">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">borrower_by_identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">borrower_identity</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the Adminostrators by their email address&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span>	
+						<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Borrowers</span><span class="p">)</span><span class="o">.</span>
+						<span class="nb">filter</span><span class="p">(</span><span class="n">Borrowers</span><span class="o">.</span><span class="n">borrower_identity</span><span class="o">==</span><span class="n">borrower_identity</span><span class="p">)</span><span class="o">.</span>
+						<span class="n">first</span><span class="p">()</span>
+				    <span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>		
+		<span class="n">borrower</span> <span class="o">=</span> <span class="n">sql_query</span><span class="o">.</span><span class="n">borrower_identity</span>
+		<span class="k">return</span> <span class="n">borrower</span></div></div>
+
+
+<span class="c1">###############################################################################</span>
+<div class="viewcode-block" id="LoggedAdmins"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.LoggedAdmins">[docs]</a><span class="k">class</span> <span class="nc">LoggedAdmins</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;LoggedAdmins&#39;</span>
+	<span class="n">loggedId</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">admin_id</span> <span class="o">=</span>  <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Administrators.admin_id&#39;</span><span class="p">,</span>
+											 <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+						  <span class="p">)</span>
+	<span class="n">logInDate</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+	<span class="n">logoutDate</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>	
+								<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+								<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span>
+										 <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+							<span class="p">)</span></div>
+	
+	
+
+<div class="viewcode-block" id="LoggedClients"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.LoggedClients">[docs]</a><span class="k">class</span> <span class="nc">LoggedClients</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;LoggedClients&#39;</span>
+	<span class="n">loggedId</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">client_id</span> <span class="o">=</span>  <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;ClientAdmins.client_id&#39;</span><span class="p">,</span>
+											 <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+						  <span class="p">)</span>
+	<span class="n">logInDate</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+	<span class="n">logoutDate</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>	
+								<span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+								<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span>
+										 <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+							<span class="p">)</span></div>
+
+<div class="viewcode-block" id="BlacklistedTokens"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.BlacklistedTokens">[docs]</a><span class="k">class</span> <span class="nc">BlacklistedTokens</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;BlacklistedTokens&#39;</span>
+	<span class="n">token_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">token</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">time_blacklisted</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+
+<div class="viewcode-block" id="BlacklistedTokens.get_by_token"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.BlacklistedTokens.get_by_token">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_token</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query table by token&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span>
+						<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">BlacklistedTokens</span><span class="p">)</span><span class="o">.</span>
+						<span class="nb">filter</span><span class="p">(</span><span class="n">BlacklistedTokens</span><span class="o">.</span><span class="n">token</span><span class="o">==</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+					<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+<div class="viewcode-block" id="KycData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.KycData">[docs]</a><span class="k">class</span> <span class="nc">KycData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for KycData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;KycData&#39;</span>
+	<span class="n">kyc_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+								 <span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 	<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">borrower_phone_number</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">kyc_default_status</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">kyc_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="KycData.get_by_borrower_identity"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.KycData.get_by_borrower_identity">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_borrower_identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">borrower_identity</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Fetches all data belonging to a borrower from the Kyc table.</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			borrower_identity (int): The national id of the borrower. </span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			sql_querry: an sqlalchemy obejct.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span>	
+						<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Borrowers</span><span class="p">)</span><span class="o">.</span>
+						<span class="nb">filter</span><span class="p">(</span><span class="n">Borrowers</span><span class="o">.</span><span class="n">borrower_identity</span><span class="o">==</span><span class="n">borrower_identity</span><span class="p">)</span><span class="o">.</span>
+						<span class="nb">all</span><span class="p">()</span>
+				    <span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">sql_query</span></div></div>
+
+
+<div class="viewcode-block" id="DepositsData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.DepositsData">[docs]</a><span class="k">class</span> <span class="nc">DepositsData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for KycData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;DepositsData&#39;</span>
+	<span class="n">deposit_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+									<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+								 <span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+							 <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">date_of_deposit</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">deposit_channel</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">deposit_amount</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">deposit_description</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">deposit_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+									 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="SavingsData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.SavingsData">[docs]</a><span class="k">class</span> <span class="nc">SavingsData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for KycData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;SavingsData&#39;</span>
+	<span class="n">savings_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+								<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+							 <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">date_of_savings</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">savings_channel</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">savings_amount</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">savings_type</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">savings_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+									 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="WithdrawalsData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.WithdrawalsData">[docs]</a><span class="k">class</span> <span class="nc">WithdrawalsData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for KycData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;WithdrawalsData&#39;</span>
+	<span class="n">withdrawals_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+							<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+							 <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">date_of_withdrawals</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">withdrawals_channel</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">withdrawals_amount</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">withdrawals_description</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">withdrawals_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="LoansData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.LoansData">[docs]</a><span class="k">class</span> <span class="nc">LoansData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for KycData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;LoansData&#39;</span>
+	<span class="n">loan_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										   <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">date_of_loan</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">loan_period</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">loan_amount</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">loan_installment_frequency</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">loan_interest</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">date_of_loan_completion</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">loan_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+	<span class="n">loan_installments_relation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+												   <span class="s2">&quot;InstallmentsData&quot;</span><span class="p">,</span>
+												   <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;LoansData&quot;</span><span class="p">,</span>
+												   <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">,</span>
+												   <span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span>
+												 <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InstallmentsData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.InstallmentsData">[docs]</a><span class="k">class</span> <span class="nc">InstallmentsData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for KycData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;InstallmentsData&#39;</span>
+	<span class="n">installment_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">installment_loan_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+										<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+									 	<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;LoansData.loan_id&#39;</span><span class="p">,</span>
+										<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+									<span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+														  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+							 <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">date_of_installment</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">installment_amount</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">installment_loan_balance</span>  <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">installment_type</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">installment_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="MpesaData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.MpesaData">[docs]</a><span class="k">class</span> <span class="nc">MpesaData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for KycData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;MpesaData&#39;</span>
+	<span class="n">mpesa_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										   <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">mpesa_amount</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">mpesa_spec_loc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">mpesa_type</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">mpesa_time_stamp</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">mpesa_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+								   <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ImageData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ImageData">[docs]</a><span class="k">class</span> <span class="nc">ImageData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for ImageData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;ImageData&#39;</span>
+	<span class="n">image_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										   <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">image_size</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">image_file_type</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">image_date_added</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">image_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MessageData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.MessageData">[docs]</a><span class="k">class</span> <span class="nc">MessageData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for ImageData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;MessageData&#39;</span>
+	<span class="n">message_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>	
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										   <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">message_length</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">message_type</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">message_direction</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">message_time_stamp</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">message_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MusicData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.MusicData">[docs]</a><span class="k">class</span> <span class="nc">MusicData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for ImageData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;MusicData&#39;</span>
+	<span class="n">music_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										   <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">music_size</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">music_file_type</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">music_date_added</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">music_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="VideoData"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.VideoData">[docs]</a><span class="k">class</span> <span class="nc">VideoData</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for ImageData&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;VideoData&#39;</span>
+	<span class="n">video_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										   <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">video_size</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">video_file_type</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">video_date_added</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">video_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<span class="c1">###############################################################################</span>
+<div class="viewcode-block" id="CreditScores"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.CreditScores">[docs]</a><span class="k">class</span> <span class="nc">CreditScores</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for CreditScores&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;CreditScores&#39;</span>
+	<span class="n">score_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">admin_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> 
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+											<span class="s1">&#39;Users.user_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span>
+										 <span class="p">)</span>
+						<span class="p">)</span>
+	<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Borrowers.borrower_identity&#39;</span><span class="p">,</span>
+													  <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							<span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										   <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">credit_score</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">score_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">credit_limit</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">score_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ClientPayments"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ClientPayments">[docs]</a><span class="k">class</span> <span class="nc">ClientPayments</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Table contianing all payments.&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;ClientPayments&#39;</span>
+	<span class="n">payment_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">)</span>
+							 <span class="p">)</span>
+	<span class="n">payment_amount</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">uploaded_by</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Administrators.admin_id&#39;</span><span class="p">,</span>
+												<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+								<span class="n">nullable</span><span class="o">=</span><span class="kc">True</span>
+							<span class="p">)</span>
+	<span class="n">payment_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">aproved_by</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Administrators.admin_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span><span class="o">=</span><span class="kc">True</span>
+						   <span class="p">)</span>
+	<span class="n">payment_date_approved</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ClientWallet"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ClientWallet">[docs]</a><span class="k">class</span> <span class="nc">ClientWallet</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;ClientWallet&#39;</span>
+	<span class="sd">&quot;&quot;&quot;Table contianing the client wallet balance.&quot;&quot;&quot;</span>
+	<span class="n">wallet_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">current_amount</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">amount_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										<span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ClientDeductions"><a class="viewcode-back" href="../../../myapp.Models.tables.html#myapp.Models.tables.ClientDeductions">[docs]</a><span class="k">class</span> <span class="nc">ClientDeductions</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Table contianing all deductions.&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;ClientDeductions&#39;</span>
+	<span class="n">deduction_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							 <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;Corporates.corporate_id&#39;</span><span class="p">,</span>
+										   <span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">))</span>
+	<span class="n">amount_b4_deduction</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">amount_deducted</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">amount_after_deduction</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+	<span class="n">service_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;ScoreTypes.service_id&#39;</span><span class="p">,</span>
+											<span class="n">ondelete</span><span class="o">=</span><span class="s1">&#39;CASCADE&#39;</span><span class="p">),</span>
+							<span class="n">nullable</span> <span class="o">=</span> <span class="kc">False</span>
+						<span class="p">)</span>
+	<span class="n">deduction_date_created</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span>
+										 <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

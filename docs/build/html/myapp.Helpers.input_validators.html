@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Helpers.input_validators module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.ModelBuilding package" href="myapp.ModelBuilding.html" />
+    <link rel="prev" title="myapp.Helpers.email_helpers module" href="myapp.Helpers.email_helpers.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Helpers.input_validators">
+<span id="myapp-helpers-input-validators-module"></span><h1>myapp.Helpers.input_validators module<a class="headerlink" href="#module-myapp.Helpers.input_validators" title="Permalink to this headline">¶</a></h1>
+<p>Validate the correct datatypes</p>
+<dl class="py class">
+<dt id="myapp.Helpers.input_validators.ValidInputs">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Helpers.input_validators.</code><code class="sig-name descname">ValidInputs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">required_inputs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/input_validators.html#ValidInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validates data types from inputs.</p>
+<ol class="arabic simple">
+<li><p>dirty_values is a class variable.</p></li>
+<li><dl class="simple">
+<dt>required_inputs default is none but must be</dt><dd><p>provided.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>valid_inputs is a dictionary of inputs</dt><dd><p>and thier associated data types.</p>
+</dd>
+</dl>
+</li>
+</ol>
+<dl class="py method">
+<dt id="myapp.Helpers.input_validators.ValidInputs.current_roles">
+<em class="property">property </em><code class="sig-name descname">current_roles</code><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.current_roles" title="Permalink to this definition">¶</a></dt>
+<dd><p>User roles and asssociated ids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of roles and ids.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.input_validators.ValidInputs.current_status">
+<em class="property">property </em><code class="sig-name descname">current_status</code><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.current_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>User status and asssociated ids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of status and ids.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Helpers.input_validators.ValidInputs.dirty_values">
+<code class="sig-name descname">dirty_values</code><em class="property"> = {}</em><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.dirty_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.input_validators.ValidInputs.find_missing_values">
+<code class="sig-name descname">find_missing_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mydict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/input_validators.html#ValidInputs.find_missing_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.find_missing_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that we do not have missing inputs.</p>
+<p>Given a dictionary, checks that no dictionary
+value is missing. It also compares the dictionary
+keys with required inputs to ensure that the data
+submited from the front end has the required. If
+their is a mistake in any of the inputs it
+appends the input with the mistake to dirty_values</p>
+<p>Philosophy: An endpoint will have required inputs
+A user will provide inputs. This function then checks
+that the inputs provided by the user are the required
+inputs in the endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mydict</strong> – A dictionary containing iputs from the user</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Retruns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.input_validators.ValidInputs.get_role_id">
+<code class="sig-name descname">get_role_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">role_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/input_validators.html#ValidInputs.get_role_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.get_role_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts and validates the role id.</p>
+<p>Given a role_name such as super_admin extract the value
+assocaited with the role_name(i.e the role_id). Note
+that the order of the role names is in the same order as
+the Roles table in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>role_name</strong> – a string of the role_name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>of the associated role_name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>role_id (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.input_validators.ValidInputs.get_status_id">
+<code class="sig-name descname">get_status_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">status_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/input_validators.html#ValidInputs.get_status_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.get_status_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts and validates the status_id.</p>
+<p>Given a status_name such as awaiting_approvale extract the
+value assocaited with the role_name(i.e the role_id). Note
+that the order of the role names is in the same order as
+the Roles table in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>status_name</strong> – a string of the status_name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>of the associated status_name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>An id (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.input_validators.ValidInputs.is_valid_input">
+<code class="sig-name descname">is_valid_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mydict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/input_validators.html#ValidInputs.is_valid_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.is_valid_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates the data type of an input</p>
+<p>Loops through the dictionary provided, extracts
+a key from the dictionary. Using the extracted
+key, extracts the values with the same key from
+valid_inputs then checks for the appropriate data
+type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mydict</strong> – a dictionary of inputs to be validated.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.input_validators.ValidInputs.produce_output">
+<code class="sig-name descname">produce_output</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mydict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/input_validators.html#ValidInputs.produce_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.produce_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Mother of all methods in this class.</p>
+<p>Method called to do the validation. using the
+find_missing_values method in this class, checks
+for any missing values. If any of the inputs are
+missing return a dictionary of inputs and missing
+values.</p>
+<p>Also checks to ensure that all of the inputs have
+the correct data types using the is_valid_input
+method in this class. If any of the inputs is not
+valid, appends the input to dirty_values.</p>
+<p>If data passes all validations returns True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mydict</strong> – A dictionary containing user inputs</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary if any input is missing
+A dictionary if any input is bad data type
+True if the data is valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.input_validators.ValidInputs.valid_inputs">
+<em class="property">property </em><code class="sig-name descname">valid_inputs</code><a class="headerlink" href="#myapp.Helpers.input_validators.ValidInputs.valid_inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Helpers.html">myapp.Helpers package</a><ul>
+      <li>Previous: <a href="myapp.Helpers.email_helpers.html" title="previous chapter">myapp.Helpers.email_helpers module</a></li>
+      <li>Next: <a href="myapp.ModelBuilding.html" title="next chapter">myapp.ModelBuilding package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Helpers.input_validators.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

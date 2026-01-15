@@ -1,0 +1,476 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Helpers.admin_details module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Helpers.data_helpers module" href="myapp.Helpers.data_helpers.html" />
+    <link rel="prev" title="myapp.Helpers package" href="myapp.Helpers.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Helpers.admin_details">
+<span id="myapp-helpers-admin-details-module"></span><h1>myapp.Helpers.admin_details module<a class="headerlink" href="#module-myapp.Helpers.admin_details" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="myapp.Helpers.admin_details.AdminDetails">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Helpers.admin_details.</code><code class="sig-name descname">AdminDetails</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/admin_details.html#AdminDetails"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Extract data from a request.</p>
+<p>A class used to extract user details from a request
+If any input is added to the api, then  this class
+should be updated.</p>
+<p>TODO: consider a situation where the key is None</p>
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.check_valid_email">
+<code class="sig-name descname">check_valid_email</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">admin_email</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/admin_details.html#AdminDetails.check_valid_email"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.check_valid_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that an email is valid format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>email</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True or False</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_admin_email">
+<em class="property">property </em><code class="sig-name descname">get_admin_email</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_admin_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to extract user’s email,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The admin email(str) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_admin_id">
+<em class="property">property </em><code class="sig-name descname">get_admin_id</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_admin_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts an admin_id from the request.</p>
+<p>Check if the request has an admin_id in the
+body and return it. If the corporate id is not
+in the body check that the id is in the
+user_token and return it if present. Else return
+False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The admin_id(int) or False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_admin_names">
+<em class="property">property </em><code class="sig-name descname">get_admin_names</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_admin_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts admin names from the request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The admin names (str) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_admin_role">
+<em class="property">property </em><code class="sig-name descname">get_admin_role</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_admin_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts an admin_role from the request.</p>
+<p>Check if the request has an admin_role in the
+body and return it. If the admin_role is not
+in the body check that the id is in the
+user_token and return it if present. Else return
+False. if the admin role is not in the dictionary
+called admin roles return invalid admin_role.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_admin_status">
+<em class="property">property </em><code class="sig-name descname">get_admin_status</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_admin_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts an admin_status from the request.</p>
+<p>Check if the request has an admin_status in the
+body and return it. If the corporate id is not
+in the body check that the id is in the header
+and return it if present. Else return False.
+:param None:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The status_id(str) if extracted from the body
+status_id(int) if extracted from the header
+False if the token is not valid or missing</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_amount_uploaded">
+<em class="property">property </em><code class="sig-name descname">get_amount_uploaded</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_amount_uploaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the amount uploaded from the request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>amount_uploaded or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_approved_from">
+<em class="property">property </em><code class="sig-name descname">get_approved_from</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_approved_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the approved_from from the request</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The approved_from (str) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_approved_to">
+<em class="property">property </em><code class="sig-name descname">get_approved_to</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_approved_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the approved_to from the request</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The approved_to (str) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_borrower_id">
+<em class="property">property </em><code class="sig-name descname">get_borrower_id</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts borrower_id from the request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The borrower_id(int) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_borrower_identity">
+<em class="property">property </em><code class="sig-name descname">get_borrower_identity</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_borrower_identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts The User_identity</p>
+<p>Check if the request has a corporate id in
+the body and return it. If the corporate
+id is not in the body check that the id is
+in the header and return it if present.
+Else return False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>user_identity or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_checked_from">
+<em class="property">property </em><code class="sig-name descname">get_checked_from</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_checked_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the checked_from from the request</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The chcked_from (str) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_checked_to">
+<em class="property">property </em><code class="sig-name descname">get_checked_to</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_checked_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to extract checked_to from the request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The check_to(string) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_corporate_id">
+<em class="property">property </em><code class="sig-name descname">get_corporate_id</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract a corporate_id from the request.</p>
+<p>Check if the request has a corporate id in the
+body and return it. If the corporate id is not
+in the body check that the id is in the
+user_token and return it if present.
+Else return False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_corporate_name">
+<em class="property">property </em><code class="sig-name descname">get_corporate_name</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_corporate_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts corporate name from the request</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Corporate name(string) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_corporate_pin">
+<em class="property">property </em><code class="sig-name descname">get_corporate_pin</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_corporate_pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to extract user’s username.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corporate_pin(str) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_loan_frequency">
+<em class="property">property </em><code class="sig-name descname">get_loan_frequency</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_loan_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the loan frequency from the request</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Thr loan frequency(int) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_loan_period">
+<em class="property">property </em><code class="sig-name descname">get_loan_period</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_loan_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the loan_period from the request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The loan period (int) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_password1">
+<em class="property">property </em><code class="sig-name descname">get_password1</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_password1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to extract user’s password1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The password(str) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_score_name">
+<em class="property">property </em><code class="sig-name descname">get_score_name</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_score_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to extract score_name from the request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The name of the score(string) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_user_identity">
+<em class="property">property </em><code class="sig-name descname">get_user_identity</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_user_identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts The User_identity</p>
+<p>Check if the request has a corporate id in
+the body and return it. If the corporate
+id is not in the body check that the id is
+in the header and return it if present.
+Else return False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>user_identity or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_user_name">
+<em class="property">property </em><code class="sig-name descname">get_user_name</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_user_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to extract user’s username.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The user name(str) or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.admin_details.AdminDetails.get_user_token">
+<em class="property">property </em><code class="sig-name descname">get_user_token</code><a class="headerlink" href="#myapp.Helpers.admin_details.AdminDetails.get_user_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the user_token from the request.</p>
+<p>Check if the token is present, if the token is
+present and valid, return the user_token. If
+the token is expired or missing
+return the string ‘expired token’.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Helpers.html">myapp.Helpers package</a><ul>
+      <li>Previous: <a href="myapp.Helpers.html" title="previous chapter">myapp.Helpers package</a></li>
+      <li>Next: <a href="myapp.Helpers.data_helpers.html" title="next chapter">myapp.Helpers.data_helpers module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Helpers.admin_details.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

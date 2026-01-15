@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Users.show_status &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Users.show_status</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module Containing my Users&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">Blueprint</span>
+
+<span class="kn">from</span> <span class="nn">flask_cors</span> <span class="kn">import</span> <span class="n">cross_origin</span>
+
+
+
+<span class="kn">from</span> <span class="nn">myapp.Models.model_users</span> <span class="kn">import</span> <span class="n">Authentication</span>
+<span class="kn">from</span> <span class="nn">myapp.Models.displays</span> <span class="kn">import</span> <span class="n">DisplayedChecks</span><span class="p">,</span>	<span class="n">DisplayedApprovals</span>
+
+
+<span class="n">display_routes</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;display_routes&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="fetch_checks"><a class="viewcode-back" href="../../../myapp.Users.show_status.html#myapp.Users.show_status.fetch_checks">[docs]</a><span class="nd">@display_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/fetch_checks/&lt;string:fetch_type&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fetch_checks</span><span class="p">(</span><span class="n">fetch_type</span><span class="p">):</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">()</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+
+	<span class="n">admin_id</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">()</span>
+	<span class="n">role_id</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">get_admin_role</span> <span class="c1"># From the token</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">get_corporate_id</span>
+	<span class="n">fetches</span> <span class="o">=</span> <span class="n">DisplayedChecks</span><span class="p">(</span><span class="n">fetch_type</span><span class="p">,</span> <span class="n">role_id</span><span class="p">,</span> <span class="n">corporate_id</span><span class="p">)</span>
+	<span class="n">current_checks</span> <span class="o">=</span> <span class="n">fetches</span><span class="o">.</span><span class="n">make_a_check_fetch</span><span class="p">()</span>
+	
+	<span class="k">if</span> <span class="n">role_id</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;messge&quot;</span><span class="p">:</span> <span class="s2">&quot;Wrong administrator role&quot;</span><span class="p">})</span>
+	<span class="k">if</span> <span class="n">current_checks</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_checks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;No checks for now&quot;</span><span class="p">})</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_checks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">current_checks</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="fetch_approvals"><a class="viewcode-back" href="../../../myapp.Users.show_status.html#myapp.Users.show_status.fetch_approvals">[docs]</a><span class="nd">@display_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/fetch_approvals/&lt;string:fetch_type&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fetch_approvals</span><span class="p">(</span><span class="n">fetch_type</span><span class="p">):</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">()</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	
+	<span class="n">admin_id</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">()</span>
+	<span class="n">role_id</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">get_admin_role</span> <span class="c1"># from the token</span>
+	<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">get_corporate_id</span>
+	<span class="n">fetches</span> <span class="o">=</span> <span class="n">DisplayedApprovals</span><span class="p">(</span><span class="n">fetch_type</span><span class="p">,</span> <span class="n">role_id</span><span class="p">,</span> <span class="n">corporate_id</span><span class="p">)</span>
+	<span class="n">current_approvals</span> <span class="o">=</span> <span class="n">fetches</span><span class="o">.</span><span class="n">make_an_approval_fetch</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_approvals</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">current_approvals</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">current_approvals</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_approvals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">jsonify</span> <span class="p">({</span>
+								<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+								<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;No approvals for now&quot;</span>
+							<span class="p">})</span>
+	<span class="k">elif</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Wrong administrator role&quot;</span>
+						<span class="p">})</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;You have just brocken my code in fetch approvals&quot;</span><span class="p">})</span></div>
+	
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

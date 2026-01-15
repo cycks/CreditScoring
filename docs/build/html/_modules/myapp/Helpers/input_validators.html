@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Helpers.input_validators &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Helpers.input_validators</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Validate the correct datatypes </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ValidInputs"><a class="viewcode-back" href="../../../myapp.Helpers.input_validators.html#myapp.Helpers.input_validators.ValidInputs">[docs]</a><span class="k">class</span> <span class="nc">ValidInputs</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;	</span>
+<span class="sd">	Validates data types from inputs.</span>
+<span class="sd">	</span>
+<span class="sd">	1. dirty_values is a class variable. </span>
+<span class="sd">	2. required_inputs default is none but must be </span>
+<span class="sd">		provided.</span>
+<span class="sd">	3. valid_inputs is a dictionary of inputs</span>
+<span class="sd">		and thier associated data types.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">dirty_values</span> <span class="o">=</span> <span class="p">{}</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">required_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">required_inputs</span> <span class="o">=</span> <span class="n">required_inputs</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">valid_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">{</span>
+					
+					<span class="s2">&quot;admin_email&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>					
+					<span class="s2">&quot;admin_id&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;admin_names&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;admin_password&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>	
+					<span class="s2">&quot;admin_status&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;admin_role&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>					
+					<span class="s2">&quot;amount_uploaded&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>		
+					<span class="s2">&quot;approved_from&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> 
+					<span class="s2">&quot;approved_to&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;approver_id&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>					
+					<span class="s2">&quot;borrower_id&quot;</span><span class="p">:</span><span class="s2">&quot;int&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;checker_id&quot;</span><span class="p">:</span><span class="s2">&quot;int&quot;</span><span class="p">,</span>			
+					<span class="s2">&quot;checked_from&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;checked_to&quot;</span><span class="p">:</span><span class="s2">&quot;string&quot;</span><span class="p">,</span>						
+					<span class="s2">&quot;corporate_id&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;corporate_name&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;corp_name&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>					
+					<span class="s2">&quot;corporate_pin&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;password1&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;password2&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;role_id&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;score_name&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>		
+					<span class="s2">&quot;status_id&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;user_identity&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>	
+					<span class="s2">&quot;user_name&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+				<span class="p">}</span>
+
+
+
+<div class="viewcode-block" id="ValidInputs.is_valid_input"><a class="viewcode-back" href="../../../myapp.Helpers.input_validators.html#myapp.Helpers.input_validators.ValidInputs.is_valid_input">[docs]</a>	<span class="k">def</span> <span class="nf">is_valid_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mydict</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Validates the data type of an input</span>
+<span class="sd">		</span>
+<span class="sd">		Loops through the dictionary provided, extracts</span>
+<span class="sd">		a key from the dictionary. Using the extracted</span>
+<span class="sd">		key, extracts the values with the same key from</span>
+<span class="sd">		valid_inputs then checks for the appropriate data</span>
+<span class="sd">		type.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			mydict: a dictionary of inputs to be validated.</span>
+<span class="sd">		Returns</span>
+<span class="sd">			None </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mydict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="n">required_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">required_type</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+					<span class="n">required_type</span> <span class="o">=</span> <span class="s2">&quot;should be &quot;</span> <span class="o">+</span> <span class="n">required_type</span> 
+					<span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">required_type</span>
+			<span class="k">elif</span> <span class="n">required_type</span> <span class="o">==</span> <span class="s2">&quot;int&quot;</span><span class="p">:</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+				<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+					<span class="n">required_type</span> <span class="o">=</span> <span class="s2">&quot;should be &quot;</span> <span class="o">+</span> <span class="n">required_type</span> 
+					<span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">required_type</span>
+			<span class="k">elif</span> <span class="n">required_type</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+				<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+					<span class="n">required_type</span> <span class="o">=</span> <span class="s2">&quot;should be &quot;</span> <span class="o">+</span> <span class="n">required_type</span> 
+					<span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">required_type</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="kc">None</span>
+		<span class="k">return</span> <span class="kc">None</span></div>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">current_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		User roles and asssociated ids.</span>
+<span class="sd">		</span>
+<span class="sd">		Args: </span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			A dictionary of roles and ids.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">admin_roles</span> <span class="o">=</span> <span class="p">{</span>
+							<span class="s2">&quot;super_admin&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;infotrace_admin&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+							<span class="s2">&quot;client_admin&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;client_staff&quot;</span><span class="p">:</span><span class="mi">4</span>
+					  <span class="p">}</span>
+		<span class="k">return</span> <span class="n">admin_roles</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">current_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		User status and asssociated ids.</span>
+<span class="sd">		</span>
+<span class="sd">		Args: </span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			A dictionary of status and ids.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">admin_status</span> <span class="o">=</span> <span class="p">{</span>
+							<span class="s2">&quot;awaiting_approval&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;approved&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;dormant&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+							<span class="s2">&quot;blocked&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;decision_rescinded&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+							<span class="s2">&quot;to_be_checked&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;checked&quot;</span><span class="p">:</span> <span class="mi">7</span>
+						<span class="p">}</span>
+		<span class="k">return</span> <span class="n">admin_status</span>
+
+
+<div class="viewcode-block" id="ValidInputs.get_role_id"><a class="viewcode-back" href="../../../myapp.Helpers.input_validators.html#myapp.Helpers.input_validators.ValidInputs.get_role_id">[docs]</a>	<span class="k">def</span> <span class="nf">get_role_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Extracts and validates the role id.</span>
+
+<span class="sd">		Given a role_name such as super_admin extract the value</span>
+<span class="sd">		assocaited with the role_name(i.e the role_id). Note</span>
+<span class="sd">		that the order of the role names is in the same order as</span>
+<span class="sd">		the Roles table in the database.</span>
+<span class="sd">		</span>
+<span class="sd">		Args: </span>
+<span class="sd">			role_name: a string of the role_name</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			role_id (int): of the associated role_name</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_roles</span><span class="p">[</span><span class="n">role_name</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ValidInputs.get_status_id"><a class="viewcode-back" href="../../../myapp.Helpers.input_validators.html#myapp.Helpers.input_validators.ValidInputs.get_status_id">[docs]</a>	<span class="k">def</span> <span class="nf">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status_name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts and validates the status_id.</span>
+<span class="sd">		</span>
+<span class="sd">		Given a status_name such as awaiting_approvale extract the </span>
+<span class="sd">		value assocaited with the role_name(i.e the role_id). Note</span>
+<span class="sd">		that the order of the role names is in the same order as</span>
+<span class="sd">		the Roles table in the database.</span>
+
+<span class="sd">		Args: </span>
+<span class="sd">			status_name: a string of the status_name</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			An id (int): of the associated status_name</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_status</span><span class="p">[</span><span class="n">status_name</span><span class="p">]</span></div>
+
+	
+<div class="viewcode-block" id="ValidInputs.find_missing_values"><a class="viewcode-back" href="../../../myapp.Helpers.input_validators.html#myapp.Helpers.input_validators.ValidInputs.find_missing_values">[docs]</a>	<span class="k">def</span> <span class="nf">find_missing_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mydict</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		</span>
+<span class="sd">		Check that we do not have missing inputs.</span>
+<span class="sd">		</span>
+
+<span class="sd">		Given a dictionary, checks that no dictionary </span>
+<span class="sd">		value is missing. It also compares the dictionary</span>
+<span class="sd">		keys with required inputs to ensure that the data</span>
+<span class="sd">		submited from the front end has the required. If </span>
+<span class="sd">		their is a mistake in any of the inputs it </span>
+<span class="sd">		appends the input with the mistake to dirty_values</span>
+
+<span class="sd">		Philosophy: An endpoint will have required inputs</span>
+<span class="sd">		A user will provide inputs. This function then checks</span>
+<span class="sd">		that the inputs provided by the user are the required</span>
+<span class="sd">		inputs in the endpoint.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			mydict: A dictionary containing iputs from the user</span>
+<span class="sd">		Retruns:</span>
+<span class="sd">			None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mydict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;is_missing&quot;</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_inputs</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mydict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;is_missing&quot;</span>
+		<span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="ValidInputs.produce_output"><a class="viewcode-back" href="../../../myapp.Helpers.input_validators.html#myapp.Helpers.input_validators.ValidInputs.produce_output">[docs]</a>	<span class="k">def</span> <span class="nf">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mydict</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		The Mother of all methods in this class.</span>
+<span class="sd">		</span>
+<span class="sd">		Method called to do the validation. using the </span>
+<span class="sd">		find_missing_values method in this class, checks</span>
+<span class="sd">		for any missing values. If any of the inputs are</span>
+<span class="sd">		missing return a dictionary of inputs and missing</span>
+<span class="sd">		values. </span>
+
+<span class="sd">		Also checks to ensure that all of the inputs have</span>
+<span class="sd">		the correct data types using the is_valid_input</span>
+<span class="sd">		method in this class. If any of the inputs is not</span>
+<span class="sd">		valid, appends the input to dirty_values.</span>
+
+<span class="sd">		If data passes all validations returns True.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			mydict: A dictionary containing user inputs</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			A dictionary if any input is missing</span>
+<span class="sd">			A dictionary if any input is bad data type</span>
+<span class="sd">			True if the data is valid</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">invalid_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_missing_values</span><span class="p">(</span><span class="n">mydict</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span>
+		<span class="n">invalid_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_input</span><span class="p">(</span><span class="n">mydict</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirty_values</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">True</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,597 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.checks_n_approvals &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Models.checks_n_approvals</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains classes used to make checks and</span>
+<span class="sd">approvals. Contains the following classes.</span>
+<span class="sd">	1. Checks: used for making all checks</span>
+<span class="sd">	2. Approvals: Used for making all approvals.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+
+<span class="kn">from</span> <span class="nn">myapp.Models.__init__</span> <span class="kn">import</span> <span class="n">db</span>
+
+<span class="kn">from</span> <span class="nn">myapp.Helpers.input_validators</span> <span class="kn">import</span> <span class="n">ValidInputs</span>
+
+
+<span class="kn">from</span> <span class="nn">myapp.Models.tables</span> <span class="kn">import</span> <span class="p">(</span>
+							<span class="n">AdminApprovals</span><span class="p">,</span>
+							<span class="n">AdminChecks</span><span class="p">,</span>
+							<span class="n">Administrators</span><span class="p">,</span>
+							<span class="n">ClientAdmins</span><span class="p">,</span>
+							<span class="n">CorporateApprovals</span><span class="p">,</span>
+							<span class="n">CorporateChecks</span><span class="p">,</span>
+							<span class="n">Corporates</span><span class="p">,</span>
+							<span class="n">Status</span>
+							<span class="p">)</span>
+
+<div class="viewcode-block" id="Checks"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks">[docs]</a><span class="k">class</span> <span class="nc">Checks</span><span class="p">(</span><span class="n">ValidInputs</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A class used for making checks.</span>
+
+<span class="sd">	Inherits from the ValidInputs class which is used here</span>
+<span class="sd">	to ensure that the inputs provided in mydict are of</span>
+<span class="sd">	valid types and names.</span>
+<span class="sd">	</span>
+
+<span class="sd">	Attributes:</span>
+<span class="sd">        mydict (dict): A dictionary containing all inputs provided</span>
+<span class="sd">        by the  user.</span>
+
+<span class="sd">        required_inputs (list): A list containing the inputs required</span>
+<span class="sd">        for a given check.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="n">ValidInputs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mydict</span> <span class="o">=</span> <span class="n">mydict</span>
+	
+<div class="viewcode-block" id="Checks.is_correct_details"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.is_correct_details">[docs]</a>	<span class="k">def</span> <span class="nf">is_correct_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Validates inputs.</span>
+
+<span class="sd">		Confirms that all the required_iputs are present and are of </span>
+<span class="sd">		valid type.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Checks.is_registered_admin"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.is_registered_admin">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the Administrators by their email address&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">Administrators</span><span class="p">()</span><span class="o">.</span><span class="n">get_admin_by_email</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Checks.is_registered_client"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.is_registered_client">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the clients by their email address&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">ClientAdmins</span><span class="p">()</span><span class="o">.</span><span class="n">get_client_by_email</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Checks.is_registered_corporate"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.is_registered_corporate">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_corporate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Query the companies by their corporate name&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">Corporates</span><span class="p">()</span><span class="o">.</span><span class="n">get_corp_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Checks.check_dual_registration"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.check_dual_registration">[docs]</a>	<span class="k">def</span> <span class="nf">check_dual_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Validates that a user cannot register as an admin and  as a client.</span>
+
+<span class="sd">		If a user is registered as an administratorr, checks if the same</span>
+<span class="sd">		user(email adress) is registered as a client. If so, return an error</span>
+<span class="sd">		message indicating the case. Otherwise return an sqlalchemy querry</span>
+<span class="sd">		object for an administrator or client. If all the tests fail then</span>
+<span class="sd">		return unregisterd email.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			Error message (str): Dual registration error.</span>
+<span class="sd">			sqlalcehmy object (obj): An sqlalcehmy object</span>
+<span class="sd">			unregistrered email (str): Unregistered email.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">admin_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_admin</span><span class="p">()</span>
+		<span class="n">client_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_client</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">admin_status</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">client_status</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;Dual registration error.&quot;</span>
+		<span class="k">elif</span> <span class="n">admin_status</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">admin_status</span>
+		<span class="k">elif</span> <span class="n">client_status</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">client_status</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;Unregistered email. Please register the user first.&quot;</span></div>
+
+
+<div class="viewcode-block" id="Checks.update_admins_on_check"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.update_admins_on_check">[docs]</a>	<span class="k">def</span> <span class="nf">update_admins_on_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Helper function used to change the checked status in the Administrators</span>
+<span class="sd">		table.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="p">(</span>
+			  <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span>
+			  <span class="nb">filter</span><span class="p">(</span><span class="n">Administrators</span><span class="o">.</span><span class="n">admin_email</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span><span class="o">.</span>
+			  <span class="n">update</span><span class="p">({</span><span class="n">Administrators</span><span class="o">.</span><span class="n">status_id</span><span class="p">:</span> <span class="mi">7</span><span class="p">})</span>
+			<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Checks.update_clients_on_check"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.update_clients_on_check">[docs]</a>	<span class="k">def</span> <span class="nf">update_clients_on_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Helper function used to change the checked status in the ClientAdminis</span>
+<span class="sd">		table.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="p">(</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+				<span class="nb">filter</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="o">.</span><span class="n">client_email</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span><span class="o">.</span>
+				<span class="n">update</span><span class="p">({</span><span class="n">ClientAdmins</span><span class="o">.</span><span class="n">status_id</span><span class="p">:</span> <span class="mi">7</span><span class="p">})</span>
+			<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Checks.check_admin"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.check_admin">[docs]</a>	<span class="k">def</span> <span class="nf">check_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		checker_id: The id of the person doing the checking</span>
+<span class="sd">		checked_id: The id of the persron being checked</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">is_valid_inputs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">is_valid_inputs</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">is_valid_inputs</span>
+					<span class="p">}</span>
+		<span class="n">current_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_dual_registration</span><span class="p">()</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_status</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">current_status</span>
+					<span class="p">}</span>
+
+		<span class="n">checked_id</span> <span class="o">=</span> <span class="n">current_status</span><span class="o">.</span><span class="n">user_id</span>
+		<span class="n">role_id</span> <span class="o">=</span> <span class="n">current_status</span><span class="o">.</span><span class="n">role_id</span>
+		<span class="n">has_been_checked</span> <span class="o">=</span> <span class="n">current_status</span><span class="o">.</span><span class="n">status_id</span>
+
+		<span class="c1"># Extract the status id using a method inherited from ValidInputs</span>
+		<span class="n">checked_from</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;checked_from&quot;</span><span class="p">])</span>
+		<span class="n">checked_to</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;checked_to&quot;</span><span class="p">])</span>
+
+		<span class="k">if</span> <span class="n">has_been_checked</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Already checked.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">if</span> <span class="n">has_been_checked</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;Already checked and approved.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">if</span> <span class="n">has_been_checked</span> <span class="o">!=</span> <span class="mi">7</span><span class="p">:</span>
+			<span class="n">check</span> <span class="o">=</span> <span class="n">AdminChecks</span><span class="p">(</span>
+									<span class="n">client_being_checked</span> <span class="o">=</span> <span class="n">checked_id</span><span class="p">,</span>
+									<span class="n">checker_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;checker_id&quot;</span><span class="p">],</span>
+									<span class="n">checked_from</span> <span class="o">=</span> <span class="n">checked_from</span><span class="p">,</span>
+									<span class="n">checked_to</span> <span class="o">=</span> <span class="n">checked_to</span>
+								<span class="p">)</span>
+			<span class="k">if</span> <span class="n">role_id</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="n">updated_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_admins_on_check</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>				
+				<span class="n">updated_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_clients_on_check</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">updated_status</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">check</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;successfully checked.&quot;</span>
+						<span class="p">}</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+				 			<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Administrators table not checked.&quot;</span>
+				 		<span class="p">}</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;For some reason the check was not completed&quot;</span>
+				   <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Checks.update_corp_on_check"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.update_corp_on_check">[docs]</a>	<span class="k">def</span> <span class="nf">update_corp_on_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Query the database for a company with the provided corporate_name,</span>
+<span class="sd">		and update the status_id, the person doing the checking and the</span>
+<span class="sd">		in the table the date and time as the current time.</span>
+
+<span class="sd">		Corporates.checked_by: checker_id,</span>
+<span class="sd">		Corporates.corporate_date_checked: current_time</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="p">(</span>
+			  <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+			  <span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span><span class="o">.</span>
+			  <span class="n">update</span><span class="p">({</span><span class="n">Corporates</span><span class="o">.</span><span class="n">status_id</span><span class="p">:</span> <span class="mi">7</span><span class="p">})</span>
+			<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Checks.check_company"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Checks.check_company">[docs]</a>	<span class="k">def</span> <span class="nf">check_company</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		</span>
+<span class="sd">		approver_id: The id of the person doing the aproval</span>
+<span class="sd">		approved_id: The id of the persron being approved.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">is_valid_inputs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">is_valid_inputs</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="n">is_valid_inputs</span>
+					<span class="p">}</span>
+
+		<span class="n">current_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_corporate</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">current_status</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">current_status</span>
+					<span class="p">}</span>
+
+		<span class="n">has_been_checked</span> <span class="o">=</span> <span class="n">current_status</span><span class="o">.</span><span class="n">status_id</span>
+		<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">current_status</span><span class="o">.</span><span class="n">corporate_id</span>
+		<span class="n">corp_name</span> <span class="o">=</span> <span class="n">current_status</span><span class="o">.</span><span class="n">corporate_name</span>
+
+		<span class="c1"># Extract the status id using a method inherited from ValidInputs</span>
+		<span class="n">checked_from</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;checked_from&quot;</span><span class="p">])</span>
+		<span class="n">checked_to</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;checked_to&quot;</span><span class="p">])</span>
+		
+		<span class="k">if</span> <span class="n">has_been_checked</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+			<span class="k">return</span> 	<span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Already checked.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">if</span> <span class="n">has_been_checked</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Already checked and approved.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">if</span> <span class="n">has_been_checked</span> <span class="o">!=</span> <span class="mi">7</span><span class="p">:</span>
+			<span class="n">check</span> <span class="o">=</span> <span class="n">CorporateChecks</span><span class="p">(</span>
+										<span class="n">corp_being_checked</span> <span class="o">=</span> <span class="n">corporate_id</span><span class="p">,</span>
+										<span class="n">checker_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;checker_id&quot;</span><span class="p">],</span>
+										<span class="n">checked_from</span> <span class="o">=</span> <span class="n">checked_from</span><span class="p">,</span>
+										<span class="n">checked_to</span> <span class="o">=</span> <span class="n">checked_to</span>
+									<span class="p">)</span>
+			<span class="n">updated_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_corp_on_check</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">updated_status</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">check</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Corporate successfully checked.&quot;</span>
+						<span class="p">}</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Corporate not updated to checked.&quot;</span>
+						<span class="p">}</span>
+				
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;For a reason the check was not completed.&quot;</span>
+					<span class="p">}</span></div></div>
+
+
+<div class="viewcode-block" id="Approvals"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals">[docs]</a><span class="k">class</span> <span class="nc">Approvals</span><span class="p">(</span><span class="n">ValidInputs</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for CreatedUsers&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="n">ValidInputs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mydict</span> <span class="o">=</span> <span class="n">mydict</span>
+	
+<div class="viewcode-block" id="Approvals.is_correct_details"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.is_correct_details">[docs]</a>	<span class="k">def</span> <span class="nf">is_correct_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Approvals.is_registered_admin"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.is_registered_admin">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">Administrators</span><span class="p">()</span><span class="o">.</span><span class="n">get_admin_by_email</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Approvals.is_registered_client"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.is_registered_client">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">ClientAdmins</span><span class="p">()</span><span class="o">.</span><span class="n">get_client_by_email</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Approvals.is_registered_corporate"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.is_registered_corporate">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_corporate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">Corporates</span><span class="p">()</span><span class="o">.</span><span class="n">get_corp_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Approvals.check_dual_registration"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.check_dual_registration">[docs]</a>	<span class="k">def</span> <span class="nf">check_dual_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">admin_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_admin</span><span class="p">()</span>
+		<span class="n">client_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_client</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">admin_status</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">client_status</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;Dual registration error.&quot;</span>
+		<span class="k">elif</span> <span class="n">admin_status</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">admin_status</span>
+		<span class="k">elif</span> <span class="n">client_status</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">client_status</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;Unregistered email.&quot;</span></div>
+
+<div class="viewcode-block" id="Approvals.update_admins_on_approval"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.update_admins_on_approval">[docs]</a>	<span class="k">def</span> <span class="nf">update_admins_on_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Helper function used to change the approval status in the Administrators</span>
+<span class="sd">		table.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">status_id</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approved_to&quot;</span><span class="p">])</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="p">(</span>
+			  <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span>
+			  <span class="nb">filter</span><span class="p">(</span><span class="n">Administrators</span><span class="o">.</span><span class="n">admin_email</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span><span class="o">.</span>
+			  <span class="n">update</span><span class="p">({</span><span class="n">Administrators</span><span class="o">.</span><span class="n">status_id</span><span class="p">:</span> <span class="n">status_id</span><span class="p">})</span>
+			<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Approvals.update_clients_on_approval"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.update_clients_on_approval">[docs]</a>	<span class="k">def</span> <span class="nf">update_clients_on_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Helper function used to change the checked status in the Administrators</span>
+<span class="sd">		table.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">approved_to</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approved_to&quot;</span><span class="p">])</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="p">(</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+				<span class="nb">filter</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="o">.</span><span class="n">client_email</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span><span class="o">.</span>
+				<span class="n">update</span><span class="p">({</span><span class="n">ClientAdmins</span><span class="o">.</span><span class="n">status_id</span><span class="p">:</span> <span class="n">approved_to</span><span class="p">})</span>
+			<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Approvals.approve_admin"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.approve_admin">[docs]</a>	<span class="k">def</span> <span class="nf">approve_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		apprver_id: The id of the person doing the aproval</span>
+<span class="sd">		apprvd__email: The email of the persron being approved.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">is_valid_inputs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">is_valid_inputs</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">is_valid_inputs</span>
+
+		<span class="n">current_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_dual_registration</span><span class="p">()</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_status</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+			<span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="n">current_status</span><span class="p">}</span>
+
+		<span class="n">approved_id</span> <span class="o">=</span> <span class="n">current_status</span><span class="o">.</span><span class="n">user_id</span>
+		<span class="n">has_been_checked</span> <span class="o">=</span> <span class="n">current_status</span><span class="o">.</span><span class="n">status_id</span>
+
+		<span class="n">approved_from</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approved_from&quot;</span><span class="p">])</span>
+		<span class="n">approved_to</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approved_to&quot;</span><span class="p">])</span>
+
+		<span class="k">if</span> <span class="n">has_been_checked</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;Already approved.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">elif</span> <span class="n">has_been_checked</span> <span class="o">!=</span> <span class="mi">7</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;Check the administrator first.&quot;</span>
+					<span class="p">}</span>
+
+		<span class="k">elif</span> <span class="n">has_been_checked</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+			<span class="n">app</span> <span class="o">=</span> <span class="n">AdminApprovals</span><span class="p">(</span>
+							<span class="n">admin_being_approved</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approved_id&quot;</span><span class="p">],</span>
+									<span class="n">approver_id</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approver_id&quot;</span><span class="p">],</span> 
+									<span class="n">approved_from</span> <span class="o">=</span> <span class="n">approved_from</span><span class="p">,</span>
+									<span class="n">approved_to</span> <span class="o">=</span> <span class="n">approved_to</span>
+						 <span class="p">)</span>
+			<span class="k">if</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="n">updated_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_admins_on_approval</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+				<span class="n">updated_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_clients_on_approval</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">updated_status</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">approval</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span>
+						 <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+						 <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;User approved successfully&quot;</span>
+						<span class="p">}</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;Administrators table not updated to approved.&quot;</span>
+						<span class="p">}</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;For some reason the approval was not successfull.&quot;</span>
+					<span class="p">}</span></div>
+
+<div class="viewcode-block" id="Approvals.update_corp_on_approval"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.update_corp_on_approval">[docs]</a>	<span class="k">def</span> <span class="nf">update_corp_on_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Helper function used to change the approval status in the Corporates</span>
+<span class="sd">		table.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">approved_to</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approved_to&quot;</span><span class="p">])</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="p">(</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+				<span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span><span class="o">.</span>
+				<span class="n">update</span><span class="p">({</span><span class="n">Corporates</span><span class="o">.</span><span class="n">status_id</span><span class="p">:</span> <span class="n">approved_to</span><span class="p">})</span>
+			<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Approvals.approve_company"><a class="viewcode-back" href="../../../myapp.Models.checks_n_approvals.html#myapp.Models.checks_n_approvals.Approvals.approve_company">[docs]</a>	<span class="k">def</span> <span class="nf">approve_company</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		</span>
+<span class="sd">		approver_id: The id of the person doing the aproval</span>
+<span class="sd">		approved_id: The id of the persron being approved.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">confirm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_corporate</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">confirm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>	
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;Company not registered.&quot;</span>
+					<span class="p">}</span>
+
+		<span class="n">has_been_checked</span> <span class="o">=</span> <span class="n">confirm</span><span class="o">.</span><span class="n">status_id</span>
+		<span class="n">approved_from</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approved_from&quot;</span><span class="p">])</span>
+		<span class="n">approved_to</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_status_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approved_to&quot;</span><span class="p">])</span>
+
+		<span class="k">if</span> <span class="n">has_been_checked</span> <span class="o">!=</span> <span class="mi">7</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;Check the company first.&quot;</span>
+					<span class="p">}</span>
+
+		<span class="k">elif</span> <span class="n">has_been_checked</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;Already approved.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">elif</span> <span class="n">has_been_checked</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+			<span class="n">app</span> <span class="o">=</span> <span class="n">CorporateApprovals</span><span class="p">(</span>
+							<span class="n">corp_being_approved</span> <span class="o">=</span> <span class="n">confirm</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							<span class="n">approver_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;approver_id&quot;</span><span class="p">],</span> 
+							<span class="n">approved_from</span> <span class="o">=</span> <span class="n">approved_from</span><span class="p">,</span>
+							<span class="n">approved_to</span> <span class="o">=</span> <span class="n">approved_to</span>
+						 <span class="p">)</span>
+			<span class="n">updated_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_corp_on_approval</span><span class="p">()</span>			
+			<span class="k">if</span> <span class="n">updated_status</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;company successfully approved&quot;</span>
+						<span class="p">}</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;company not updated to approved.&quot;</span>
+						<span class="p">}</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;For some reason the company was not approved.&quot;</span>
+					<span class="p">}</span></div></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

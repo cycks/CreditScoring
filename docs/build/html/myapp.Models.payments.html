@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.payments module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Models.tables module" href="myapp.Models.tables.html" />
+    <link rel="prev" title="myapp.Models.our_data module" href="myapp.Models.our_data.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Models.payments">
+<span id="myapp-models-payments-module"></span><h1>myapp.Models.payments module<a class="headerlink" href="#module-myapp.Models.payments" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="myapp.Models.payments.approve_payment">
+<code class="sig-prename descclassname">myapp.Models.payments.</code><code class="sig-name descname">approve_payment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">approver_id</span></em>, <em class="sig-param"><span class="n">corporate_name</span></em>, <em class="sig-param"><span class="n">amount_uploaded</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/payments.html#approve_payment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.payments.approve_payment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approves a payment.</p>
+<p>Helper function used to approve a payment after it has been uploaded.
+Query client payment, filter where corporate name is corporate_name
+uploaded_by is not null, and approved_by is null. Update the approved_by
+column, then send the same amount to the client wallet table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>approver_id</strong> (<em>int</em>) – The admin_id for the person approving the
+payment.</p></li>
+<li><p><strong>corporate_name</strong> (<em>str</em>) – The company that has made the payment.</p></li>
+<li><p><strong>amount_uploaded</strong> (<em>float</em>) – The amount uploaded to the wallet</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success.
+This company is not registered(str): If company is unknown.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean(bool)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.payments.deduct_service_cost">
+<code class="sig-prename descclassname">myapp.Models.payments.</code><code class="sig-name descname">deduct_service_cost</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_name</span></em>, <em class="sig-param"><span class="n">corporate_id</span></em>, <em class="sig-param"><span class="n">admin_role</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/payments.html#deduct_service_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.payments.deduct_service_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deducts the cost of service from the wallet.</p>
+<p>Validation of a registered company and the score name is made
+in the make_payment endpoint.</p>
+<p>To make a deduction find the current amount for the company from
+the ClientWallet table. Set the amount deducted as the cost
+of the score type, which is retrieved from the ScoreTypes table,
+get the current amount from the ClientWallet table, update the
+amount in the wallet, and update the ClientWallet and ClientDeductions
+tables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>score_name</strong> (<em>str</em>) – The type of score that is requested,</p></li>
+<li><p><strong>corp_name</strong> (<em>str</em>) – The name of the company that sent the request</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>True if the admin is an infotrace admin and</dt><dd><p>True after the deduction is made.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean(bool)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.payments.displayed_companies">
+<code class="sig-prename descclassname">myapp.Models.payments.</code><code class="sig-name descname">displayed_companies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/payments.html#displayed_companies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.payments.displayed_companies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function used to display registered companies.</p>
+<p>This function does not require authentication to access it.
+Fetch all companies from the Corporates table, convert the
+result into a dictionary using a list comprehension, convert
+the resulting dictionary into a string dictinary. Finally,
+convert the result to json using json.loads</p>
+<p>This function can never return None because company data is
+inserted into the companies table when the app starts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary in json format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.payments.enter_payment">
+<code class="sig-prename descclassname">myapp.Models.payments.</code><code class="sig-name descname">enter_payment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uploader_id</span></em>, <em class="sig-param"><span class="n">corporate_name</span></em>, <em class="sig-param"><span class="n">amount_uploaded</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/payments.html#enter_payment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.payments.enter_payment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads the amount to the table.</p>
+<p>Helper function used to upload a payment in the database.
+Confirms that the coporate_name is registered before uploading
+the payment to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uploader_id</strong> (<em>int</em>) – The Infotrace admin uploading the payment.</p></li>
+<li><p><strong>corporate_name</strong> – The company that owns the payment.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success.
+This company is not registered(str): If company is unknown.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean(bool)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.payments.save_credit_score">
+<code class="sig-prename descclassname">myapp.Models.payments.</code><code class="sig-name descname">save_credit_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">borrower_id</span></em>, <em class="sig-param"><span class="n">corporate_id</span></em>, <em class="sig-param"><span class="n">credit_score</span></em>, <em class="sig-param"><span class="n">score_name</span></em>, <em class="sig-param"><span class="n">credit_limit</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/payments.html#save_credit_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.payments.save_credit_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the credit score to the CrediScores table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>borrower_id</strong> (<em>int</em>) – The user_identity of the borrower</p></li>
+<li><p><strong>corporate_id</strong> (<em>int</em>) – The corporate id of the employee that did
+the fetching.</p></li>
+<li><p><strong>credit_score</strong> (<em>str</em>) – The score from the client.</p></li>
+<li><p><strong>score_name</strong> (<em>str</em>) – The name of the score sought.</p></li>
+<li><p><strong>credit_limit</strong> (<em>float</em>) – The maximum recommended limit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Always returns True</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean(bool)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.payments.upload_to_wallet">
+<code class="sig-prename descclassname">myapp.Models.payments.</code><code class="sig-name descname">upload_to_wallet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">amount_uploaded</span></em>, <em class="sig-param"><span class="n">corporate_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/payments.html#upload_to_wallet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.payments.upload_to_wallet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads payments to the wallet.</p>
+<p>Check if the company already has money in the wallet, if not insert the
+money in the wallet. If money is in the wallet take that amount in the
+wallet and add the amount that has been uploaded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>amount_uploaded</strong> (<em>float</em>) – The amount uploaded to the wallet.</p></li>
+<li><p><strong>corporate_id</strong> (<em>int</em>) – The corporate_id for the paying company.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Always returns True.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean(bool)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Models.html">myapp.Models package</a><ul>
+      <li>Previous: <a href="myapp.Models.our_data.html" title="previous chapter">myapp.Models.our_data module</a></li>
+      <li>Next: <a href="myapp.Models.tables.html" title="next chapter">myapp.Models.tables module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Models.payments.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.others module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Models.our_data module" href="myapp.Models.our_data.html" />
+    <link rel="prev" title="myapp.Models.model_users module" href="myapp.Models.model_users.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Models.others">
+<span id="myapp-models-others-module"></span><h1>myapp.Models.others module<a class="headerlink" href="#module-myapp.Models.others" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="myapp.Models.others.check_borrower">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">check_borrower</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">borrower_identity</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#check_borrower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.check_borrower" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate if a single borrower is registered in the table.</p>
+<p>Helper function used in the push_kyc_to_db function to check if a
+borrower_id is in the Borrowers table and return True if that is the
+case and False otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>borrower_id</strong> (<em>int</em>) – self explanatory.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the borrower is registered false otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.others.check_corp_by_id">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">check_corp_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corporate_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#check_corp_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.check_corp_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates a company by corporate_id.</p>
+<p>Given a corporate id check if the name is in the Corporates
+table. If true, return the corporate_id for the given company.
+if False rollback and return False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>corporate_id</strong> (<em>int</em>) – The name of the company</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corporate_id of the company
+bool: False If the company is not registered.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>corporate_id (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.others.check_corp_by_name">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">check_corp_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corporate_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#check_corp_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.check_corp_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates a company by name.</p>
+<p>Given a corporate name check if the name is in the Corporates
+table. If true, return the corporate_id for the given company.
+if False rollback and return False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>corporate_name</strong> (<em>str</em>) – The name of the company</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corporate_id of the company
+bool: False If the company is not registered.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>corporate_id (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.others.check_score_type">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">check_score_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#check_score_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.check_score_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the database tables for correct names.</p>
+<p>Given a score name check if the score is in the ScoreTypes
+table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>score_name</strong> (<em>str</em>) – The name of the score correct</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Sqlalchemy query object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.others.confirm_registered_borrower">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">confirm_registered_borrower</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#confirm_registered_borrower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.confirm_registered_borrower" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates a list of borrowers.</p>
+<p>Used in all functions that send transactional data to the
+db to confirm whether all borrowere in the entire data set
+are all registered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code>) – data sent by the request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>An empty list if all borrowers are registered.</dt><dd><p>A list of unregistered borrowers otherwise.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.others.confirm_registred_corporates">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">confirm_registred_corporates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#confirm_registred_corporates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.confirm_registred_corporates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates a list of Corporates.</p>
+<p>Used in all functions that send transactional data to the
+db to confirm whether corporates in the entire data set are
+all registered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code>) – data sent by the request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>An empty list if all corporates are registered.</dt><dd><p>A list of unregistered corporates otherwise.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.others.populate_admin">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">populate_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#populate_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.populate_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert the first super admin in the db.</p>
+<p>used in the __init__ of the main application on app start up.
+Using default details provided in the function hash the password
+and check if the Users table is empty. If so, insert the
+user in the User and Administrators table. Also populates the
+first company in the Corporates table.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Always remember to use a good password here.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns True</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.others.populate_status_roles">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">populate_status_roles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#populate_status_roles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.populate_status_roles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populates the main tables on startup.</p>
+<p>Don’t ever change the order of the two lists below.
+Given a list of roles populate the Roles table.
+Given a list of status populate the Status table.
+Given a list of type of scores, populate the ScoreTypes table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.others.save_company_details">
+<code class="sig-prename descclassname">myapp.Models.others.</code><code class="sig-name descname">save_company_details</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mydict</span></em>, <em class="sig-param"><span class="n">admin_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/others.html#save_company_details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.others.save_company_details" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves company details to the database.</p>
+<p>Given a dictionary containing the corporate details, confirm
+that the company is not already registered. If the company is
+registered return a string indicating the same. If the company
+name is not register the company.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mydict</strong> (<em>dict</em>) – A dictionary with company details</p></li>
+<li><p><strong>admin_id</strong> (<em>int</em>) – The admin_id for the person registering
+the company.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns True if the registration is ok.
+str: If the company name is taken.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Models.html">myapp.Models package</a><ul>
+      <li>Previous: <a href="myapp.Models.model_users.html" title="previous chapter">myapp.Models.model_users module</a></li>
+      <li>Next: <a href="myapp.Models.our_data.html" title="next chapter">myapp.Models.our_data module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Models.others.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

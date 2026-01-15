@@ -1,0 +1,641 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.our_data &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Models.our_data</h1><div class="highlight"><pre>
+<span></span><span class="c1"># TODO consider a situation where the borrower county has changed.</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">dateutil.relativedelta</span> <span class="kn">import</span> <span class="n">relativedelta</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">inspect</span>
+
+<span class="kn">from</span> <span class="nn">myapp.Models.__init__</span> <span class="kn">import</span> <span class="n">db</span>
+
+<span class="kn">from</span> <span class="nn">myapp.Models.others</span> <span class="kn">import</span> <span class="n">check_borrower</span>
+<span class="kn">from</span> <span class="nn">myapp.Models.tables</span> <span class="kn">import</span><span class="p">(</span>
+									<span class="n">Borrowers</span><span class="p">,</span>
+									<span class="n">DepositsData</span><span class="p">,</span>
+									<span class="n">ImageData</span><span class="p">,</span>
+									<span class="n">InstallmentsData</span><span class="p">,</span>
+									<span class="n">KycData</span><span class="p">,</span>
+									<span class="n">MessageData</span><span class="p">,</span>
+									<span class="n">MpesaData</span><span class="p">,</span>
+									<span class="n">MusicData</span><span class="p">,</span>
+									<span class="n">LoansData</span><span class="p">,</span>
+									<span class="n">SavingsData</span><span class="p">,</span>
+									<span class="n">VideoData</span><span class="p">,</span>
+									<span class="n">WithdrawalsData</span>
+								<span class="p">)</span>
+
+<div class="viewcode-block" id="object_as_dict"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.object_as_dict">[docs]</a><span class="k">def</span> <span class="nf">object_as_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function is used to convert an sqlalchemy query from a</span>
+<span class="sd">	list to a dictionary.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="p">{</span><span class="n">c</span><span class="o">.</span><span class="n">key</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">inspect</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">column_attrs</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="confirm_no_duplicate_kyc"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.confirm_no_duplicate_kyc">[docs]</a><span class="k">def</span> <span class="nf">confirm_no_duplicate_kyc</span><span class="p">(</span><span class="n">borrower_identity</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Confirms that a user does not belong to the same corporate twice.</span>
+<span class="sd">	</span>
+<span class="sd">	Given a borrower identity fetch the borrowers detail from the</span>
+<span class="sd">	KycData table. Check if the corporate trying to register the </span>
+<span class="sd">	borrower has already registered the borrower if so return False</span>
+<span class="sd">	and return True otherwise.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		borrower_identity(int): </span>
+<span class="sd">	</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">already_existing</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span>
+					<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">KycData</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">KycData</span><span class="o">.</span><span class="n">borrower_id</span><span class="o">==</span><span class="n">borrower_identity</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">all</span><span class="p">()</span>
+				<span class="p">)</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sql_query</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">corporate_id</span> <span class="ow">in</span> <span class="n">already_existing</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="n">already_existing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+
+
+
+
+
+<div class="viewcode-block" id="push_kyc_to_db"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.push_kyc_to_db">[docs]</a><span class="k">def</span> <span class="nf">push_kyc_to_db</span><span class="p">(</span><span class="n">borrower_identity</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">):</span>
+	<span class="n">registered_borrower</span> <span class="o">=</span> <span class="n">check_borrower</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">])</span>
+	<span class="n">checks</span> <span class="o">=</span> <span class="n">confirm_no_duplicate_kyc</span><span class="p">(</span><span class="n">borrower_identity</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">checks</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s2">&quot;You already have a borrower with the identity: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">borrower_identity</span><span class="p">)</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">registered_borrower</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="n">ed_borrower</span> <span class="o">=</span> <span class="n">Borrowers</span><span class="p">(</span>
+							<span class="n">borrower_identity</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+							<span class="n">borrower_gender</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_gender&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+							<span class="n">borrower_date_of_birth</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_date_of_birth&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+							<span class="n">borrower_county</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_county&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+									<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_borrower</span><span class="p">)</span>
+			<span class="n">ed_kyc</span> <span class="o">=</span> <span class="n">KycData</span><span class="p">(</span>
+						<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+						<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+						<span class="n">kyc_default_status</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;kyc_default_status&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+						<span class="n">borrower_phone_number</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_phone_number&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+						<span class="n">kyc_date_created</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;registration_date&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+						<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_kyc</span><span class="p">)</span>
+		<span class="c1"># If the we already have the borrower details</span>
+		<span class="k">elif</span> <span class="n">registered_borrower</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">ed_kyc</span> <span class="o">=</span> <span class="n">KycData</span><span class="p">(</span>
+						<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+						<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+						<span class="n">kyc_default_status</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;kyc_default_status&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+						<span class="n">borrower_phone_number</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_phone_number&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+						<span class="n">kyc_date_created</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;registration_date&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+						<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_kyc</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="push_deposits_to_db"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.push_deposits_to_db">[docs]</a><span class="k">def</span> <span class="nf">push_deposits_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">):</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">ed_kyc</span> <span class="o">=</span> <span class="n">DepositsData</span><span class="p">(</span>
+					<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">deposit_channel</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;deposit_channel&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">date_of_deposit</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;date_of_deposit&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">deposit_amount</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;deposit_amount&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">deposit_description</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;deposit_description&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+					<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_kyc</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="push_savings_to_db"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.push_savings_to_db">[docs]</a><span class="k">def</span> <span class="nf">push_savings_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">):</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">ed_kyc</span> <span class="o">=</span> <span class="n">SavingsData</span><span class="p">(</span>
+					<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">savings_channel</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;savings_channel&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">date_of_savings</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;date_of_savings&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">savings_amount</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;savings_amount&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">savings_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;savings_type&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+					<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_kyc</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="push_withdrawals_to_db"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.push_withdrawals_to_db">[docs]</a><span class="k">def</span> <span class="nf">push_withdrawals_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">):</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">ed_kyc</span> <span class="o">=</span> <span class="n">WithdrawalsData</span><span class="p">(</span>
+					<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">withdrawals_channel</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;withdrawals_channel&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">date_of_withdrawals</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;date_of_withdrawals&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">withdrawals_amount</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;withdrawals_amount&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">withdrawals_description</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;withdrawals_description&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+					<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_kyc</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="push_loans_to_db"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.push_loans_to_db">[docs]</a><span class="k">def</span> <span class="nf">push_loans_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">):</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">ed_kyc</span> <span class="o">=</span> <span class="n">ed_kyc</span> <span class="o">=</span> <span class="n">LoansData</span><span class="p">(</span>
+					<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">date_of_loan</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;date_of_loan&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">loan_amount</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;loan_amount&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">loan_interest</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;loan_interest&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">loan_period</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;loan_period&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">loan_installment_frequency</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;loan_installment_frequency&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">date_of_loan_completion</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+					<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_kyc</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="push_installments_to_db"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.push_installments_to_db">[docs]</a><span class="k">def</span> <span class="nf">push_installments_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">):</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">ed_kyc</span> <span class="o">=</span> <span class="n">InstallmentsData</span><span class="p">(</span>
+					<span class="n">installment_loan_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;installment_loan_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">date_of_installment</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;date_of_installment&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">installment_amount</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;installment_amount&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">installment_loan_balance</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;installment_loan_balance&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">],</span>
+					<span class="n">installment_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;installment_type&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+					<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_kyc</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+<span class="n">todays_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+<span class="n">three_months_ago</span> <span class="o">=</span> <span class="n">todays_date</span> <span class="o">-</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="FetchedData"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData">[docs]</a><span class="k">class</span> <span class="nc">FetchedData</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;docstring for FetchedData&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">,</span> <span class="n">corporate_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">=</span> <span class="n">borrower_id</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">=</span> <span class="n">corporate_id</span>
+
+
+<div class="viewcode-block" id="FetchedData.filter_last_n_months"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.filter_last_n_months">[docs]</a>	<span class="k">def</span> <span class="nf">filter_last_n_months</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">n_moths</span><span class="p">,</span> <span class="n">column_to_filter</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Sort dataframe by date column then select rows for the last </span>
+<span class="sd">		three months then drop any columns containinng date_created.&quot;&quot;&quot;</span>
+		<span class="n">df_sorted</span> <span class="o">=</span> <span class="p">(</span>
+						<span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">column_to_filter</span><span class="p">),</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+						<span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">column_to_filter</span><span class="p">))</span>
+						<span class="o">.</span><span class="n">last</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n_moths</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;M&quot;</span><span class="p">)</span>
+					<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+		<span class="n">df_sorted</span> <span class="o">=</span> <span class="n">df_sorted</span><span class="p">[</span>
+								<span class="n">df_sorted</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+								<span class="nb">list</span><span class="p">(</span><span class="n">df_sorted</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;date_created&#39;</span><span class="p">))</span>
+								<span class="p">)</span>
+							 <span class="p">]</span>
+		<span class="k">return</span> <span class="n">df_sorted</span></div>
+
+		
+<div class="viewcode-block" id="FetchedData.fetch_kyc_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_kyc_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_kyc_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">KycData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+									<span class="n">KycData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+									<span class="n">KycData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>	
+										<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>		
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;kyc_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;kyc_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;kyc_default_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;kyc_default_status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;kyc_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;kyc_date_created&#39;</span><span class="p">])</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="FetchedData.fetch_borrower_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_borrower_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_borrower_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">Borrowers</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+									<span class="n">Borrowers</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span>
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_date_of_birth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_date_of_birth&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_county&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_county&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_gender&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_gender&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_date_created&#39;</span><span class="p">])</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="FetchedData.fetch_deposits_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_deposits_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_deposits_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">DepositsData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+								<span class="n">DepositsData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+								<span class="n">DepositsData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_deposit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_deposit&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_channel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_channel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_amount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;deposit_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;date_of_deposit&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;deposit_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;date_of_deposit&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+							 <span class="s1">&#39;deposit_channel&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;deposit_amount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;deposit_description&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="FetchedData.fetch_savings_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_savings_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_savings_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">SavingsData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+								<span class="n">SavingsData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+								<span class="n">SavingsData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_savings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_savings&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_channel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_channel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_amount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;savings_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;date_of_savings&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;savings_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;date_of_savings&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+							 <span class="s1">&#39;savings_channel&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;savings_amount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;savings_type&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;savings_date_created&#39;</span><span class="p">:</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="FetchedData.fetch_withdrawal_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_withdrawal_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_withdrawal_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">WithdrawalsData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+							<span class="n">WithdrawalsData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							<span class="n">WithdrawalsData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>	
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_withdrawals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_withdrawals&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_channel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_channel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_amount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;withdrawals_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;date_of_withdrawals&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;withdrawals_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;date_of_withdrawals&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+							 <span class="s1">&#39;withdrawals_channel&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;withdrawals_amount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;withdrawals_description&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="FetchedData.fetch_loans_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_loans_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_loans_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">LoansData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+									<span class="n">LoansData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+									<span class="n">LoansData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+										   <span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_period&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_period&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_amount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_installment_frequency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_installment_frequency&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_interest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_interest&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;date_of_loan&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;loan_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;date_of_loan&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+							 <span class="s1">&#39;loan_period&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;loan_amount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;loan_interest&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;loan_installment_frequency&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="FetchedData.fetch_installments_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_installments_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_installments_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">InstallmentsData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+							<span class="n">InstallmentsData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							<span class="n">InstallmentsData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+						<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_loan_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_loan_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_amount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_loan_balance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_loan_balance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_installment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_of_installment&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;date_of_installment&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;installment_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+							 <span class="s1">&#39;installment_loan_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;date_of_installment&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+							 <span class="s1">&#39;installment_amount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;installment_loan_balance&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;installment_type&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="FetchedData.fetch_mpesa_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_mpesa_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_mpesa_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">MpesaData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+									<span class="n">MpesaData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+									<span class="n">MpesaData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_amount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_spec_loc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_spec_loc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;mpesa_time_stamp&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;mpesa_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;mpesa_amount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;mpesa_spec_loc&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;mpesa_type&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="FetchedData.fetch_image_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_image_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_image_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">ImageData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+									<span class="n">ImageData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+									<span class="n">ImageData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_size&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_file_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_date_added&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_date_added&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;image_date_added&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;image_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;image_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;image_file_type&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;image_date_added&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="FetchedData.fetch_message_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_message_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_message_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">MessageData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+								<span class="n">MessageData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+								<span class="n">MessageData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_direction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_direction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_time_stamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_time_stamp&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;message_time_stamp&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;message_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;message_length&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;message_type&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;message_direction&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;message_time_stamp&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="FetchedData.fetch_music_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_music_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_music_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">MusicData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+									<span class="n">MusicData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+									<span class="n">MusicData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_size&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_file_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_date_added&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_date_added&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;music_date_added&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;music_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;music_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;music_file_type&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;music_date_added&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="FetchedData.fetch_video_data"><a class="viewcode-back" href="../../../myapp.Models.our_data.html#myapp.Models.our_data.FetchedData.fetch_video_data">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_video_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">user_data</span> <span class="o">=</span> <span class="n">VideoData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+									<span class="n">VideoData</span><span class="o">.</span><span class="n">borrower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+									<span class="n">VideoData</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span>
+											<span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">user_data</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span> <span class="n">user_data</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_size&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_file_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_date_added&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_date_added&#39;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_date_created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_date_created&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_last_n_months</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;video_date_added&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+							<span class="p">{</span><span class="s1">&#39;video_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+							 <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">borrower_id</span><span class="p">,</span>
+							 <span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">,</span>
+							 <span class="s1">&#39;video_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+							 <span class="s1">&#39;video_file_type&#39;</span><span class="p">:</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;video_date_added&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+							<span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

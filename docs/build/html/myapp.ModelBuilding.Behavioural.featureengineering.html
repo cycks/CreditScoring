@@ -1,0 +1,495 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.ModelBuilding.Behavioural.featureengineering module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.ModelBuilding.Behavioural.prepare_default module" href="myapp.ModelBuilding.Behavioural.prepare_default.html" />
+    <link rel="prev" title="myapp.ModelBuilding.Behavioural package" href="myapp.ModelBuilding.Behavioural.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.ModelBuilding.Behavioural.featureengineering">
+<span id="myapp-modelbuilding-behavioural-featureengineering-module"></span><h1>myapp.ModelBuilding.Behavioural.featureengineering module<a class="headerlink" href="#module-myapp.ModelBuilding.Behavioural.featureengineering" title="Permalink to this headline">¶</a></h1>
+<p>This module is used for feature engineering.</p>
+<p>During feature engineering separate limit from default engineering.
+For default engineering: The kyc is the first entity set
+For limit engineering: The loan is the first entity set</p>
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.add_default_relations_to_entityset">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">add_default_relations_to_entityset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#add_default_relations_to_entityset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.add_default_relations_to_entityset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates relationships between entity sets(default prediction).</p>
+<p>Give an entity set create relationships between different
+data sets in the entity set and add the relationships to the
+entity sets.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The relatinships used when predicting default is different
+from the relationships used when predicting loan limits.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>es</strong> (<em>obj</em>) – Feature tools object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Featuretools object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>es(obje)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.add_limit_relations_to_entityset">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">add_limit_relations_to_entityset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#add_limit_relations_to_entityset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.add_limit_relations_to_entityset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates relationships between entity sets (limit prediction).</p>
+<p>Give an entity set create relationships between different
+data sets in the entity set and add the relationships to the
+entity sets.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The relationships used when predicting default is different
+from the relationships used when predicting loan limits.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>es</strong> (<em>obj</em>) – Feature tools object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Featuretools object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>es(obje)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_default_kyc_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_default_kyc_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_default_kyc_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_default_kyc_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an entity set for kyc</p>
+<p>Creates a kyc entitty set used in predicting the default.
+Initalize an empty called borrowers, decalare all variable
+types using featuretools then add the resultting entity set
+to the borrowers entity set declared earlier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> – The Kyc data set.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An entity set(featuretools object)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_default_loans_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_default_loans_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_default_loans_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_default_loans_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a loans entity set for predicting default.</p>
+<p>Given an entity set and a dataframe create loans types and
+add the data from the df to the entity set provided.
+:param obj: es an entity set, which is a feature tools object.
+:param df: a dataframe in this case a loan data set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An entity set</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_deposits_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_deposits_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_deposits_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_deposits_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a deposits entity set.</p>
+<p>Given an entity set and a dataframe create deposit types and
+add the data from the df to the entity set provided.
+:param obj: es an entity set, which is a feature tools object.
+:param df: a dataframe in this case a deposits data set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An entity set</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_images_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_images_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_images_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_images_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an immages entity set.</p>
+<p>Given an entity set and a dataframe create an images types and
+add the data from the df to the entity set provided.
+:param obj: es an entity set, which is a feature tools object.
+:param df: a dataframe in this case a images data set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An entity set</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_installments_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_installments_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_installments_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_installments_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an installments entity set.</p>
+<p>Given an entity set and a dataframe create an installments types
+and add the data from the df to the entity set provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – es an entity set, which is a feature tools object.</p></li>
+<li><p><strong>df</strong> – a dataframe in this case a installments data set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An entity set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_limit_kyc_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_limit_kyc_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_limit_kyc_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_limit_kyc_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a kyc entity set for limit prediction.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unlike the create_default_kyc_entity function, this
+one does not initalize an empty entity set because that
+is done in the loan entity set.</p>
+</div>
+<p>Given an entity set and a dataframe create borrower types and
+add the data from the df to the entity set provided.
+:param obj: es an entity set, which is a feature tools object.
+:param df: a dataframe in this case a kyc data set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An entity set</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_limit_loans_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_limit_loans_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_limit_loans_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_limit_loans_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a loans entity set for limit prediction.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An entity set has not been provided here</p>
+</div>
+<p>Initialize an empty entity set called loans create loans
+types and add the data from the df to the empty entity set
+initiated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> – a dataframe in this case a loans data set.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An entity set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_messages_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_messages_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_messages_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_messages_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a message entity set.</p>
+<p>Given an entity set and a dataframe create message types and
+add the data from the df to the entity set provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – es an entity set, which is a feature tools object.</p></li>
+<li><p><strong>df</strong> – a dataframe in this case a message data set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An entity set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_mpesa_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_mpesa_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_mpesa_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_mpesa_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an mpesa entity set.</p>
+<p>Given an entity set and a dataframe create mpesa types and
+add the data from the df to the entity set provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – es an entity set, which is a feature tools object.</p></li>
+<li><p><strong>df</strong> – a dataframe in this case a mpesa data set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An entity set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_music_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_music_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_music_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_music_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a music entity set.</p>
+<p>Given an entity set and a dataframe create music types and
+add the data from the df to the entity set provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – es an entity set, which is a feature tools object.</p></li>
+<li><p><strong>df</strong> – a dataframe in this case a kyc data set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An entity set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_savings_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_savings_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_savings_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_savings_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a savings entity set.</p>
+<p>Given an entity set and a dataframe create savings types and
+add the data from the df to the entity set provided.
+:param obj: es an entity set, which is a feature tools object.
+:param df: a dataframe in this case a savings data set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An entity set</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_videos_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_videos_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_videos_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_videos_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a video entity set.</p>
+<p>Given an entity set and a dataframe create video types and
+add the data from the df to the entity set provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – es an entity set, which is a feature tools object.</p></li>
+<li><p><strong>df</strong> – a dataframe in this case a video data set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An entity set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.create_withdrawals_entity">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">create_withdrawals_entity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#create_withdrawals_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.create_withdrawals_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a withdrawals entity set.</p>
+<p>Given an entity set and a dataframe create withdrawals types and
+add the data from the df to the entity set provided.
+:param obj: es an entity set, which is a feature tools object.
+:param df: a dataframe in this case a withdrawals data set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An entity set</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>es(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.do_default_feature_engineering">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">do_default_feature_engineering</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#do_default_feature_engineering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.do_default_feature_engineering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates features from the entity set for default prediction.</p>
+<p>Declare the metrics used by feature tools to create features, do
+feature engineering and a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>es</strong> (<em>obj</em>) – Feature tools object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df(dataframe)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.featureengineering.do_limit_feature_engineering">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.featureengineering.</code><code class="sig-name descname">do_limit_feature_engineering</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">es</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/featureengineering.html#do_limit_feature_engineering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.featureengineering.do_limit_feature_engineering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates features from the entity set for limit prediction.</p>
+<p>Declare the metrics used by feature tools to create features, do
+feature engineering and a dataframe.Here the loan data is
+provided by the user seeking the loan. For details check
+Users.users module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>es</strong> (<em>obj</em>) – Feature tools object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df(dataframe)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a><ul>
+  <li><a href="myapp.ModelBuilding.Behavioural.html">myapp.ModelBuilding.Behavioural package</a><ul>
+      <li>Previous: <a href="myapp.ModelBuilding.Behavioural.html" title="previous chapter">myapp.ModelBuilding.Behavioural package</a></li>
+      <li>Next: <a href="myapp.ModelBuilding.Behavioural.prepare_default.html" title="next chapter">myapp.ModelBuilding.Behavioural.prepare_default module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.ModelBuilding.Behavioural.featureengineering.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

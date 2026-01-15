@@ -1,0 +1,531 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Helpers.data_helpers &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Helpers.data_helpers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Validates data sent to the backend</span>
+
+<span class="sd">Contains value_types variable</span>
+<span class="sd">Contains the DataTypes class</span>
+<span class="sd">Contains the DataSent class</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span><span class="o">,</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+
+<span class="n">value_types</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s2">&quot;borrower_identity&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;borrower_id&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;corporate_id&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;borrower_county&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;borrower_gender&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;borrower_county&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;borrower_date_of_birth&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;borrower_phone_number&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;kyc_default_status&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;kyc_date_created&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;registration_date&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;deposit_amount&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;date_of_deposit&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;deposit_description&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;installment&quot;</span><span class="p">,</span> <span class="s2">&quot;savings&quot;</span><span class="p">],</span>
+	<span class="s2">&quot;deposit_channel&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;airtel&quot;</span><span class="p">,</span> <span class="s2">&quot;mpesa&quot;</span><span class="p">,</span> <span class="s2">&quot;bank&quot;</span><span class="p">],</span>
+	<span class="s2">&quot;date_of_savings&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;savings_amount&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;savings_type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;fixed&quot;</span><span class="p">,</span> <span class="s2">&quot;current&quot;</span><span class="p">],</span>
+	<span class="s2">&quot;savings_channel&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;airtel&quot;</span><span class="p">,</span> <span class="s2">&quot;mpesa&quot;</span><span class="p">,</span> <span class="s2">&quot;bank&quot;</span><span class="p">,</span> <span class="s2">&quot;mobile_app&quot;</span><span class="p">],</span>
+	<span class="s2">&quot;date_of_withdrawals&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;withdrawals_amount&quot;</span><span class="p">:</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;withdrawals_description&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">,</span> <span class="s2">&quot;savings&quot;</span><span class="p">,</span> <span class="s2">&quot;fixed&quot;</span><span class="p">],</span>
+	<span class="s2">&quot;withdrawals_channel&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;airtel&quot;</span><span class="p">,</span> <span class="s2">&quot;mpesa&quot;</span><span class="p">,</span> <span class="s2">&quot;bank&quot;</span><span class="p">,</span> <span class="s2">&quot;mobile_app&quot;</span><span class="p">],</span>
+	<span class="s2">&quot;date_of_loan&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;loan_amount&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;loan_interest&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;loan_period&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;loan_installment_frequency&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;date_of_loan_completion&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;installment_loan_id&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;date_of_installment&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;installment_amount&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;installment_loan_balance&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;installment_type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;interest&quot;</span><span class="p">,</span> <span class="s2">&quot;debtcollection&quot;</span><span class="p">,</span> <span class="s2">&quot;principal&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+
+
+
+<div class="viewcode-block" id="DataTypes"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataTypes">[docs]</a><span class="k">class</span> <span class="nc">DataTypes</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Validates Data and Used in SentData Package</span>
+<span class="sd">	</span>
+<span class="sd">	A class used to validate Transactional data sent</span>
+<span class="sd">	by the client. The class must be instantiated by </span>
+<span class="sd">	providing the value_types and data.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		data: A json object</span>
+<span class="sd">		value_types: A dictionar defining the data type</span>
+<span class="sd">						of each column</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">dirty_columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">value_types</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">value_types</span> <span class="o">=</span> <span class="n">value_types</span>
+
+
+<div class="viewcode-block" id="DataTypes.validate_integer"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataTypes.validate_integer">[docs]</a>	<span class="k">def</span> <span class="nf">validate_integer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">integer_list</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Validates integer columns </span>
+<span class="sd">		</span>
+<span class="sd">		Checks columns that must be integers to ensure</span>
+<span class="sd">		that all values in the column are integers.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			List containing integers</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			False if any value in the list is not an int.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">check_col</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">integer_list</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">check_col</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="DataTypes.validate_float"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataTypes.validate_float">[docs]</a>	<span class="k">def</span> <span class="nf">validate_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">float_list</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Validates float columns</span>
+
+<span class="sd">		Checks the data sent to ensure all values in </span>
+<span class="sd">		float_list are floats or can be converted to </span>
+<span class="sd">		float.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			float_list : list</span>
+<span class="sd">			A list containing floats</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			False if any of the value in the float_list</span>
+<span class="sd">			cannot be converted to float.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">float_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">float_list</span><span class="p">]</span>
+		<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DataTypes.validate_string"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataTypes.validate_string">[docs]</a>	<span class="k">def</span> <span class="nf">validate_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string_list</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Validates string columns </span>
+
+<span class="sd">		Checks the data sent to ensure all values in </span>
+<span class="sd">		string_list are string or can be converted to </span>
+<span class="sd">		strings.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			string_list: A list containing strings</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			False if any of the values are strings</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">string_list</span> <span class="o">=</span> <span class="p">([</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">string_list</span><span class="p">])</span>
+		<span class="n">check_column</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">string_list</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">check_column</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="DataTypes.validate_dates"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataTypes.validate_dates">[docs]</a>	<span class="k">def</span> <span class="nf">validate_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_list</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Validates date columns</span>
+
+<span class="sd">		Checks a column to ensure all variables can be </span>
+<span class="sd">		converted to dates.</span>
+
+<span class="sd">		arg1 : list</span>
+<span class="sd">			A list containing date_list</span>
+<span class="sd">		Returns</span>
+<span class="sd">			False if any of the date columns cannot be</span>
+<span class="sd">			converted to dates.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="p">(</span><span class="n">date_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;my_dates&#39;</span><span class="p">])</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">df</span><span class="p">[</span><span class="s1">&#39;my_dates&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;my_dates&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;datetime64[ns]&#39;</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="DataTypes.to_camelcase"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataTypes.to_camelcase">[docs]</a>	<span class="k">def</span> <span class="nf">to_camelcase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Method used to convert words to title case</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			string: a string to be converted to camelcase</span>
+<span class="sd">		Returns</span>
+<span class="sd">			A string</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">string</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="DataTypes.validate_options"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataTypes.validate_options">[docs]</a>	<span class="k">def</span> <span class="nf">validate_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options_list</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Method used to validate options.</span>
+
+<span class="sd">		Checks that a list of options provided are all</span>
+<span class="sd">		required. For Example the Installment_type can</span>
+<span class="sd">		only be interest, debtcollection, or principal</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			options_list: A list from the data provided</span>
+<span class="sd">			options: The default values allowed.</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			bool: True if all items in options_list are in</span>
+<span class="sd">			the default options</span>
+<span class="sd">			bool: False if any of the items in options_list</span>
+<span class="sd">			are in options.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">options_list</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+				<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DataTypes.make_validation"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataTypes.make_validation">[docs]</a>	<span class="k">def</span> <span class="nf">make_validation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Method used to triger data validation.</span>
+
+<span class="sd">		Given data, runs all the type validations in this </span>
+<span class="sd">		class. If any of the methods returs False,</span>
+<span class="sd">		it appends the column name to dirty columns </span>
+<span class="sd">		declared before the __init__ method.</span>
+
+<span class="sd">		Args: </span>
+<span class="sd">			data: A dictionary containing data to be</span>
+<span class="sd">			validated.</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			An empty list if all the data is ok</span>
+<span class="sd">			Returns a list of columns with invalid data</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;integer&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_integer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">dirty_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">dirty_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">dirty_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_dates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">dirty_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_options</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+										 <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">dirty_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirty_columns</span></div></div>
+
+
+
+<div class="viewcode-block" id="DataSent"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent">[docs]</a><span class="k">class</span> <span class="nc">DataSent</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Checks Column Names and Equal Column Lengths.</span>
+
+<span class="sd">	This class must be instantiated using the args</span>
+<span class="sd">	provided. </span>
+<span class="sd">	1. It checks that the data provided has the </span>
+<span class="sd">	required columns. </span>
+<span class="sd">	2. It also checks that any unrequired columns are </span>
+<span class="sd">	not present.</span>
+<span class="sd">	3. Ensures all columns have equal lengths</span>
+<span class="sd">	4. Checks that the json data provided has column</span>
+<span class="sd">	values as lists.</span>
+<span class="sd">	5. Uses the DataTypes class above to the data</span>
+<span class="sd">	types provided.</span>
+<span class="sd">	Remember it does not inherit from Datatypes. I</span>
+<span class="sd">	don&#39;t know why I did this.I will check later.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		required_columns: A list of required columns</span>
+<span class="sd">		data: json data recieved in an endpoint.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># TODO: Consider an edge case where data is None</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">required_columns</span> <span class="o">=</span> <span class="n">required_columns</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">columns_present</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">all_columns</span> <span class="o">=</span> <span class="n">DataTypes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">value_types</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DataSent.convert_unicode_string"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent.convert_unicode_string">[docs]</a>	<span class="k">def</span> <span class="nf">convert_unicode_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Converts a unicode string from bytes.</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;NFKD&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataSent.validate_wanted_columns"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent.validate_wanted_columns">[docs]</a>	<span class="k">def</span> <span class="nf">validate_wanted_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">		Check that no required column is missing.</span>
+
+<span class="sd">		Converts columns_present(from the __init__ method)</span>
+<span class="sd">		to a list, and checks that columns_present is the</span>
+<span class="sd">		same as required_columns. If not returns the </span>
+<span class="sd">		missing columns.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			A list of required columns.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">columns_present</span> <span class="o">=</span> <span class="p">([</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns_present</span><span class="p">])</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required_columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns_present</span><span class="p">):</span>
+			<span class="n">missing_columns</span> <span class="o">=</span>  <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required_columns</span><span class="p">)</span> <span class="o">-</span>
+											<span class="nb">set</span><span class="p">(</span><span class="n">columns_present</span><span class="p">)))</span>
+			<span class="k">return</span> <span class="n">missing_columns</span></div>
+
+<div class="viewcode-block" id="DataSent.validate_unwanted_columns"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent.validate_unwanted_columns">[docs]</a>	<span class="k">def</span> <span class="nf">validate_unwanted_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">		Check that urequired columns are not present.</span>
+<span class="sd">		</span>
+<span class="sd">		Checks that columns_present is the same as </span>
+<span class="sd">		required_columns. If not returns the aditional</span>
+<span class="sd">		columns.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			A list of columns that must be deleted.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># TODO: consider deleting the unrequired columns.</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns_present</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required_columns</span><span class="p">):</span>
+			<span class="n">addtional_columns</span>  <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns_present</span><span class="p">)</span> <span class="o">-</span>
+											<span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required_columns</span><span class="p">)))</span>
+			<span class="k">return</span> <span class="n">addtional_columns</span></div>
+
+
+<div class="viewcode-block" id="DataSent.check_dictionary_values"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent.check_dictionary_values">[docs]</a>	<span class="k">def</span> <span class="nf">check_dictionary_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Check Columns are Lists.</span>
+
+<span class="sd">		Ensures that all values are lists. Returns an </span>
+<span class="sd">		empty list if all values are lists and returns a </span>
+<span class="sd">		list of keys for values that are not lists. </span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			An empty list if all values are lists</span>
+<span class="sd">			A list of dictionary values that are not</span>
+<span class="sd">			lists.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">not_list_columns</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+				<span class="n">not_list_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">not_list_columns</span></div>
+
+<div class="viewcode-block" id="DataSent.check_columns_length"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent.check_columns_length">[docs]</a>	<span class="k">def</span> <span class="nf">check_columns_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Checks that all columns are eqaul in length</span>
+
+<span class="sd">		Extracts the first value from data, compares the </span>
+<span class="sd">		length of the first value to all other values in </span>
+<span class="sd">		the dictionary. If all values in the dictionary </span>
+<span class="sd">		have equal lengths it returns true otherwise </span>
+<span class="sd">		returns false.</span>
+
+<span class="sd">		Find columns present in the data recieved, extract</span>
+<span class="sd">		the first column from the data, compare the length</span>
+<span class="sd">		of the extracted column to all other columns in the</span>
+<span class="sd">		data. If any of the length is present return True</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			data: The data recieved from a request</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			Returns True if any of the columns is not</span>
+<span class="sd">			equal to the first column and False otherwise.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">dataframe_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+		<span class="n">first_column</span> <span class="o">=</span> <span class="n">dataframe_columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">length</span> <span class="o">=</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_column</span><span class="p">)</span>
+						<span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+		<span class="k">if</span> <span class="n">length</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="DataSent.validate_dict_length"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent.validate_dict_length">[docs]</a>	<span class="k">def</span> <span class="nf">validate_dict_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Checks length of columns</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			False if all columns are equal</span>
+<span class="sd">			True if any column has a different length</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_columns_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataSent.validate_dictionary_values"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent.validate_dictionary_values">[docs]</a>	<span class="k">def</span> <span class="nf">validate_dictionary_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Checks Length of Columns</span>
+
+<span class="sd">		Checks that all dictionary values have appropriate</span>
+<span class="sd">		data types. Uses the make_validation from the </span>
+<span class="sd">		DataTypes class defined above.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The number of columns with inapropriate data</span>
+<span class="sd">			types</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">inapropriate_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_columns</span><span class="o">.</span><span class="n">make_validation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">inapropriate_columns</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataSent.make_responses"><a class="viewcode-back" href="../../../myapp.Helpers.data_helpers.html#myapp.Helpers.data_helpers.DataSent.make_responses">[docs]</a>	<span class="k">def</span> <span class="nf">make_responses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		The Mother of All Methods in This Class</span>
+<span class="sd">		</span>
+<span class="sd">		This function uses other methods in this class to</span>
+<span class="sd">		check for missing columns, additional columns,</span>
+<span class="sd">		checks that all values in the json object are</span>
+<span class="sd">		lists, compares length of lists.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			dict: A dictionary with the mistake as the value of</span>
+<span class="sd">			the dictionary if any of the validations fail.</span>
+<span class="sd">			bool: None if the data is ok.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">missing_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_wanted_columns</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">missing_columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;missing columns&quot;</span><span class="p">:</span> <span class="n">missing_columns</span>
+					<span class="p">}</span>
+		<span class="n">addtional_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_unwanted_columns</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">addtional_columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;remove this additional columns&quot;</span><span class="p">:</span> <span class="n">addtional_columns</span>
+					<span class="p">}</span>
+		<span class="n">not_list_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_dictionary_values</span><span class="p">()</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_list_columns</span><span class="p">):</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;These values are not lists&quot;</span><span class="p">:</span> <span class="n">not_list_columns</span>
+					<span class="p">}</span>
+		<span class="n">equal_lengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_columns_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">equal_lengths</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;dictionary values not equal in length&quot;</span>
+					<span class="p">}</span>
+		<span class="k">return</span> <span class="kc">None</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

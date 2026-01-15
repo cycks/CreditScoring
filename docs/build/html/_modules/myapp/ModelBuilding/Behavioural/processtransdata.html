@@ -1,0 +1,1032 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.ModelBuilding.Behavioural.processtransdata &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.ModelBuilding.Behavioural.processtransdata</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Prepares Transactional data</span>
+
+<span class="sd">The tra</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+
+<span class="n">transactional_types</span> <span class="o">=</span> <span class="p">{</span>
+						<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;kyc_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;default_status&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_date_created&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_date_of_birth&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;gender_f&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;gender_m&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;province_Central&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;province_Coast&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;province_Eastern&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;province_Nairobi&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;province_NorthEastern&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;province_Nyanza&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;province_RiftyValley&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;province_Western&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;date_of_deposit&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_amount&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_channel_Airtel&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_channel_Bank&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_channel_Mpesa&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_description_Installments&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_description_Savings&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;withdrawals_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;date_of_withdrawals&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;withdrawals_amount&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;withdrawals_channel_Mfanisi&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;withdrawals_channel_Mpesa&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;withdrawals_description_Installments&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;withdrawals_description_Savings&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;savings_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;date_of_savings&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;savings_amount&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;savings_channel_Mfanisi&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;savings_channel_Mpesa&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;savings_type_current&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;savings_type_fixed&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;loan_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;date_of_loan&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;loan_period&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;loan_amount&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;loan_interest&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;loan_installment_1&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;loan_installment_2&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;loan_installment_3&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;installment_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;installments_loan_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;date_of_installment&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;installment_amount&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;installment_loan_balance&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;installment_type_debt_collection&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;installment_type_interest&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;installment_type_principal&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span>
+					   <span class="p">}</span>
+
+<div class="viewcode-block" id="WrappedTransactional"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional">[docs]</a><span class="k">class</span> <span class="nc">WrappedTransactional</span><span class="p">():</span>
+
+<div class="viewcode-block" id="WrappedTransactional.impute_missing_columns"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.impute_missing_columns">[docs]</a>	<span class="k">def</span> <span class="nf">impute_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Handles missing and unawanted columns.</span>
+
+<span class="sd">		Check columns present in the dataframe sort it and</span>
+<span class="sd">		compare it to a sorted list of required columns.</span>
+<span class="sd">		If any of the required columns are missing replace them</span>
+<span class="sd">		with default values.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df(obj): A dataframe</span>
+<span class="sd">			required_columns (list): A list containing columns that</span>
+<span class="sd">			must be present in the dataframe:</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			obj: A dataframe.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">columns_present</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">columns_present</span> <span class="o">!=</span> <span class="n">required_columns</span><span class="p">:</span>
+			<span class="n">missing_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns_present</span><span class="p">))</span>
+			<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">missing_columns</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">transactional_types</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">==</span> <span class="s1">&#39;int&#39;</span> <span class="ow">and</span> <span class="n">item</span> <span class="o">!=</span> <span class="s1">&#39;year&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">if</span> <span class="n">transactional_types</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">==</span> <span class="s1">&#39;float&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">if</span> <span class="n">transactional_types</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">==</span> <span class="s1">&#39;datetime&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+				<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;month&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">month</span>
+				<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;year&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="WrappedTransactional.prepare_borrower_data"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_borrower_data">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_borrower_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares borrower data.</span>
+
+<span class="sd">		Given a dataframe convert date columns to appropriate types</span>
+<span class="sd">		then convert counties to their respective provinces.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): A dataframe preferable the borrower df.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): A cleaned borrower data.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_date_of_birth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_date_of_birth&quot;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_date_created&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_date_created&quot;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_county&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_county&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s2">&quot;Kakamega&quot;</span><span class="p">:</span> <span class="s2">&quot;Western&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Bungoma&quot;</span><span class="p">:</span> <span class="s2">&quot;Western&quot;</span><span class="p">,</span> <span class="s2">&quot;Busia&quot;</span><span class="p">:</span> <span class="s2">&quot;Western&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Vihiga&quot;</span><span class="p">:</span> <span class="s2">&quot;Western&quot;</span><span class="p">,</span> <span class="s2">&quot;Kisii&quot;</span><span class="p">:</span> <span class="s2">&quot;Nyanza&quot;</span><span class="p">,</span> 
+									<span class="s2">&quot;Kisumu&quot;</span><span class="p">:</span> <span class="s2">&quot;Nyanza&quot;</span><span class="p">,</span> <span class="s2">&quot;Migori&quot;</span><span class="p">:</span> <span class="s2">&quot;Nyanza&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Homabay&quot;</span><span class="p">:</span> <span class="s2">&quot;Nyanza&quot;</span><span class="p">,</span> <span class="s2">&quot;Siaya&quot;</span><span class="p">:</span> <span class="s2">&quot;Nyanza&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Nyamira&quot;</span><span class="p">:</span> <span class="s2">&quot;Nyanza&quot;</span><span class="p">,</span> <span class="s2">&quot;Bomet&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Elgeyo-Marakwet&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span> 
+									<span class="s2">&quot;West Pokot&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span> <span class="s2">&quot;Kericho&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Nandi&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span> <span class="s2">&quot;Uasin Gishu&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Nakuru&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span> <span class="s2">&quot;Samburu&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Narok&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span> <span class="s2">&quot;Baringo&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Trans Nzoia&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span> <span class="s2">&quot;Kajiado&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Laikipia&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span> <span class="s2">&quot;Turkana&quot;</span><span class="p">:</span> <span class="s2">&quot;RiftyValley&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Nairobi&quot;</span><span class="p">:</span> <span class="s2">&quot;Nairobi&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Kiambu&quot;</span><span class="p">:</span> <span class="s2">&quot;Central&quot;</span><span class="p">,</span> <span class="s2">&quot;Nyeri&quot;</span><span class="p">:</span> <span class="s2">&quot;Central&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Kirinyaga&quot;</span><span class="p">:</span> <span class="s2">&quot;Central&quot;</span><span class="p">,</span> <span class="s2">&quot;Nyandarua&quot;</span><span class="p">:</span> <span class="s2">&quot;Central&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Muranga&#39;a&quot;</span><span class="p">:</span> <span class="s2">&quot;Central&quot;</span><span class="p">,</span> <span class="s2">&quot;Kwale&quot;</span><span class="p">:</span> <span class="s2">&quot;Coast&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Taita-Taveta&quot;</span><span class="p">:</span> <span class="s2">&quot;Coast&quot;</span><span class="p">,</span> <span class="s2">&quot;Mombasa&quot;</span><span class="p">:</span> <span class="s2">&quot;Coast&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Kilifi&quot;</span><span class="p">:</span> <span class="s2">&quot;Coast&quot;</span><span class="p">,</span> <span class="s2">&quot;Lamu&quot;</span><span class="p">:</span> <span class="s2">&quot;Coast&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Tana River&quot;</span><span class="p">:</span> <span class="s2">&quot;Coast&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Machakos&quot;</span><span class="p">:</span><span class="s2">&quot;Eastern&quot;</span><span class="p">,</span> <span class="s2">&quot;Meru&quot;</span><span class="p">:</span> <span class="s2">&quot;Eastern&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Embu&quot;</span><span class="p">:</span> <span class="s2">&quot;Eastern&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Tharaka-Nithi&quot;</span><span class="p">:</span> <span class="s2">&quot;Eastern&quot;</span><span class="p">,</span> <span class="s2">&quot;Kitui&quot;</span><span class="p">:</span> <span class="s2">&quot;Eastern&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Makueni&quot;</span><span class="p">:</span> <span class="s2">&quot;Eastern&quot;</span><span class="p">,</span> <span class="s2">&quot;Marsabit&quot;</span><span class="p">:</span> <span class="s2">&quot;Eastern&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Isiolo&quot;</span><span class="p">:</span> <span class="s2">&quot;Eastern&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Garissa&quot;</span><span class="p">:</span> <span class="s2">&quot;NorthEastern&quot;</span><span class="p">,</span> <span class="s2">&quot;Wajir&quot;</span><span class="p">:</span> <span class="s2">&quot;NorthEastern&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Mandera&quot;</span><span class="p">:</span> <span class="s2">&quot;NorthEastern&quot;</span><span class="p">}))</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="WrappedTransactional.create_target_df"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.create_target_df">[docs]</a>	<span class="k">def</span> <span class="nf">create_target_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">,</span> <span class="n">target_column</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Creates a df with the predictor variable and an id.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): A dataframe.</span>
+<span class="sd">			borrower_id (int): Self explanatory</span>
+<span class="sd">			target_column (str): The response variable.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			dataframe</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">myTarget</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="nb">str</span><span class="p">(</span><span class="n">borrower_id</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">target_column</span><span class="p">)]]</span>
+		<span class="k">return</span> <span class="n">myTarget</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.prepare_kyc_data"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_kyc_data">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_kyc_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares the kyc_data</span>
+
+<span class="sd">		Given a borrower_df prepare it using the method using the</span>
+<span class="sd">		prepare_borrower_data defined in this class. Cleaning in </span>
+<span class="sd">		this method is self explanatory easily readable.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): Kyc dataframe</span>
+<span class="sd">			borrower_df (df): The borrower dataframe.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): A prepared dataframe</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">borrower_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_borrower_data</span><span class="p">(</span><span class="n">borrower_df</span><span class="p">)</span> 
+		<span class="n">df1</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kyc_id&quot;</span><span class="p">,</span> <span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">df1</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">borrower_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+		<span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;kyc_default_status&quot;</span><span class="p">:</span> <span class="s2">&quot;default_status&quot;</span><span class="p">})</span>
+		<span class="k">try</span><span class="p">:</span>
+			 <span class="n">df1</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;default_status&quot;</span><span class="p">,</span>
+												<span class="s1">&#39;borrower_phone_number&#39;</span><span class="p">])</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">pass</span>        
+		<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df1</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;borrower_gender&quot;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;gender&quot;</span><span class="p">)</span>
+		<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+								<span class="n">df2</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;borrower_county&quot;</span><span class="p">],</span>
+								<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;province&quot;</span>
+							<span class="p">)</span>
+		<span class="n">df2</span><span class="p">[</span><span class="s2">&quot;Today&quot;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s2">&quot;today&quot;</span><span class="p">)</span>
+		<span class="n">df2</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+						<span class="n">df2</span><span class="p">[</span><span class="s2">&quot;Today&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> 
+						<span class="n">df2</span><span class="p">[</span><span class="s2">&quot;borrower_date_of_birth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
+					 <span class="p">)</span>
+		<span class="c1"># df2 = df2[df2.columns.drop(list(df2.filter(regex=&#39;missing&#39;)))]</span>
+		<span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Today&quot;</span><span class="p">,</span> <span class="s2">&quot;corporate_id&quot;</span><span class="p">,</span> <span class="s2">&quot;kyc_id&quot;</span><span class="p">])</span>
+		<span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="n">df2</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="k">del</span> <span class="n">df1</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;kyc_id&#39;</span><span class="p">,</span> <span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> 
+							 <span class="s1">&#39;borrower_date_created&#39;</span><span class="p">,</span> <span class="s1">&#39;borrower_date_of_birth&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;gender_f&#39;</span><span class="p">,</span> <span class="s1">&#39;gender_m&#39;</span><span class="p">,</span> <span class="s1">&#39;province_Central&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;province_Coast&#39;</span><span class="p">,</span> <span class="s1">&#39;province_Eastern&#39;</span><span class="p">,</span> 
+							 <span class="s1">&#39;province_Nairobi&#39;</span><span class="p">,</span> <span class="s1">&#39;province_NorthEastern&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;province_Nyanza&#39;</span><span class="p">,</span> <span class="s1">&#39;province_RiftyValley&#39;</span><span class="p">,</span>
+							 <span class="s1">&#39;province_Western&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>                   
+		<span class="n">kyc_data2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">kyc_data2</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.summarize_kyc"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_kyc">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_kyc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Summarizes the kyc df.</span>
+
+<span class="sd">		Given a dataframe, prepare it. No idea of the logic</span>
+<span class="sd">		used here for now. Will need to check later</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The kyc dataframe</span>
+<span class="sd">			borrower_df (obj): The borrower df</span>
+<span class="sd">			borrower_id (int): The borrowers id</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): A summarized dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_kyc_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">borrower_df</span><span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">borrower_id</span><span class="p">]</span> <span class="c1"># filter for borrower_id</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">(</span><span class="n">df</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">])</span>
+		<span class="n">df_tojson</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;},{&quot;</span><span class="p">,</span> <span class="s2">&quot;} {&quot;</span><span class="p">)</span>
+		<span class="k">del</span> <span class="n">df</span>
+		<span class="k">return</span> <span class="n">df_tojson</span> </div>
+
+	
+<div class="viewcode-block" id="WrappedTransactional.prepare_deposits"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_deposits">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_deposits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares the deposit data.</span>
+
+<span class="sd">		Create dummy variables form the deposit channel column, convert</span>
+<span class="sd">		the data_of_deposit to datetime, drop the corporate_id and any</span>
+<span class="sd">		columns containing the &#39;missing&#39;. Confirm that no required</span>
+<span class="sd">		columns are missing or any unwanted columns are present.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits data frame</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): The prepared deposits dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">deposits</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">df</span><span class="p">,</span>
+									<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;deposit_channel&quot;</span><span class="p">],</span>
+									<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;deposit_channel&quot;</span>
+								  <span class="p">)</span>
+		<span class="n">deposits</span><span class="p">[</span><span class="s2">&quot;date_of_deposit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+											<span class="n">deposits</span><span class="p">[</span><span class="s2">&quot;date_of_deposit&quot;</span><span class="p">]</span>
+										<span class="p">)</span>
+		<span class="n">deposits</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">deposits</span><span class="p">,</span>
+									<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;deposit_description&quot;</span><span class="p">],</span>
+									<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;deposit_description&quot;</span>
+								 <span class="p">)</span>
+		<span class="n">deposits</span> <span class="o">=</span> <span class="n">deposits</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">deposits</span> <span class="o">=</span> <span class="n">deposits</span><span class="p">[</span>
+								<span class="n">deposits</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+									<span class="nb">list</span><span class="p">(</span><span class="n">deposits</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">))</span>
+									<span class="p">)</span>
+							<span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;deposit_id&#39;</span><span class="p">,</span> <span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_deposit&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;deposit_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;deposit_channel_Airtel&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;deposit_channel_Bank&#39;</span><span class="p">,</span> <span class="s1">&#39;deposit_channel_Mpesa&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;deposit_description_Installments&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;deposit_description_Savings&#39;</span><span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>                   
+		<span class="n">deposits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">deposits</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">deposits</span></div>
+
+<div class="viewcode-block" id="WrappedTransactional.sum_deposit_amounts"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_deposit_amounts">[docs]</a>	<span class="k">def</span> <span class="nf">sum_deposit_amounts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Group by month, year, and id and find sum</span>
+
+<span class="sd">		Extract month and year from date of deposit, and add amounts</span>
+<span class="sd">		to the repective columns by multiplying the amount by the </span>
+<span class="sd">		dummy variables. Group by month, year and borrower_id, find</span>
+<span class="sd">		the sum and rename the final columns.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits dataframe.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): summarised deposits data.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_deposit&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_deposit&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_channel_Airtel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+											<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_channel_Airtel&quot;</span><span class="p">]</span> <span class="o">*</span> 
+											<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_amount&quot;</span><span class="p">]</span>
+										<span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_channel_Bank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+										<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_channel_Bank&quot;</span><span class="p">]</span> <span class="o">*</span> 
+										<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_amount&quot;</span><span class="p">]</span>
+									  <span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_Mpesa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_Mpesa&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_description_Savings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+										<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_description_Savings&quot;</span><span class="p">]</span> <span class="o">*</span> 
+										<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_amount&quot;</span><span class="p">]</span>
+										<span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_description_Installments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+								<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_description_Installments&quot;</span><span class="p">]</span> <span class="o">*</span> 
+								<span class="n">df</span><span class="p">[</span><span class="s2">&quot;deposit_amount&quot;</span><span class="p">]</span>
+												  <span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;date_of_deposit&quot;</span><span class="p">,</span> <span class="s2">&quot;deposit_id&quot;</span><span class="p">])</span>
+		<span class="n">df1_sums</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+								<span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+							  <span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+									  <span class="p">{</span>
+										<span class="s2">&quot;deposit_channel_Airtel&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> 
+										<span class="s2">&quot;deposit_channel_Bank&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;deposit_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;deposit_description_Savings&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;deposit_description_Installments&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span>
+									  <span class="p">}</span>
+									<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+		<span class="n">df1_sums</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+					  <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+								<span class="s2">&quot;deposit_channel_Airtel&quot;</span><span class="p">:</span><span class="s2">&quot;deposit_Airtel_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;deposit_channel_Bank&quot;</span><span class="p">:</span><span class="s2">&quot;deposit_Bank_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;deposit_Mpesa&quot;</span><span class="p">:</span> <span class="s2">&quot;deposit_Mpesa_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;deposit_description_Savings&quot;</span><span class="p">:</span> <span class="s2">&quot;Savings_sum&quot;</span><span class="p">,</span>
+						<span class="s2">&quot;deposit_description_Installments&quot;</span><span class="p">:</span> <span class="s2">&quot;Installments_sum&quot;</span>
+						  <span class="p">},</span>
+						<span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df1_sums</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.count_deposit_amounts"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_deposit_amounts">[docs]</a>	<span class="k">def</span> <span class="nf">count_deposit_amounts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Group by year, month, and borrower_id and find counts.</span>
+
+<span class="sd">		Extract month and year from date of deposit, count the </span>
+<span class="sd">		occurrence of each dummy column by summing them up. </span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits dataframe.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): counts deposits data.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_deposit&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_deposit&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;date_of_deposit&quot;</span><span class="p">,</span> <span class="s2">&quot;deposit_id&quot;</span><span class="p">,</span> <span class="s2">&quot;deposit_amount&quot;</span><span class="p">])</span>
+		<span class="n">df1_counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+								<span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+								<span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+									  <span class="p">{</span>
+										<span class="s2">&quot;deposit_channel_Airtel&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> 
+										<span class="s2">&quot;deposit_channel_Bank&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;deposit_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;deposit_description_Savings&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;deposit_description_Installments&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span>
+									  <span class="p">}</span>
+								<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+		<span class="n">df1_counts</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+					 <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+								<span class="s2">&quot;deposit_channel_Airtel&quot;</span><span class="p">:</span><span class="s2">&quot;depositAirtel_count&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;deposit_channel_Bank&quot;</span><span class="p">:</span><span class="s2">&quot;deposit_Bank_count&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;deposit_Mpesa&quot;</span><span class="p">:</span> <span class="s2">&quot;deposit_Mpesa_count&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;deposit_description_Savings&quot;</span><span class="p">:</span> <span class="s2">&quot;Savings_count&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;deposit_description_Installments&quot;</span><span class="p">:</span> <span class="s2">&quot;Installments_count&quot;</span>
+							  <span class="p">},</span>
+						  <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df1_counts</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.summarize_deposits"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_deposits">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_deposits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Summarize the counts and sums in deposit data.</span>
+
+<span class="sd">		Given a dataframe find the sums and counts from the</span>
+<span class="sd">		data frame, join the resulting dataframes and convert the</span>
+<span class="sd">		final dataframe to json.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits dataframe.</span>
+<span class="sd">			borrower_id (int): The borrower_id for the loan seeker</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (json): A json object from the final dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">borrower_id</span><span class="p">]</span>
+		<span class="n">df1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_deposits</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+		<span class="n">df_sums</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_deposit_amounts</span><span class="p">(</span><span class="n">df1</span><span class="p">)</span>
+		<span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_deposits</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+		<span class="n">df_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_deposit_amounts</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_sums</span><span class="p">,</span> <span class="n">df_counts</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">])</span>
+		<span class="n">df_tojson</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;},{&quot;</span><span class="p">,</span> <span class="s2">&quot;} {&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df_tojson</span></div>
+<span class="c1">#################################################################################################</span>
+
+<div class="viewcode-block" id="WrappedTransactional.prepare_withdrawals"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_withdrawals">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_withdrawals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares the withdrawals data.</span>
+
+<span class="sd">		Create dummy variables form the withdrawal channel column, convert</span>
+<span class="sd">		the date_of_withdrawal to datetime, drop the corporate_id and any</span>
+<span class="sd">		columns containing the string &#39;missing&#39;. Confirm that no required</span>
+<span class="sd">		columns are missing or any unwanted columns are present.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits data frame</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): The prepared deposits dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">withdrawal</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+										<span class="n">df</span><span class="p">,</span>
+										<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;withdrawals_channel&quot;</span><span class="p">],</span>
+										<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;withdrawals_channel&quot;</span>
+									<span class="p">)</span>
+		<span class="n">withdrawal</span><span class="p">[</span><span class="s2">&quot;date_of_withdrawals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+												<span class="n">withdrawal</span><span class="p">[</span>
+													<span class="s2">&quot;date_of_withdrawals&quot;</span>
+												<span class="p">])</span>
+											<span class="p">)</span>
+		<span class="n">withdrawal</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+										<span class="n">withdrawal</span><span class="p">,</span>
+										<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;withdrawals_description&quot;</span><span class="p">],</span>
+										<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;withdrawals_description&quot;</span>
+									<span class="p">)</span>
+		<span class="n">withdrawal</span> <span class="o">=</span> <span class="n">withdrawal</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">withdrawal</span> <span class="o">=</span> <span class="p">(</span>  <span class="n">withdrawal</span>
+							<span class="p">[</span>
+								<span class="n">withdrawal</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+								<span class="nb">list</span><span class="p">(</span><span class="n">withdrawal</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">))</span>
+								<span class="p">)</span>
+							<span class="p">]</span>
+					<span class="p">)</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span>
+							  <span class="s1">&#39;withdrawals_id&#39;</span><span class="p">,</span> <span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;date_of_withdrawals&#39;</span><span class="p">,</span> <span class="s1">&#39;withdrawals_amount&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;withdrawals_channel_Mfanisi&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;withdrawals_channel_Mpesa&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;withdrawals_description_Installments&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;withdrawals_description_Savings&#39;</span>
+							<span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">withdrawal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">withdrawal</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">withdrawal</span>  </div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.sum_withdrawal_amounts"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_withdrawal_amounts">[docs]</a>	<span class="k">def</span> <span class="nf">sum_withdrawal_amounts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Group by month, year, and id and find sum</span>
+
+<span class="sd">		Extract month and year from date of withdrawal, add amounts</span>
+<span class="sd">		to the repective columns by multiplying the amount by the </span>
+<span class="sd">		dummy variables. Group by month, year and borrower_id, find</span>
+<span class="sd">		the sum and rename the final columns.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits dataframe.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): summarised deposits data.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_withdrawal&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_withdrawal&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_Mfanisi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_Mfanisi&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_Mpesa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_Mpesa&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_Installments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_Installments&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_Savings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_Savings&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;withdrawal_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;date_of_withdrawal&quot;</span><span class="p">,</span> <span class="s2">&quot;withdrawal_id&quot;</span><span class="p">])</span>
+		<span class="n">df1_sums</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+								<span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+							  <span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+									  <span class="p">{</span>
+										<span class="s2">&quot;withdrawal_Mfanisi&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> 
+										<span class="s2">&quot;withdrawal_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;withdrawal_Installments&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;withdrawal_Savings&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span>
+									  <span class="p">}</span>
+									<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+		<span class="n">df1_sums</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+					 <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+								<span class="s2">&quot;withdrawal_Mfanisi&quot;</span><span class="p">:</span><span class="s2">&quot;withdrawal_Mfanisi_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;withdrawal_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;withdrawal_Mpesa_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;withdrawal_Installments&quot;</span><span class="p">:</span> <span class="s2">&quot;withdrawal_Installments_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;withdrawal_Savings&quot;</span><span class="p">:</span> <span class="s2">&quot;withdrawal_Savings_sum&quot;</span>
+							  <span class="p">},</span>
+					  <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df1_sums</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.count_withdrawal_amounts"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_withdrawal_amounts">[docs]</a>	<span class="k">def</span> <span class="nf">count_withdrawal_amounts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Group by year, month, and borrower_id and find counts.</span>
+
+<span class="sd">		Extract month and year from date of withdrawal, count the </span>
+<span class="sd">		occurrence of each dummy column by summing them up. </span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits dataframe.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): counts deposits data.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_withdrawal&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_withdrawal&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;date_of_withdrawal&quot;</span><span class="p">,</span> <span class="s2">&quot;withdrawal_id&quot;</span><span class="p">,</span> <span class="s2">&quot;withdrawal_amount&quot;</span><span class="p">])</span>
+		<span class="n">df1_counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+								  <span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+								<span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+										<span class="p">{</span>
+										  <span class="s2">&quot;withdrawal_Mfanisi&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> 
+										  <span class="s2">&quot;withdrawal_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										  <span class="s2">&quot;withdrawal_Installments&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										  <span class="s2">&quot;withdrawal_Savings&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span>
+										<span class="p">}</span>
+									  <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+		<span class="n">df1_counts</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+							<span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+									  <span class="s2">&quot;withdrawal_Mfanisi&quot;</span><span class="p">:</span><span class="s2">&quot;withdrawal_Mfanisi_count&quot;</span><span class="p">,</span>
+									  <span class="s2">&quot;withdrawal_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;withdrawal_Mpesa_count&quot;</span><span class="p">,</span>
+									  <span class="s2">&quot;withdrawal_Installments&quot;</span><span class="p">:</span> <span class="s2">&quot;withdrawal_Installments_count&quot;</span><span class="p">,</span>
+									  <span class="s2">&quot;withdrawal_Savings&quot;</span><span class="p">:</span> <span class="s2">&quot;withdrawal_Savings_count&quot;</span>
+									<span class="p">},</span>
+							<span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+						  <span class="p">)</span>
+		<span class="k">return</span> <span class="n">df1_counts</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.summarize_withdrawals"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_withdrawals">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_withdrawals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Summarize the counts and sums in withdrawals data.</span>
+
+<span class="sd">		Given a dataframe find the sums and counts from the</span>
+<span class="sd">		data frame, join the resulting dataframes and convert the</span>
+<span class="sd">		final dataframe to json.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The withdrawals dataframe.</span>
+<span class="sd">			borrower_id (int): The borrower_id for the loan seeker</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (json): A json object from the final dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">borrower_id</span><span class="p">]</span>
+		<span class="n">df1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_withdrawals</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+		<span class="n">df_sums</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_withdrawal_amounts</span><span class="p">(</span><span class="n">df1</span><span class="p">)</span>
+		<span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_withdrawals</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+		<span class="n">df_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_withdrawal_amounts</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+						<span class="n">df_sums</span><span class="p">,</span> <span class="n">df_counts</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+						<span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+					  <span class="p">)</span>
+		<span class="n">df_tojson</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;},{&quot;</span><span class="p">,</span> <span class="s2">&quot;} {&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df_tojson</span></div>
+
+<span class="c1">##################################################################################################</span>
+<div class="viewcode-block" id="WrappedTransactional.prepare_savings"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_savings">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_savings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares the savings data.</span>
+
+<span class="sd">		Create dummy variables form the withdrawal channel column, convert</span>
+<span class="sd">		the date_of_withdrawal to datetime, drop the corporate_id and any</span>
+<span class="sd">		columns containing the string &#39;missing&#39;. Confirm that no required</span>
+<span class="sd">		columns are missing or any unwanted columns are present.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits data frame</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): The prepared deposits dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">savings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">df</span><span class="p">,</span>
+									<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;savings_channel&quot;</span><span class="p">],</span>
+									<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;savings_channel&quot;</span>
+								<span class="p">)</span>
+		<span class="n">savings</span><span class="p">[</span><span class="s2">&quot;date_of_savings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">savings</span><span class="p">[</span><span class="s2">&quot;date_of_savings&quot;</span><span class="p">])</span>
+		<span class="n">savings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">savings</span><span class="p">,</span>
+									<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;savings_type&quot;</span><span class="p">],</span>
+									<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;savings_type&quot;</span>
+								<span class="p">)</span>
+		<span class="n">savings</span> <span class="o">=</span> <span class="n">savings</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">savings</span> <span class="o">=</span> <span class="n">savings</span><span class="p">[</span>
+							<span class="n">savings</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+								<span class="nb">list</span><span class="p">(</span><span class="n">savings</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">))</span>
+								<span class="p">)</span>
+						 <span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;savings_id&#39;</span><span class="p">,</span> <span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_savings&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;savings_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;savings_channel_Mfanisi&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;savings_channel_Mpesa&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;savings_type_current&#39;</span><span class="p">,</span> <span class="s1">&#39;savings_type_fixed&#39;</span>
+							<span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">savings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">savings</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">savings</span>  </div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.sum_savings_amounts"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_savings_amounts">[docs]</a>	<span class="k">def</span> <span class="nf">sum_savings_amounts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Group by month, year, and id and find sum</span>
+
+<span class="sd">		Extract month and year from date of savings, add amounts</span>
+<span class="sd">		to the repective columns by multiplying the amount by the </span>
+<span class="sd">		dummy variables. Group by month, year and borrower_id, find</span>
+<span class="sd">		the sum and rename the final columns.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The savings dataframe.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): summarised savings data.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_savings&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_savings&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_channel_Mfanisi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_channel_Mfanisi&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_channel_Mpesa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_channel_Mpesa&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_current&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_current&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_fixed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_fixed&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_amount&quot;</span><span class="p">]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;date_of_savings&quot;</span><span class="p">,</span> <span class="s2">&quot;savings_id&quot;</span><span class="p">])</span>
+		<span class="n">df1_sums</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+								<span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+							  <span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+									  <span class="p">{</span>
+										<span class="s2">&quot;savings_channel_Mfanisi&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> 
+										<span class="s2">&quot;savings_channel_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;savings_current&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;savings_fixed&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span>
+									  <span class="p">}</span>
+									<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+		<span class="n">df1_sums</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+						<span class="n">columns</span><span class="o">=</span>
+							  <span class="p">{</span>
+								<span class="s2">&quot;savings_channel_Mfanisi&quot;</span><span class="p">:</span><span class="s2">&quot;savings_Mfanisi_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;savings_channel_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;savings_Mpesa_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;savings_current&quot;</span><span class="p">:</span> <span class="s2">&quot;savings_current_sum&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;savings_fixed&quot;</span><span class="p">:</span> <span class="s2">&quot;savings_fixed_sum&quot;</span>
+							  <span class="p">},</span>
+						<span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df1_sums</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.count_savings_amounts"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_savings_amounts">[docs]</a>	<span class="k">def</span> <span class="nf">count_savings_amounts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Group by year, month, and borrower_id and find counts.</span>
+
+<span class="sd">		Extract month and year from date of savings, count the </span>
+<span class="sd">		occurrence of each dummy column by summing them up. </span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The savings dataframe.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): counts svings data.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_savings&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_savings&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;date_of_savings&quot;</span><span class="p">,</span> <span class="s2">&quot;savings_id&quot;</span><span class="p">,</span> <span class="s2">&quot;savings_amount&quot;</span><span class="p">])</span>
+		<span class="n">df1_counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+								  <span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+							   <span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+									  <span class="p">{</span>
+										<span class="s2">&quot;savings_channel_Mfanisi&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> 
+										<span class="s2">&quot;savings_channel_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;savings_current&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;savings_fixed&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span>
+									  <span class="p">}</span>
+									<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+		<span class="n">df1_counts</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+						  <span class="n">columns</span><span class="o">=</span>
+								  <span class="p">{</span>
+							<span class="s2">&quot;savings_channel_Mfanisi&quot;</span><span class="p">:</span><span class="s2">&quot;savings_Mfanisi_count&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;savings_channel_Mpesa&quot;</span><span class="p">:</span><span class="s2">&quot;savings_Mpesa_count&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;savings_current&quot;</span><span class="p">:</span> <span class="s2">&quot;savings_current_count&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;savings_fixed&quot;</span><span class="p">:</span> <span class="s2">&quot;savings_fixed_count&quot;</span>
+								  <span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+						 <span class="p">)</span>
+		<span class="k">return</span> <span class="n">df1_counts</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.summarize_savings"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_savings">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_savings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Summarize the counts and sums in svings data.</span>
+
+<span class="sd">		Given a dataframe find the sums and counts from the</span>
+<span class="sd">		data frame, join the resulting dataframes and convert the</span>
+<span class="sd">		final dataframe to json.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The savings dataframe.</span>
+<span class="sd">			borrower_id (int): The borrower_id for the loan seeker</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (json): A json object from the final dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">borrower_id</span><span class="p">]</span>
+		<span class="n">df1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_savings</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+		<span class="n">df_sums</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_savings_amounts</span><span class="p">(</span><span class="n">df1</span><span class="p">)</span>
+		<span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_savings</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+		<span class="n">df_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_savings_amounts</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+						<span class="n">df_sums</span><span class="p">,</span> <span class="n">df_counts</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+						<span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+					  <span class="p">)</span>
+		<span class="n">df_tojson</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;},{&quot;</span><span class="p">,</span> <span class="s2">&quot;} {&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df_tojson</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.prepare_loan_4_classification"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_loan_4_classification">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_loan_4_classification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares the loan data for classification.</span>
+
+<span class="sd">		Create dummy variables from the loan_period column and the </span>
+<span class="sd">		loan_installment_frequency columns, convert the date_of_loan </span>
+<span class="sd">		and the date_of_loan_completion to datetime, drop the </span>
+<span class="sd">		corporate_id and any columns containing the string </span>
+<span class="sd">		&#39;missing&#39;. Confirm that no required columns are missing or </span>
+<span class="sd">		any unwanted columns are present.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The loan data frame</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): The prepared loan dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">loan_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">df</span><span class="p">,</span>
+									<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loan_period&quot;</span><span class="p">],</span>
+									<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;period&quot;</span>
+								  <span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_loan&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_loan&quot;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_loan_completion&quot;</span><span class="p">]</span> <span class="o">=</span>  <span class="p">(</span>
+											<span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+											<span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_loan_completion&quot;</span><span class="p">]</span>
+													<span class="p">)</span>    
+										  <span class="p">)</span>
+		<span class="n">loan_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">df</span><span class="p">,</span>
+									<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loan_installment_frequency&quot;</span><span class="p">],</span>
+									<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;loan_installment&quot;</span>
+								   <span class="p">)</span>
+		<span class="n">loan_data</span> <span class="o">=</span> <span class="n">loan_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">loan_data</span> <span class="o">=</span> <span class="n">loan_data</span><span class="p">[</span>
+								<span class="n">loan_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+									<span class="nb">list</span><span class="p">(</span><span class="n">loan_data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">))</span>
+								<span class="p">)</span>
+							 <span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span>
+								<span class="s1">&#39;loan_id&#39;</span><span class="p">,</span> <span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_loan&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;loan_period&#39;</span><span class="p">,</span> <span class="s1">&#39;loan_amount&#39;</span><span class="p">,</span> 
+								<span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">,</span> <span class="s1">&#39;loan_installment_1&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;loan_installment_2&#39;</span><span class="p">,</span> <span class="s1">&#39;loan_installment_3&#39;</span>
+						   <span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">loan_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">loan_data</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">loan_data</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.prepare_loan_4_regression"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_loan_4_regression">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_loan_4_regression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares the loan data for regression.</span>
+
+<span class="sd">		Create dummy variables from the loan_period column and the </span>
+<span class="sd">		loan_installment_frequency columns, convert the date_of_loan </span>
+<span class="sd">		and the date_of_loan_completion to datetime, drop the </span>
+<span class="sd">		corporate_id, is_defaulted_loan, loan_id and any columns </span>
+<span class="sd">		containing the string  &#39;missing&#39;. Confirm that no </span>
+<span class="sd">		required columns are missing or  any unwanted columns are </span>
+<span class="sd">		present.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The loan data frame</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): The prepared loan dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">df</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+							<span class="n">df</span><span class="p">,</span>
+							<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loan_period&quot;</span><span class="p">],</span>
+							<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;period&quot;</span>
+						  <span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_loan&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_loan&quot;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_loan_completion&quot;</span><span class="p">]</span> <span class="o">=</span>  <span class="p">(</span>
+											<span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+											<span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_loan_completion&quot;</span><span class="p">]</span>
+													<span class="p">)</span>   
+										  <span class="p">)</span>
+		<span class="n">loan_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">df</span><span class="p">,</span>
+									<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loan_installment_frequency&quot;</span><span class="p">],</span>
+									<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;loan_installment&quot;</span>
+								   <span class="p">)</span>
+		<span class="n">loan_data</span> <span class="o">=</span> <span class="n">loan_data</span><span class="p">[</span>
+								<span class="n">loan_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+									<span class="nb">list</span><span class="p">(</span><span class="n">loan_data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">))</span>
+								<span class="p">)</span>
+							 <span class="p">]</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">loan_data</span> <span class="o">=</span> <span class="n">loan_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+											<span class="n">columns</span><span class="o">=</span><span class="p">[</span>
+													<span class="s2">&quot;corporate_id&quot;</span><span class="p">,</span>
+													<span class="s2">&quot;is_defaulted_loan&quot;</span><span class="p">,</span>
+													<span class="s2">&quot;loan_id&quot;</span>
+												<span class="p">]</span>
+										<span class="p">)</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">pass</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span>
+								<span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_loan&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;loan_period&#39;</span><span class="p">,</span> <span class="s1">&#39;loan_amount&#39;</span><span class="p">,</span> 
+								<span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">,</span> <span class="s1">&#39;loan_installment_1&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;loan_installment_2&#39;</span><span class="p">,</span> <span class="s1">&#39;loan_installment_3&#39;</span>
+						   <span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">loan_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">loan_data</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">loan_data</span></div>
+
+
+<div class="viewcode-block" id="WrappedTransactional.prepare_installments"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processtransdata.html#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_installments">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_installments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares the installments data.</span>
+
+<span class="sd">		Create dummy variables form the installments channel </span>
+<span class="sd">		and types column,  	convert the date_of_installment to </span>
+<span class="sd">		datetime, drop the 	corporate_id and any columns containing</span>
+<span class="sd">		the string &#39;missing&#39;. Confirm that no required columns are </span>
+<span class="sd">		missing or any unwanted columns are present.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The deposits data frame</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): The prepared deposits dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_installment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date_of_installment&quot;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">,</span> <span class="s2">&quot;borrower_id&quot;</span><span class="p">])</span>
+		<span class="n">installment_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+											<span class="n">df</span><span class="p">,</span>
+											<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;installment_type&quot;</span><span class="p">],</span>
+											<span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;installment_type&quot;</span>
+										  <span class="p">)</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span>
+								<span class="s1">&#39;installment_id&#39;</span><span class="p">,</span> <span class="s1">&#39;installments_loan_id&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;corporate_id&#39;</span><span class="p">,</span><span class="s1">&#39;date_of_installment&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;installment_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;installment_loan_balance&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;installment_type_debt_collection&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;installment_type_interest&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;installment_type_principal&#39;</span>
+							<span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">installment_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">installment_data</span><span class="p">,</span>
+														<span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">installment_data</span></div></div>
+
+
+<span class="c1"># kyc_data = pd.read_csv(&quot;Transanctional/kyc_data.csv&quot;)</span>
+<span class="c1"># borrowers_data = pd.read_csv(&quot;Transanctional/borrower.csv&quot;)</span>
+<span class="c1"># deposits_data = pd.read_csv(&quot;Transanctional/deposits_data.csv&quot;)</span>
+<span class="c1"># withdrawals_data = pd.read_csv(&quot;Transanctional/withdrawal_data.csv&quot;)</span>
+<span class="c1"># savings_data = pd.read_csv(&quot;Transanctional/savings_data.csv&quot;)</span>
+
+
+
+<span class="c1"># kyc_instance = WrappedTransactional()</span>
+<span class="c1"># cleaned_kyc = kyc_instance.prepare_kyc_data(kyc_data, borrowers_data)</span>
+<span class="c1"># print(cleaned_kyc.columns)</span>
+
+
+<span class="c1"># summarize_kyc = kyc_instance.summarize_kyc(kyc_data, borrowers_data, 113)</span>
+<span class="c1"># print(summarize_kyc)</span>
+
+<span class="c1"># deposits_instance = WrappedTransactional()</span>
+<span class="c1"># # print(deposits_instance)</span>
+<span class="c1"># cleaned_deposits = deposits_instance.prepare_deposits(deposits_data)</span>
+<span class="c1"># print(cleaned_deposits.head(10))</span>
+<span class="c1"># # count_deposits = deposits_instance.count_deposit_amounts(deposits_data)</span>
+<span class="c1"># # print(count_deposits.columns)</span>
+
+<span class="c1"># summarized_deposits = deposits_instance.summarize_deposits(deposits_data, 113)</span>
+<span class="c1"># print(summarized_deposits)</span>
+
+
+<span class="c1"># withdrawals_instance = WrappedTransactional()</span>
+<span class="c1"># cleaned_withdrawals = withdrawals_instance.prepare_withdrawals(withdrawals_data)</span>
+<span class="c1"># # print(cleaned_withdrawals.head(10))</span>
+<span class="c1"># count_withdrawals = withdrawals_instance.count_withdrawal_amounts(cleaned_withdrawals)</span>
+<span class="c1"># print(count_withdrawals.head(5))</span>
+
+<span class="c1"># summarized_withdrawals = withdrawals_instance.summarize_withdrawals(withdrawals_data, 113)</span>
+<span class="c1"># print(summarized_withdrawals)</span>
+
+
+<span class="c1"># savings_instance = WrappedTransactional()</span>
+<span class="c1"># cleaned_savings = savings_instance.prepare_savings(savings_data)</span>
+<span class="c1"># # print(cleaned_savings.head(10))</span>
+<span class="c1"># # print(cleaned_savings.columns)</span>
+<span class="c1"># count_savings = savings_instance.count_savings_amounts(cleaned_savings)</span>
+<span class="c1"># # print(count_savings.head(5))</span>
+
+<span class="c1"># summarized_savings = savings_instance.summarize_savings(savings_data, 113)</span>
+<span class="c1"># print(summarized_savings)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

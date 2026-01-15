@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.displays module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Models.model_users module" href="myapp.Models.model_users.html" />
+    <link rel="prev" title="myapp.Models.checks_n_approvals module" href="myapp.Models.checks_n_approvals.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Models.displays">
+<span id="myapp-models-displays-module"></span><h1>myapp.Models.displays module<a class="headerlink" href="#module-myapp.Models.displays" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="myapp.Models.displays.DetailsFromQuery">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">DetailsFromQuery</code><a class="reference internal" href="_modules/myapp/Models/displays.html#DetailsFromQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DetailsFromQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="myapp.Models.displays.DetailsFromQuery.create_corp_details">
+<code class="sig-name descname">create_corp_details</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DetailsFromQuery.create_corp_details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DetailsFromQuery.create_corp_details" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DetailsFromQuery.create_payments">
+<code class="sig-name descname">create_payments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DetailsFromQuery.create_payments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DetailsFromQuery.create_payments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DetailsFromQuery.create_user">
+<code class="sig-name descname">create_user</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DetailsFromQuery.create_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DetailsFromQuery.create_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DetailsFromQuery.is_valid_fetch">
+<code class="sig-name descname">is_valid_fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_of_fetch</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DetailsFromQuery.is_valid_fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DetailsFromQuery.is_valid_fetch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.displays.DisplayedApprovals">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">DisplayedApprovals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_of_fetch</span></em>, <em class="sig-param"><span class="n">role_id</span></em>, <em class="sig-param"><span class="n">corporate_id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedApprovals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedApprovals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#myapp.Models.displays.DetailsFromQuery" title="myapp.Models.displays.DetailsFromQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">myapp.Models.displays.DetailsFromQuery</span></code></a></p>
+<p>The status name should not indicate the current status. Instead, it should
+indicate the previous status.</p>
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedApprovals.fetch_client_admin_approvals">
+<code class="sig-name descname">fetch_client_admin_approvals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedApprovals.fetch_client_admin_approvals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedApprovals.fetch_client_admin_approvals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedApprovals.fetch_superadmin_admin_approvals">
+<code class="sig-name descname">fetch_superadmin_admin_approvals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedApprovals.fetch_superadmin_admin_approvals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedApprovals.fetch_superadmin_admin_approvals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedApprovals.fetch_superadmin_client_approvals">
+<code class="sig-name descname">fetch_superadmin_client_approvals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedApprovals.fetch_superadmin_client_approvals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedApprovals.fetch_superadmin_client_approvals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedApprovals.fetch_superadmin_corp_approvals">
+<code class="sig-name descname">fetch_superadmin_corp_approvals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedApprovals.fetch_superadmin_corp_approvals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedApprovals.fetch_superadmin_corp_approvals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedApprovals.fetch_superadmin_pay_approvals">
+<code class="sig-name descname">fetch_superadmin_pay_approvals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedApprovals.fetch_superadmin_pay_approvals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedApprovals.fetch_superadmin_pay_approvals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedApprovals.make_an_approval_fetch">
+<code class="sig-name descname">make_an_approval_fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedApprovals.make_an_approval_fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedApprovals.make_an_approval_fetch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.displays.DisplayedChecks">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">DisplayedChecks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_of_fetch</span></em>, <em class="sig-param"><span class="n">role_id</span></em>, <em class="sig-param"><span class="n">corp_id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedChecks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedChecks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#myapp.Models.displays.DetailsFromQuery" title="myapp.Models.displays.DetailsFromQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">myapp.Models.displays.DetailsFromQuery</span></code></a></p>
+<p>A superadmin can fetch corporate checks, infotrace_staff checks,
+and client_admin checks super_admin checks</p>
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedChecks.fetch_client_admin_checks">
+<code class="sig-name descname">fetch_client_admin_checks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedChecks.fetch_client_admin_checks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedChecks.fetch_client_admin_checks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedChecks.fetch_corporates">
+<code class="sig-name descname">fetch_corporates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedChecks.fetch_corporates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedChecks.fetch_corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedChecks.fetch_infotrace_admin_checks">
+<code class="sig-name descname">fetch_infotrace_admin_checks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedChecks.fetch_infotrace_admin_checks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedChecks.fetch_infotrace_admin_checks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedChecks.fetch_infotrace_client_checks">
+<code class="sig-name descname">fetch_infotrace_client_checks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedChecks.fetch_infotrace_client_checks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedChecks.fetch_infotrace_client_checks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedChecks.fetch_superadmin_admin_checks">
+<code class="sig-name descname">fetch_superadmin_admin_checks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedChecks.fetch_superadmin_admin_checks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedChecks.fetch_superadmin_admin_checks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedChecks.fetch_superadmin_client_checks">
+<code class="sig-name descname">fetch_superadmin_client_checks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedChecks.fetch_superadmin_client_checks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedChecks.fetch_superadmin_client_checks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.displays.DisplayedChecks.make_a_check_fetch">
+<code class="sig-name descname">make_a_check_fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#DisplayedChecks.make_a_check_fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.DisplayedChecks.make_a_check_fetch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.admin_function">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">admin_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">admin_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#admin_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.admin_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.admin_last_status">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">admin_last_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#admin_last_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.admin_last_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is best used without commiting the session
+becuase it is later committed in the DisplayedApprovals
+class found in the displays module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.corp_function">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">corp_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corporate_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#corp_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.corp_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.corp_function2">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">corp_function2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corp_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#corp_function2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.corp_function2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.corp_last_status">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">corp_last_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corp_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#corp_last_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.corp_last_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is best used without commiting the session
+becuase it is later committed in the DisplayedApprovals
+class found in the displays module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.last_admin_status">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">last_admin_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">current_answer</span></em>, <em class="sig-param"><span class="n">required_data</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#last_admin_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.last_admin_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.last_corp_status">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">last_corp_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">current_answer</span></em>, <em class="sig-param"><span class="n">required_data</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#last_corp_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.last_corp_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.object_as_dict">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">object_as_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#object_as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.object_as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to convert an sqlalchemy query from a
+list to a dictionary.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.role_function">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">role_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">role_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#role_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.role_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.status_function">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">status_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">status_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#status_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.status_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.displays.user_function">
+<code class="sig-prename descclassname">myapp.Models.displays.</code><code class="sig-name descname">user_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/displays.html#user_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.displays.user_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Models.html">myapp.Models package</a><ul>
+      <li>Previous: <a href="myapp.Models.checks_n_approvals.html" title="previous chapter">myapp.Models.checks_n_approvals module</a></li>
+      <li>Next: <a href="myapp.Models.model_users.html" title="next chapter">myapp.Models.model_users module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Models.displays.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

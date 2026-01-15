@@ -1,0 +1,507 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.displays &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Models.displays</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">inspect</span>
+
+
+<span class="kn">from</span> <span class="nn">myapp.Models.__init__</span> <span class="kn">import</span> <span class="n">db</span>
+
+
+
+<span class="kn">from</span> <span class="nn">myapp.Models.tables</span> <span class="kn">import</span> <span class="p">(</span>
+									<span class="n">AdminChecks</span><span class="p">,</span>
+									<span class="n">Administrators</span><span class="p">,</span>
+									<span class="n">ClientAdmins</span><span class="p">,</span>
+									<span class="n">CorporateChecks</span><span class="p">,</span>
+									<span class="n">Corporates</span><span class="p">,</span>
+									<span class="n">Roles</span><span class="p">,</span>
+									<span class="n">Status</span><span class="p">,</span>
+									<span class="n">Users</span>
+								<span class="p">)</span>
+
+<div class="viewcode-block" id="object_as_dict"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.object_as_dict">[docs]</a><span class="k">def</span> <span class="nf">object_as_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function is used to convert an sqlalchemy query from a</span>
+<span class="sd">	list to a dictionary.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="p">{</span><span class="n">c</span><span class="o">.</span><span class="n">key</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">inspect</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">column_attrs</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="admin_last_status"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.admin_last_status">[docs]</a><span class="k">def</span> <span class="nf">admin_last_status</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function is best used without commiting the session</span>
+<span class="sd">	becuase it is later committed in the DisplayedApprovals</span>
+<span class="sd">	class found in the displays module.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span>
+					<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AdminChecks</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">AdminChecks</span><span class="o">.</span><span class="n">client_being_checked</span><span class="o">==</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span>
+					<span class="n">order_by</span><span class="p">(</span><span class="n">AdminChecks</span><span class="o">.</span><span class="n">check_id</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+				<span class="p">)</span>
+	<span class="n">convert_to_dict</span> <span class="o">=</span> <span class="n">object_as_dict</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">convert_to_dict</span></div>
+
+
+<div class="viewcode-block" id="corp_last_status"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.corp_last_status">[docs]</a><span class="k">def</span> <span class="nf">corp_last_status</span><span class="p">(</span><span class="n">corp_id</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function is best used without commiting the session</span>
+<span class="sd">	becuase it is later committed in the DisplayedApprovals</span>
+<span class="sd">	class found in the displays module.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># print(&quot;The corporate id is :&quot;, corp_id)</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span>
+					<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CorporateChecks</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">CorporateChecks</span><span class="o">.</span><span class="n">corp_being_checked</span><span class="o">==</span><span class="n">corp_id</span><span class="p">)</span><span class="o">.</span>
+					<span class="n">order_by</span><span class="p">(</span><span class="n">CorporateChecks</span><span class="o">.</span><span class="n">check_id</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+				<span class="p">)</span>
+	<span class="n">convert_to_dict</span> <span class="o">=</span> <span class="n">object_as_dict</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">convert_to_dict</span></div>
+
+
+
+<div class="viewcode-block" id="last_admin_status"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.last_admin_status">[docs]</a><span class="k">def</span> <span class="nf">last_admin_status</span><span class="p">(</span><span class="n">current_answer</span><span class="p">,</span> <span class="n">required_data</span><span class="o">=</span><span class="p">[]):</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_answer</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">current_answer</span><span class="p">:</span>
+			<span class="n">person_id</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
+			<span class="n">recent_status</span> <span class="o">=</span> <span class="n">admin_last_status</span><span class="p">(</span><span class="n">person_id</span><span class="p">)[</span><span class="s2">&quot;checked_from&quot;</span><span class="p">]</span>
+			<span class="n">last_status</span> <span class="o">=</span> <span class="n">status_function</span><span class="p">(</span><span class="n">recent_status</span><span class="p">)</span><span class="o">.</span><span class="n">status_name</span>
+			<span class="n">person</span><span class="p">[</span><span class="s1">&#39;status_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">last_status</span>
+			<span class="n">required_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">required_data</span></div>
+
+
+<div class="viewcode-block" id="last_corp_status"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.last_corp_status">[docs]</a><span class="k">def</span> <span class="nf">last_corp_status</span><span class="p">(</span><span class="n">current_answer</span><span class="p">,</span> <span class="n">required_data</span><span class="o">=</span><span class="p">[]):</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_answer</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">corporate</span> <span class="ow">in</span> <span class="n">current_answer</span><span class="p">:</span>
+			<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">corporate</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span>
+			<span class="n">recent_status</span> <span class="o">=</span> <span class="n">corp_last_status</span><span class="p">(</span><span class="n">corporate_id</span><span class="p">)[</span><span class="s2">&quot;checked_from&quot;</span><span class="p">]</span>
+			<span class="n">last_status</span> <span class="o">=</span> <span class="n">status_function</span><span class="p">(</span><span class="n">recent_status</span><span class="p">)</span><span class="o">.</span><span class="n">status_name</span>
+			<span class="n">corporate</span><span class="p">[</span><span class="s1">&#39;status_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">last_status</span>
+			<span class="n">required_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">corporate</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">required_data</span></div>
+
+<span class="c1"># Functions used to commit changes to the database when for loop ends</span>
+<div class="viewcode-block" id="user_function"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.user_function">[docs]</a><span class="k">def</span> <span class="nf">user_function</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Users</span><span class="o">.</span><span class="n">user_id</span><span class="o">==</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+	<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="status_function"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.status_function">[docs]</a><span class="k">def</span> <span class="nf">status_function</span><span class="p">(</span><span class="n">status_id</span><span class="p">):</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Status</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">status_id</span><span class="o">==</span><span class="n">status_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+	<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="role_function"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.role_function">[docs]</a><span class="k">def</span> <span class="nf">role_function</span><span class="p">(</span><span class="n">role_id</span><span class="p">):</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Roles</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Roles</span><span class="o">.</span><span class="n">role_id</span><span class="o">==</span><span class="n">role_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+	<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="corp_function"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.corp_function">[docs]</a><span class="k">def</span> <span class="nf">corp_function</span><span class="p">(</span><span class="n">corporate_name</span><span class="p">):</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_name</span><span class="o">==</span><span class="n">corporate_name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+	<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="corp_function2"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.corp_function2">[docs]</a><span class="k">def</span> <span class="nf">corp_function2</span><span class="p">(</span><span class="n">corp_id</span><span class="p">):</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">corporate_id</span><span class="o">==</span><span class="n">corp_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+	<span class="k">return</span> <span class="n">sql_query</span></div>
+
+<div class="viewcode-block" id="admin_function"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.admin_function">[docs]</a><span class="k">def</span> <span class="nf">admin_function</span><span class="p">(</span><span class="n">admin_id</span><span class="p">):</span>
+	<span class="n">sql_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span>
+					<span class="nb">filter</span><span class="p">(</span><span class="n">Administrators</span><span class="o">.</span><span class="n">admin_id</span><span class="o">==</span><span class="n">admin_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+	<span class="k">return</span> <span class="n">sql_query</span></div>
+
+
+<div class="viewcode-block" id="DetailsFromQuery"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DetailsFromQuery">[docs]</a><span class="k">class</span> <span class="nc">DetailsFromQuery</span><span class="p">():</span>
+	
+<div class="viewcode-block" id="DetailsFromQuery.is_valid_fetch"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DetailsFromQuery.is_valid_fetch">[docs]</a>	<span class="k">def</span> <span class="nf">is_valid_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_of_fetch</span><span class="p">):</span>
+		<span class="n">valid_fetches</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;administrators&quot;</span><span class="p">,</span> <span class="s2">&quot;clients&quot;</span><span class="p">,</span> <span class="s2">&quot;corporates&quot;</span><span class="p">]</span> 
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_fetches</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DetailsFromQuery.create_user"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DetailsFromQuery.create_user">[docs]</a>	<span class="k">def</span> <span class="nf">create_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">):</span>
+		<span class="n">admin_displays</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="k">if</span> <span class="n">sql_query</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">None</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sql_query</span><span class="p">:</span>
+			<span class="n">all_details</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="n">the_item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="vm">__dict__</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">the_email</span> <span class="o">=</span> <span class="n">the_item</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">]</span>
+			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="n">the_email</span> <span class="o">=</span> <span class="n">the_item</span><span class="p">[</span><span class="s2">&quot;client_email&quot;</span><span class="p">]</span>
+			<span class="n">user_details</span> <span class="o">=</span> <span class="n">user_function</span><span class="p">(</span><span class="n">the_item</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">])</span>
+			<span class="n">user_names</span> <span class="o">=</span> <span class="n">user_details</span><span class="o">.</span><span class="n">user_names</span>
+			<span class="n">user_identity</span> <span class="o">=</span> <span class="n">user_details</span><span class="o">.</span><span class="n">user_identity</span>
+			<span class="n">user_id</span> <span class="o">=</span> <span class="n">user_details</span><span class="o">.</span><span class="n">user_id</span>
+			<span class="n">corp_name</span> <span class="o">=</span> <span class="n">corp_function2</span><span class="p">(</span><span class="n">the_item</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">corporate_name</span>
+			<span class="n">status_name</span> <span class="o">=</span> <span class="n">status_function</span><span class="p">(</span><span class="n">the_item</span><span class="p">[</span><span class="s2">&quot;status_id&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_name</span>
+			<span class="n">role_name</span> <span class="o">=</span><span class="n">role_function</span><span class="p">(</span><span class="n">the_item</span><span class="p">[</span><span class="s2">&quot;role_id&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">role_name</span>
+			<span class="n">user_email</span> <span class="o">=</span> <span class="n">the_email</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;user_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_names</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;user_identity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_identity</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_id</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;status_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">status_name</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;role_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">role_name</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;user_email&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_email</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">corp_name</span>
+			<span class="n">admin_displays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_details</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">admin_displays</span></div>
+
+
+<div class="viewcode-block" id="DetailsFromQuery.create_corp_details"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DetailsFromQuery.create_corp_details">[docs]</a>	<span class="k">def</span> <span class="nf">create_corp_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">):</span>
+		<span class="n">admin_displays</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">sql_query</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">None</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sql_query</span><span class="p">:</span>
+			<span class="n">all_details</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="vm">__dict__</span>
+			<span class="n">corp_name</span> <span class="o">=</span> <span class="n">corp_function</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">corporate_name</span>
+			<span class="n">corporate_pin</span> <span class="o">=</span> <span class="n">corp_function</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">corporate_pin</span>
+			<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">corp_function</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">corporate_id</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">corp_name</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;corporate_pin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">corporate_pin</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">corporate_id</span>
+			<span class="n">admin_displays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_details</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">admin_displays</span></div>
+
+<div class="viewcode-block" id="DetailsFromQuery.create_payments"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DetailsFromQuery.create_payments">[docs]</a>	<span class="k">def</span> <span class="nf">create_payments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">):</span>
+		<span class="n">admin_displays</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">sql_query</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">None</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sql_query</span><span class="p">:</span>
+			<span class="n">all_details</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="vm">__dict__</span>
+			<span class="n">corp_details</span> <span class="o">=</span> <span class="n">corp_function2</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+			<span class="n">corp_names</span> <span class="o">=</span> <span class="n">corp_details</span><span class="o">.</span><span class="n">corporate_name</span>
+			<span class="n">payment_amount</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;payment_amount&quot;</span><span class="p">]</span>
+			<span class="n">admin</span> <span class="o">=</span><span class="n">admin_function</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;admin_id&quot;</span><span class="p">])</span>
+			<span class="n">user_names</span> <span class="o">=</span> <span class="n">user_function</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">user_names</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;user_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_names</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">corporate_name</span>
+			<span class="n">all_details</span><span class="p">[</span><span class="s2">&quot;payment_amount&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">payment_amount</span>
+			<span class="n">admin_displays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_details</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">admin_displays</span></div></div>
+
+
+<div class="viewcode-block" id="DisplayedChecks"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedChecks">[docs]</a><span class="k">class</span> <span class="nc">DisplayedChecks</span><span class="p">(</span><span class="n">DetailsFromQuery</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;A superadmin can fetch corporate checks, infotrace_staff checks,</span>
+<span class="sd">	and client_admin checks super_admin checks&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_of_fetch</span><span class="p">,</span> <span class="n">role_id</span><span class="p">,</span> <span class="n">corp_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">=</span> <span class="n">type_of_fetch</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">=</span> <span class="n">role_id</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">corp_id</span> <span class="o">=</span> <span class="n">corp_id</span>
+
+<div class="viewcode-block" id="DisplayedChecks.fetch_superadmin_admin_checks"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedChecks.fetch_superadmin_admin_checks">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_superadmin_admin_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_admins</span> <span class="o">=</span> 	<span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span>
+										<span class="n">Administrators</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">Administrators</span><span class="o">.</span><span class="n">role_id</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+										<span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+							<span class="p">)</span>
+			<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">fetch_admins</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DisplayedChecks.fetch_superadmin_client_checks"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedChecks.fetch_superadmin_client_checks">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_superadmin_client_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_clients</span> <span class="o">=</span> <span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">3</span>
+										<span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+							<span class="p">)</span>
+			<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">fetch_clients</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DisplayedChecks.fetch_infotrace_admin_checks"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedChecks.fetch_infotrace_admin_checks">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_infotrace_admin_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_admins</span> <span class="o">=</span> 	<span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span>
+										<span class="n">Administrators</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">Administrators</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">2</span>
+										<span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+							<span class="p">)</span>
+			<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">fetch_admins</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DisplayedChecks.fetch_infotrace_client_checks"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedChecks.fetch_infotrace_client_checks">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_infotrace_client_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_client</span> <span class="o">=</span> 	<span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">3</span>
+										<span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+							<span class="p">)</span>
+			<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">fetch_clients</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DisplayedChecks.fetch_client_admin_checks"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedChecks.fetch_client_admin_checks">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_client_admin_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_clients</span> <span class="o">=</span> <span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">role_id</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">,</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corp_id</span>
+										<span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+								<span class="p">)</span>
+			<span class="n">clients</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">fetch_clients</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">clients</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DisplayedChecks.fetch_corporates"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedChecks.fetch_corporates">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_corporates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_corps</span> <span class="o">=</span> 	<span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span><span class="n">Corporates</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+							<span class="p">)</span>
+			<span class="n">corporates</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_corp_details</span><span class="p">(</span><span class="n">fetch_corps</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">corporates</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DisplayedChecks.make_a_check_fetch"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedChecks.make_a_check_fetch">[docs]</a>	<span class="k">def</span> <span class="nf">make_a_check_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">is_valid_fetch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;wrong type of fetch provided&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;administrators&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_superadmin_admin_checks</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;clients&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_superadmin_client_checks</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;administrators&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_infotrace_admin_checks</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;clients&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_superadmin_client_checks</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;clients&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_client_admin_checks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;corporates&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_corporates</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="DisplayedApprovals"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedApprovals">[docs]</a><span class="k">class</span> <span class="nc">DisplayedApprovals</span><span class="p">(</span><span class="n">DetailsFromQuery</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	The status name should not indicate the current status. Instead, it should</span>
+<span class="sd">	indicate the previous status.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_of_fetch</span><span class="p">,</span> <span class="n">role_id</span><span class="p">,</span> <span class="n">corporate_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">=</span> <span class="n">type_of_fetch</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">=</span> <span class="n">role_id</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">=</span> <span class="n">corporate_id</span>
+
+<div class="viewcode-block" id="DisplayedApprovals.fetch_superadmin_admin_approvals"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedApprovals.fetch_superadmin_admin_approvals">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_superadmin_admin_approvals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_admins</span> <span class="o">=</span> <span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Administrators</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span>
+										<span class="n">Administrators</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">7</span><span class="p">,</span>
+										<span class="n">Administrators</span><span class="o">.</span><span class="n">role_id</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+									  <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+								<span class="p">)</span>
+			
+			<span class="n">current_answer</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">fetch_admins</span><span class="p">)</span>
+			<span class="c1"># Fetch the recent status as checked_from in the AdminChecks table</span>
+			<span class="n">last_status_from_AdminChecks</span> <span class="o">=</span> <span class="n">last_admin_status</span><span class="p">(</span><span class="n">current_answer</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">last_status_from_AdminChecks</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DisplayedApprovals.fetch_superadmin_client_approvals"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedApprovals.fetch_superadmin_client_approvals">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_superadmin_client_approvals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_clients</span> <span class="o">=</span> <span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">7</span><span class="p">,</span>
+										<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">role_id</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+									   <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+							<span class="p">)</span>
+			<span class="n">current_answer</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">fetch_clients</span><span class="p">)</span>
+			<span class="c1"># Fetch the recent status as checked_from in the AdminChecks table</span>
+			<span class="n">last_status_from_AdminChecks</span> <span class="o">=</span> <span class="n">last_admin_status</span><span class="p">(</span><span class="n">current_answer</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">last_status_from_AdminChecks</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DisplayedApprovals.fetch_superadmin_corp_approvals"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedApprovals.fetch_superadmin_corp_approvals">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_superadmin_corp_approvals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>		
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_corps</span> <span class="o">=</span> <span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Corporates</span><span class="p">)</span><span class="o">.</span>
+							<span class="nb">filter</span><span class="p">(</span>
+									<span class="n">Corporates</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">7</span>
+								  <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+						  <span class="p">)</span>
+			<span class="n">current_answer</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_corp_details</span><span class="p">(</span><span class="n">fetch_corps</span><span class="p">)</span>
+			<span class="c1"># Fetch the recent status as checked_from in the AdminChecks table</span>
+			<span class="n">last_status_from_CorpChecks</span> <span class="o">=</span> <span class="n">last_corp_status</span><span class="p">(</span><span class="n">current_answer</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">last_status_from_CorpChecks</span>
+			
+		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DisplayedApprovals.fetch_superadmin_pay_approvals"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedApprovals.fetch_superadmin_pay_approvals">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_superadmin_pay_approvals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">payment_result</span> <span class="o">=</span> <span class="p">(</span>
+								<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientPayments</span><span class="p">)</span><span class="o">.</span>
+								<span class="nb">filter</span><span class="p">(</span>
+											<span class="n">ClientPayments</span><span class="o">.</span><span class="n">uploaded_by</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">,</span>
+											<span class="n">ClientPayments</span><span class="o">.</span><span class="n">approved_by</span> <span class="o">==</span> <span class="kc">None</span>
+									   <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+							 <span class="p">)</span>
+			<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_payments</span><span class="p">(</span><span class="n">payment_result</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DisplayedApprovals.fetch_client_admin_approvals"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedApprovals.fetch_client_admin_approvals">[docs]</a>	<span class="k">def</span> <span class="nf">fetch_client_admin_approvals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">fetch_result</span> <span class="o">=</span> <span class="p">(</span>
+							<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientAdmins</span><span class="p">)</span><span class="o">.</span>
+							<span class="nb">filter</span><span class="p">(</span>
+									<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">status_id</span> <span class="o">==</span> <span class="mi">7</span><span class="p">,</span>
+									<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span>
+									<span class="n">ClientAdmins</span><span class="o">.</span><span class="n">corporate_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">corp_id</span>
+								<span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+							<span class="p">)</span>
+			<span class="n">current_answer</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_user_details</span><span class="p">(</span><span class="n">fetch_result</span><span class="p">)</span>
+			<span class="c1"># Fetch the recent status as checked_from in the AdminChecks table</span>
+			<span class="n">last_status_from_AdminChecks</span> <span class="o">=</span> <span class="n">last_admin_status</span><span class="p">(</span><span class="n">current_answer</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">last_status_from_AdminChecks</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></div>
+	
+<div class="viewcode-block" id="DisplayedApprovals.make_an_approval_fetch"><a class="viewcode-back" href="../../../myapp.Models.displays.html#myapp.Models.displays.DisplayedApprovals.make_an_approval_fetch">[docs]</a>	<span class="k">def</span> <span class="nf">make_an_approval_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">is_valid_fetch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;wrong type of fetch provided&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;administrators&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_superadmin_admin_approvals</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;clients&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_superadmin_client_approvals</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;corporates&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_superadmin_corp_approvals</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;payments&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_superadmin_pay_approvals</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;clients&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_client_admin_approvals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corporate_id</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_of_fetch</span> <span class="o">==</span> <span class="s2">&quot;corporates&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_id</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_corporates</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

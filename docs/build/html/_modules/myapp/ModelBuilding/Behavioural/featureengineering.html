@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.ModelBuilding.Behavioural.featureengineering &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.ModelBuilding.Behavioural.featureengineering</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is used for feature engineering.</span>
+
+<span class="sd">During feature engineering separate limit from default engineering.</span>
+<span class="sd">For default engineering: The kyc is the first entity set</span>
+<span class="sd">For limit engineering: The loan is the first entity set</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">featuretools</span> <span class="k">as</span> <span class="nn">ft</span>
+<span class="kn">import</span> <span class="nn">featuretools.variable_types</span> <span class="k">as</span> <span class="nn">vtypes</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+
+
+	
+<div class="viewcode-block" id="create_default_kyc_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_default_kyc_entity">[docs]</a><span class="k">def</span> <span class="nf">create_default_kyc_entity</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Create an entity set for kyc</span>
+
+<span class="sd">	Creates a kyc entitty set used in predicting the default.</span>
+<span class="sd">	Initalize an empty called borrowers, decalare all variable</span>
+<span class="sd">	types using featuretools then add the resultting entity set</span>
+<span class="sd">	to the borrowers entity set declared earlier.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		df: The Kyc data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		obj: An entity set(featuretools object)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">EntitySet</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="s1">&#39;borrowers&#39;</span><span class="p">)</span>
+	<span class="c1"># decalare variable types</span>
+	<span class="n">borrower_types</span> <span class="o">=</span> <span class="p">{</span>
+						<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+						<span class="s1">&#39;kyc_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_date_created&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_date_of_birth&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">DateOfBirth</span><span class="p">,</span>
+						<span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+						<span class="s1">&#39;province_Central&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+						<span class="s1">&#39;province_Coast&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_Eastern&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Categorical</span><span class="p">,</span>
+						<span class="s1">&#39;province_Nairobi&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_NorthEastern&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_Nyanza&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_RiftyValley&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_Western&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;gender_f&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;gender_m&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+				<span class="p">}</span>
+	<span class="c1"># add the information to the entity set es</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span><span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;kyc_data&#39;</span><span class="p">,</span>
+								  <span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+								  <span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span>
+								  <span class="n">variable_types</span> <span class="o">=</span> <span class="n">borrower_types</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_limit_kyc_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_limit_kyc_entity">[docs]</a><span class="k">def</span> <span class="nf">create_limit_kyc_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a kyc entity set for limit prediction.</span>
+
+<span class="sd">	Note:</span>
+<span class="sd">		Unlike the create_default_kyc_entity function, this</span>
+<span class="sd">		one does not initalize an empty entity set because that</span>
+<span class="sd">		is done in the loan entity set.</span>
+<span class="sd">	Given an entity set and a dataframe create borrower types and</span>
+<span class="sd">	add the data from the df to the entity set provided. </span>
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a kyc data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="n">borrower_types</span> <span class="o">=</span> <span class="p">{</span>
+						<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+						<span class="s1">&#39;kyc_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_date_created&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_date_of_birth&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">DateOfBirth</span><span class="p">,</span>
+						<span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+						<span class="s1">&#39;province_Central&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+						<span class="s1">&#39;province_Coast&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_Eastern&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Categorical</span><span class="p">,</span>
+						<span class="s1">&#39;province_Nairobi&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_NorthEastern&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_Nyanza&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_RiftyValley&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;province_Western&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;gender_f&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;gender_m&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+				<span class="p">}</span>
+	<span class="c1"># add the information ot the entity set es</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span><span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;kyc&#39;</span><span class="p">,</span>
+								  <span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+								  <span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;kyc_id&#39;</span><span class="p">,</span>
+								  <span class="n">variable_types</span> <span class="o">=</span> <span class="n">borrower_types</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_deposits_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_deposits_entity">[docs]</a><span class="k">def</span> <span class="nf">create_deposits_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a deposits entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create deposit types and</span>
+<span class="sd">	add the data from the df to the entity set provided. </span>
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a deposits data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">deposit_types</span> <span class="o">=</span> <span class="p">{</span>
+						<span class="s1">&#39;deposit_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+						<span class="s1">&#39;date_of_deposit&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span> 
+						<span class="s1">&#39;deposit_amount&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_channel_Airtel&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_channel_Bank&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_channel_Mpesa&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+						<span class="s1">&#39;deposit_description_Installments&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;deposit_description_Savings&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+					 <span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;deposits&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;deposit_id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">deposit_types</span>
+								  <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+<div class="viewcode-block" id="create_withdrawals_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_withdrawals_entity">[docs]</a><span class="k">def</span> <span class="nf">create_withdrawals_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a withdrawals entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create withdrawals types and</span>
+<span class="sd">	add the data from the df to the entity set provided. </span>
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a withdrawals data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">withdrawal_types</span> <span class="o">=</span> <span class="p">{</span>
+							<span class="s2">&quot;withdrawals_id&quot;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+							<span class="s2">&quot;borrower_id&quot;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+							<span class="s2">&quot;withdrawals_amount&quot;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+							<span class="s2">&quot;withdrawals_channel_Mfanisi&quot;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+							<span class="s2">&quot;date_of_withdrawals&quot;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+							<span class="s2">&quot;withdrawals_channel_Mpesa&quot;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+							<span class="s2">&quot;withdrawals_description_Installments&quot;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+							<span class="s2">&quot;withdrawals_description_Savings&quot;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+						<span class="p">}</span>
+	<span class="c1"># add the information to the entity set es</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s2">&quot;withdrawal&quot;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s2">&quot;withdrawals_id&quot;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">withdrawal_types</span>
+								 <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_savings_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_savings_entity">[docs]</a><span class="k">def</span> <span class="nf">create_savings_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a savings entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create savings types and</span>
+<span class="sd">	add the data from the df to the entity set provided. </span>
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a savings data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">savings_types</span> <span class="o">=</span> <span class="p">{</span>
+						<span class="s1">&#39;savings_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span> 
+						<span class="s1">&#39;date_of_savings&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+						<span class="s1">&#39;savings_amount&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+						<span class="s1">&#39;savings_channel_Mfanisi&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;savings_channel_Mpesa&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;savings_type_current&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;savings_type_fixed&#39;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+					<span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;savings&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;savings_id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">savings_types</span>
+								<span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_default_loans_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_default_loans_entity">[docs]</a><span class="k">def</span> <span class="nf">create_default_loans_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a loans entity set for predicting default.</span>
+
+<span class="sd">	Given an entity set and a dataframe create loans types and</span>
+<span class="sd">	add the data from the df to the entity set provided. </span>
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a loan data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">loan_types</span> <span class="o">=</span> <span class="p">{</span>
+					  <span class="s1">&#39;loan_id&#39;</span><span class="p">:</span>  <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+					  <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span>  <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+					  <span class="s1">&#39;date_of_loan&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_period&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Categorical</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_amount&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+					  <span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Datetime</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_installment_1&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_installment_2&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_installment_3&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+				  <span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;loans&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;loan_id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">loan_types</span>
+								  <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_limit_loans_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_limit_loans_entity">[docs]</a><span class="k">def</span> <span class="nf">create_limit_loans_entity</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a loans entity set for limit prediction.</span>
+
+<span class="sd">	Note:</span>
+<span class="sd">		An entity set has not been provided here</span>
+
+<span class="sd">	Initialize an empty entity set called loans create loans</span>
+<span class="sd">	types and add the data from the df to the empty entity set</span>
+<span class="sd">	initiated.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		df: a dataframe in this case a loans data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">EntitySet</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="s1">&#39;loans&#39;</span><span class="p">)</span>
+	<span class="n">loan_types</span> <span class="o">=</span> <span class="p">{</span>
+					  <span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span>  <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+					  <span class="s1">&#39;date_of_loan&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_period&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Categorical</span><span class="p">,</span>
+					  <span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Datetime</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_installment_1&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_installment_2&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					  <span class="s1">&#39;loan_installment_3&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+				  <span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;loans&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">loan_types</span>
+								  <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+<div class="viewcode-block" id="create_installments_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_installments_entity">[docs]</a><span class="k">def</span> <span class="nf">create_installments_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates an installments entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create an installments types</span>
+<span class="sd">	and add the data from the df to the entity set provided.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a installments data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">installment_types</span> <span class="o">=</span> <span class="p">{</span>
+							<span class="s1">&#39;installment_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+							<span class="s1">&#39;installments_loan_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+							<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+							<span class="s1">&#39;date_of_installment&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+							<span class="s1">&#39;installment_amount&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+							<span class="s1">&#39;installment_loan_balance&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span> 
+							<span class="s1">&#39;installment_type_debt_collection&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+							<span class="s1">&#39;installment_type_interest&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+							<span class="s1">&#39;installment_type_principal&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+						<span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;installments&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;installment_id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">installment_types</span>
+								 <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_mpesa_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_mpesa_entity">[docs]</a><span class="k">def</span> <span class="nf">create_mpesa_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates an mpesa entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create mpesa types and</span>
+<span class="sd">	add the data from the df to the entity set provided.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a mpesa data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">mpesa_types</span>  <span class="o">=</span> <span class="p">{</span>
+					<span class="s1">&#39;mpesa_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+					<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span>  <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+					<span class="s1">&#39;mpesa_amount&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span> 
+					<span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span> 
+					<span class="s1">&#39;mpesa_airtime&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;mpesa_banking&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+					<span class="s1">&#39;mpesa_fuliza&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;mpesa_gambling&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;mpesa_incoming&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;mpesa_loans&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;mpesa_outgoing_sent_to&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;mpesa_utilities&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;mpesa_withdrawal&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+				<span class="p">}</span>
+	<span class="c1"># add the information ot the entity set es</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;mpesa&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;mpesa_id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">mpesa_types</span>
+								  <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_images_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_images_entity">[docs]</a><span class="k">def</span> <span class="nf">create_images_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates an immages entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create an images types and</span>
+<span class="sd">	add the data from the df to the entity set provided. </span>
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a images data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">image_types</span> <span class="o">=</span> <span class="p">{</span>
+					<span class="s1">&#39;image_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+					<span class="s1">&#39;image_date_added&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+					<span class="s1">&#39;image_size&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+					<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+					<span class="s1">&#39;image_heic&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;image_jpeg&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;image_jpg&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;image_png&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;image_webp&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;image_x-ms-bmp&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+				  <span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;images&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">image_types</span>
+								 <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_music_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_music_entity">[docs]</a><span class="k">def</span> <span class="nf">create_music_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a music entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create music types and</span>
+<span class="sd">	add the data from the df to the entity set provided.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a kyc data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">music_types</span> <span class="o">=</span> <span class="p">{</span>
+					<span class="s1">&#39;music_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+					<span class="s1">&#39;music_date_added&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+					<span class="s1">&#39;music_size&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+					<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+					<span class="s1">&#39;music_3gpp&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_aac&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_aac-adts&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_adpcm&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_amr&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_amr-wb&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_application/aac&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_application/ogg&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_flac&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_m4a&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_mp3&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_mp4&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_mpeg&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_ogg&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_quicktime&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_wav&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_x-matroska&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_x-ms-wma&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s1">&#39;music_x-wav&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+			  <span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;music&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">music_types</span>
+								  <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_messages_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_messages_entity">[docs]</a><span class="k">def</span> <span class="nf">create_messages_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a message entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create message types and</span>
+<span class="sd">	add the data from the df to the entity set provided.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a message data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">message_types</span> <span class="o">=</span> <span class="p">{</span>
+						<span class="s1">&#39;message_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+						<span class="s1">&#39;message_time_stamp&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span>
+						<span class="s1">&#39;message_length&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+						<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+						<span class="s1">&#39;message_INCOMING&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+						<span class="s1">&#39;message_OUTGOING&#39;</span><span class="p">:</span> <span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+					<span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;messages&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">message_types</span>
+								  <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="create_videos_entity"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.create_videos_entity">[docs]</a><span class="k">def</span> <span class="nf">create_videos_entity</span><span class="p">(</span><span class="n">es</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates a video entity set.</span>
+
+<span class="sd">	Given an entity set and a dataframe create video types and</span>
+<span class="sd">	add the data from the df to the entity set provided.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		obj: es an entity set, which is a feature tools object.</span>
+<span class="sd">		df: a dataframe in this case a video data set.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obj): An entity set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">video_types</span><span class="o">=</span><span class="p">{</span>
+					<span class="s2">&quot;video_id&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+					<span class="s2">&quot;video_date_added&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">TimeIndex</span><span class="p">,</span> 
+					<span class="s2">&quot;video_size&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span> 
+					<span class="s2">&quot;borrower_id&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span>
+					<span class="s2">&quot;video_3gpp&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+					<span class="s2">&quot;video_avi&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+					<span class="s2">&quot;video_mp2ts&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+					<span class="s2">&quot;video_mp4&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+					<span class="s2">&quot;video_mpeg&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+					<span class="s2">&quot;video_quicktime&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+					<span class="s2">&quot;video_webm&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> 
+					<span class="s2">&quot;video_x-matroska&quot;</span><span class="p">:</span><span class="n">vtypes</span><span class="o">.</span><span class="n">Boolean</span>
+				<span class="p">}</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">entity_from_dataframe</span><span class="p">(</span>
+									<span class="n">entity_id</span> <span class="o">=</span> <span class="s1">&#39;videos&#39;</span><span class="p">,</span>
+									<span class="n">dataframe</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+									<span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+									<span class="n">variable_types</span> <span class="o">=</span> <span class="n">video_types</span>
+								  <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+<div class="viewcode-block" id="add_default_relations_to_entityset"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.add_default_relations_to_entityset">[docs]</a><span class="k">def</span> <span class="nf">add_default_relations_to_entityset</span><span class="p">(</span><span class="n">es</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates relationships between entity sets(default prediction).</span>
+
+<span class="sd">	Give an entity set create relationships between different</span>
+<span class="sd">	data sets in the entity set and add the relationships to the</span>
+<span class="sd">	entity sets.</span>
+
+<span class="sd">	Note:</span>
+<span class="sd">		The relatinships used when predicting default is different </span>
+<span class="sd">		from the relationships used when predicting loan limits.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		es(obj): Feature tools object</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obje): Featuretools object.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">r_kyc_deposits</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+									 <span class="n">es</span><span class="p">[</span><span class="s1">&#39;deposits&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_kyc_savings</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+									<span class="n">es</span><span class="p">[</span><span class="s1">&#39;savings&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_kyc_withdrawal</span> <span class="o">=</span> <span class="p">(</span><span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+										<span class="n">es</span><span class="p">[</span><span class="s1">&#39;withdrawal&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]))</span>
+	<span class="n">r_kyc_loans</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+								  <span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_loans_installments</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;loan_id&#39;</span><span class="p">],</span>
+										   <span class="n">es</span><span class="p">[</span><span class="s1">&#39;installments&#39;</span><span class="p">][</span><span class="s1">&#39;installments_loan_id&#39;</span><span class="p">])</span>
+	<span class="n">r_kyc_mpesa</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+								  <span class="n">es</span><span class="p">[</span><span class="s1">&#39;mpesa&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_kyc_images</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+								   <span class="n">es</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_kyc_music</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+								  <span class="n">es</span><span class="p">[</span><span class="s1">&#39;music&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_kyc_messages</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+									 <span class="n">es</span><span class="p">[</span><span class="s1">&#39;messages&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_kyc_videos</span> <span class="o">=</span> <span class="p">(</span><span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+									  <span class="n">es</span><span class="p">[</span><span class="s1">&#39;videos&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]))</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">add_relationships</span><span class="p">(</span>
+								<span class="p">[</span>	
+									<span class="n">r_kyc_withdrawal</span><span class="p">,</span> <span class="n">r_kyc_mpesa</span><span class="p">,</span>
+									<span class="n">r_kyc_deposits</span><span class="p">,</span> <span class="n">r_kyc_loans</span><span class="p">,</span>
+									<span class="n">r_loans_installments</span><span class="p">,</span> <span class="n">r_kyc_savings</span><span class="p">,</span>
+									<span class="n">r_kyc_images</span><span class="p">,</span> <span class="n">r_kyc_music</span><span class="p">,</span>
+									<span class="n">r_kyc_messages</span><span class="p">,</span><span class="n">r_kyc_videos</span>
+								<span class="p">]</span>
+							  <span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+<div class="viewcode-block" id="add_limit_relations_to_entityset"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.add_limit_relations_to_entityset">[docs]</a><span class="k">def</span> <span class="nf">add_limit_relations_to_entityset</span><span class="p">(</span><span class="n">es</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates relationships between entity sets (limit prediction).</span>
+
+<span class="sd">	Give an entity set create relationships between different</span>
+<span class="sd">	data sets in the entity set and add the relationships to the</span>
+<span class="sd">	entity sets.</span>
+
+<span class="sd">	Note:</span>
+<span class="sd">		The relationships used when predicting default is different </span>
+<span class="sd">		from the relationships used when predicting loan limits.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		es(obj): Feature tools object</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		es(obje): Featuretools object.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">r_loan_deposits</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+									  <span class="n">es</span><span class="p">[</span><span class="s1">&#39;deposits&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_loan_savings</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+										 <span class="n">es</span><span class="p">[</span><span class="s1">&#39;savings&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_loan_withdrawal</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+											 <span class="n">es</span><span class="p">[</span><span class="s1">&#39;withdrawal&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_loan_mpesa</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+									  <span class="n">es</span><span class="p">[</span><span class="s1">&#39;mpesa&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_loan_images</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+									   <span class="n">es</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_loan_music</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+										<span class="n">es</span><span class="p">[</span><span class="s1">&#39;music&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_loan_messages</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+											<span class="n">es</span><span class="p">[</span><span class="s1">&#39;messages&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">r_loan_videos</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">Relationship</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="s1">&#39;loans&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">],</span>
+										   <span class="n">es</span><span class="p">[</span><span class="s1">&#39;videos&#39;</span><span class="p">][</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">])</span>
+	<span class="n">es</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">add_relationships</span><span class="p">(</span>
+								<span class="p">[</span>  
+									<span class="n">r_loan_withdrawal</span><span class="p">,</span> <span class="n">r_loan_mpesa</span><span class="p">,</span>
+									<span class="n">r_loan_deposits</span><span class="p">,</span> <span class="n">r_loan_savings</span><span class="p">,</span>
+									<span class="n">r_loan_images</span><span class="p">,</span> <span class="n">r_loan_music</span><span class="p">,</span>
+									<span class="n">r_loan_messages</span><span class="p">,</span><span class="n">r_loan_videos</span>
+								<span class="p">]</span>
+							<span class="p">)</span>
+	<span class="k">return</span> <span class="n">es</span></div>
+
+
+
+<div class="viewcode-block" id="do_default_feature_engineering"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.do_default_feature_engineering">[docs]</a><span class="k">def</span> <span class="nf">do_default_feature_engineering</span><span class="p">(</span><span class="n">es</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates features from the entity set for default prediction.</span>
+
+<span class="sd">	Declare the metrics used by feature tools to create features, do </span>
+<span class="sd">	feature engineering and a dataframe.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		es(obj): Feature tools object.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		df(dataframe): a dataframe</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">agg_primitives</span> <span class="o">=</span> <span class="p">(</span>
+						<span class="p">[</span>
+							<span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;skew&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s1">&#39;Trend&#39;</span>
+						<span class="p">]</span>
+			 <span class="p">)</span>
+	<span class="n">trans_primitives</span> <span class="o">=</span>  <span class="p">([</span><span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;weekday&quot;</span><span class="p">])</span>
+	<span class="c1"># es = add_default_relations_to_entityset(es)</span>
+	<span class="n">feat_matrix</span><span class="p">,</span> <span class="n">feat_names</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span>
+										<span class="n">entityset</span><span class="o">=</span><span class="n">es</span><span class="p">,</span>
+										<span class="n">target_entity</span><span class="o">=</span><span class="s1">&#39;kyc_data&#39;</span><span class="p">,</span>
+										<span class="n">agg_primitives</span> <span class="o">=</span> <span class="n">agg_primitives</span><span class="p">,</span>
+										<span class="n">trans_primitives</span> <span class="o">=</span> <span class="n">trans_primitives</span><span class="p">,</span>
+										<span class="n">n_jobs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">features_only</span> <span class="o">=</span> <span class="kc">False</span>
+									<span class="p">)</span> 
+	<span class="n">feat_matrix</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">feat_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">feat_matrix</span><span class="p">)</span>
+	<span class="c1"># drop any column containing the word _id</span>
+	<span class="n">feat_df</span> <span class="o">=</span> <span class="n">feat_df</span><span class="p">[</span><span class="n">feat_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">feat_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;_id&#39;</span><span class="p">)))]</span>
+	<span class="n">feat_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># replace missing values</span>
+	<span class="k">return</span> <span class="n">feat_df</span></div>
+
+
+<div class="viewcode-block" id="do_limit_feature_engineering"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.featureengineering.html#myapp.ModelBuilding.Behavioural.featureengineering.do_limit_feature_engineering">[docs]</a><span class="k">def</span> <span class="nf">do_limit_feature_engineering</span><span class="p">(</span><span class="n">es</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Creates features from the entity set for limit prediction.</span>
+
+<span class="sd">	Declare the metrics used by feature tools to create features, do </span>
+<span class="sd">	feature engineering and a dataframe.Here the loan data is </span>
+<span class="sd">	provided by the user seeking the loan. For details check </span>
+<span class="sd">	Users.users module</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		es(obj): Feature tools object.</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		df(dataframe): a dataframe	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">agg_primitives</span> <span class="o">=</span> <span class="p">(</span>
+						<span class="p">[</span>
+							<span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;skew&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s1">&#39;Trend&#39;</span>
+						<span class="p">]</span>
+			 <span class="p">)</span>
+	<span class="n">trans_primitives</span> <span class="o">=</span>  <span class="p">([</span><span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;weekday&quot;</span><span class="p">])</span>
+	<span class="c1"># es = add_limit_relations_to_entityset(es)</span>
+	<span class="n">feat_matrix</span><span class="p">,</span> <span class="n">feat_names</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span>
+										<span class="n">entityset</span><span class="o">=</span><span class="n">es</span><span class="p">,</span>
+										<span class="n">target_entity</span><span class="o">=</span><span class="s1">&#39;loans&#39;</span><span class="p">,</span>
+										<span class="n">agg_primitives</span> <span class="o">=</span> <span class="n">agg_primitives</span><span class="p">,</span>
+										<span class="n">trans_primitives</span> <span class="o">=</span> <span class="n">trans_primitives</span><span class="p">,</span>
+										<span class="n">n_jobs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">features_only</span> <span class="o">=</span> <span class="kc">False</span>
+									<span class="p">)</span>
+	<span class="n">feat_matrix</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+	<span class="n">feat_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">feat_matrix</span><span class="p">)</span>
+	<span class="c1"># drop any column containing the word _id</span>
+	<span class="n">feat_df</span> <span class="o">=</span> <span class="n">feat_df</span><span class="p">[</span><span class="n">feat_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">feat_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;_id&#39;</span><span class="p">)))]</span>
+	<span class="n">feat_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># replace missing values</span>
+	<span class="k">return</span> <span class="n">feat_df</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

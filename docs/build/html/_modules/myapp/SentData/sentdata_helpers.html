@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.SentData.sentdata_helpers &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.SentData.sentdata_helpers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Used in the send_endpoints module to save data in the </span>
+<span class="sd">database. </span>
+
+<span class="sd">Uses functions defined in myapp.Models.our_data module</span>
+<span class="sd">to persist data in the db.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">myapp.Models.our_data</span> <span class="kn">import</span><span class="p">(</span>
+									<span class="n">push_kyc_to_db</span><span class="p">,</span>
+									<span class="n">push_deposits_to_db</span><span class="p">,</span>
+									<span class="n">push_savings_to_db</span><span class="p">,</span>
+									<span class="n">push_withdrawals_to_db</span><span class="p">,</span>
+									<span class="n">push_loans_to_db</span><span class="p">,</span>
+									<span class="n">push_installments_to_db</span>
+								<span class="p">)</span>
+
+
+
+<span class="n">the_list</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="s2">&quot;254701&quot;</span><span class="p">,</span> <span class="s2">&quot;254702&quot;</span><span class="p">,</span> <span class="s2">&quot;254703&quot;</span><span class="p">,</span> <span class="s2">&quot;254704&quot;</span><span class="p">,</span> <span class="s2">&quot;254705&quot;</span><span class="p">,</span> <span class="s2">&quot;254706&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254707&quot;</span><span class="p">,</span> <span class="s2">&quot;254708&quot;</span><span class="p">,</span> <span class="s2">&quot;254710&quot;</span><span class="p">,</span> <span class="s2">&quot;254709&quot;</span><span class="p">,</span> <span class="s2">&quot;254711&quot;</span><span class="p">,</span> <span class="s2">&quot;254712&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254713&quot;</span><span class="p">,</span> <span class="s2">&quot;254714&quot;</span><span class="p">,</span> <span class="s2">&quot;254715&quot;</span><span class="p">,</span> <span class="s2">&quot;254716&quot;</span><span class="p">,</span> <span class="s2">&quot;254717&quot;</span><span class="p">,</span> <span class="s2">&quot;254718&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254719&quot;</span><span class="p">,</span> <span class="s2">&quot;254720&quot;</span><span class="p">,</span> <span class="s2">&quot;254721&quot;</span><span class="p">,</span> <span class="s2">&quot;254722&quot;</span><span class="p">,</span> <span class="s2">&quot;254723&quot;</span><span class="p">,</span> <span class="s2">&quot;254724&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254725&quot;</span><span class="p">,</span> <span class="s2">&quot;254726&quot;</span><span class="p">,</span> <span class="s2">&quot;254728&quot;</span><span class="p">,</span> <span class="s2">&quot;254729&quot;</span><span class="p">,</span> <span class="s2">&quot;254740&quot;</span><span class="p">,</span> <span class="s2">&quot;254741&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254742&quot;</span><span class="p">,</span> <span class="s2">&quot;254743&quot;</span><span class="p">,</span> <span class="s2">&quot;254726&quot;</span><span class="p">,</span> <span class="s2">&quot;254703&quot;</span><span class="p">,</span> <span class="s2">&quot;254790&quot;</span><span class="p">,</span> <span class="s2">&quot;254791&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254792&quot;</span><span class="p">,</span> <span class="s2">&quot;254793&quot;</span><span class="p">,</span> <span class="s2">&quot;254794&quot;</span><span class="p">,</span> <span class="s2">&quot;254795&quot;</span><span class="p">,</span> <span class="s2">&quot;254796&quot;</span><span class="p">,</span> <span class="s2">&quot;254797&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254798&quot;</span><span class="p">,</span> <span class="s2">&quot;254799&quot;</span><span class="p">,</span> <span class="s2">&quot;254110&quot;</span><span class="p">,</span> <span class="s2">&quot;254111&quot;</span><span class="p">,</span> <span class="s2">&quot;254730&quot;</span><span class="p">,</span> <span class="s2">&quot;254731&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254734&quot;</span><span class="p">,</span> <span class="s2">&quot;254735&quot;</span><span class="p">,</span> <span class="s2">&quot;254736&quot;</span><span class="p">,</span> <span class="s2">&quot;254737&quot;</span><span class="p">,</span> <span class="s2">&quot;254738&quot;</span><span class="p">,</span> <span class="s2">&quot;254739&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;254750&quot;</span><span class="p">,</span> <span class="s2">&quot;254751&quot;</span><span class="p">,</span> <span class="s2">&quot;254752&quot;</span><span class="p">,</span> <span class="s2">&quot;254752&quot;</span><span class="p">,</span> <span class="s2">&quot;254753&quot;</span>
+			<span class="p">]</span>
+
+
+
+<div class="viewcode-block" id="validate_phone_number"><a class="viewcode-back" href="../../../myapp.SentData.sentdata_helpers.html#myapp.SentData.sentdata_helpers.validate_phone_number">[docs]</a><span class="k">def</span> <span class="nf">validate_phone_number</span><span class="p">(</span><span class="n">my_number</span><span class="p">):</span>
+	<span class="n">to_check</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">my_number</span><span class="p">[:</span><span class="mi">6</span><span class="p">])</span>
+	<span class="k">if</span> <span class="n">to_check</span> <span class="ow">in</span> <span class="n">the_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_number</span><span class="p">)</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="nb">int</span><span class="p">(</span><span class="n">my_number</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">False</span>
+	<span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="save_kyc_data"><a class="viewcode-back" href="../../../myapp.SentData.sentdata_helpers.html#myapp.SentData.sentdata_helpers.save_kyc_data">[docs]</a><span class="k">def</span> <span class="nf">save_kyc_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Saves kyc data tot the db</span>
+
+<span class="sd">	Extract the first column from the post request, use the</span>
+<span class="sd">	length of the column to loop through every list item in the</span>
+<span class="sd">	post request and saving all list items in the same index</span>
+<span class="sd">	to the database dynamically.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		data (json): json data from the request.</span>
+
+<span class="sd">	Raises: LookupError if a row is not saved to the database.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">user_index</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">dataframe_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+	<span class="n">first_column_values</span> <span class="o">=</span> <span class="n">dataframe_columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">first_column_values</span><span class="p">:</span>
+		<span class="n">borrower_identity</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+		<span class="n">borrower_phone</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_phone_number&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+		<span class="n">is_correct_number</span> <span class="o">=</span> <span class="n">validate_phone_number</span><span class="p">(</span><span class="n">borrower_phone</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">is_correct_number</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;invalid phone number&quot;</span>
+		<span class="n">saved_kyc_data</span> <span class="o">=</span> <span class="n">push_kyc_to_db</span><span class="p">(</span><span class="n">borrower_identity</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">saved_kyc_data</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">user_index</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">saved_kyc_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+			<span class="k">return</span> <span class="n">saved_kyc_data</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="save_deposits_data"><a class="viewcode-back" href="../../../myapp.SentData.sentdata_helpers.html#myapp.SentData.sentdata_helpers.save_deposits_data">[docs]</a><span class="k">def</span> <span class="nf">save_deposits_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Saves the deposits data to the db</span>
+
+<span class="sd">	Extract the first column from the post request, use the</span>
+<span class="sd">	length of the column to loop through every list item in the</span>
+<span class="sd">	post request and saving all list items in the same index</span>
+<span class="sd">	to the database dynamically.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		data (json): json data from the request.</span>
+
+<span class="sd">	Raises: LookupError if a row is not saved to the database.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">user_index</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">dataframe_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+	<span class="n">first_column_values</span> <span class="o">=</span> <span class="n">dataframe_columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">first_column_values</span><span class="p">:</span>
+		<span class="n">borrower_identity</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+		<span class="n">saved_deposits_data</span> <span class="o">=</span> <span class="n">push_deposits_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">saved_deposits_data</span><span class="p">:</span>
+			<span class="n">user_index</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s2">&quot;user data not saved in kyc_table.&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="save_savings_data"><a class="viewcode-back" href="../../../myapp.SentData.sentdata_helpers.html#myapp.SentData.sentdata_helpers.save_savings_data">[docs]</a><span class="k">def</span> <span class="nf">save_savings_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Saves the savings data to the database</span>
+
+<span class="sd">	Extract the first column from the post request, use the</span>
+<span class="sd">	length of the column to loop through every list item in the</span>
+<span class="sd">	post request and saving all list items in the same index</span>
+<span class="sd">	to the database dynamically.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		data (json): json data from the request.</span>
+
+<span class="sd">	Raises: LookupError if a row is not saved to the database.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">user_index</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">dataframe_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+	<span class="n">first_column_values</span> <span class="o">=</span> <span class="n">dataframe_columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">first_column_values</span><span class="p">:</span>
+		<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+		<span class="n">saved_deposits_data</span> <span class="o">=</span> <span class="n">push_savings_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">saved_deposits_data</span><span class="p">:</span>
+			<span class="n">user_index</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s2">&quot;user data not saved in kyc_table.&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="save_withdrawals_data"><a class="viewcode-back" href="../../../myapp.SentData.sentdata_helpers.html#myapp.SentData.sentdata_helpers.save_withdrawals_data">[docs]</a><span class="k">def</span> <span class="nf">save_withdrawals_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Saves withdrawals data to the db	</span>
+
+<span class="sd">	Extract the first column from the post request, use the</span>
+<span class="sd">	length of the column to loop through every list item in the</span>
+<span class="sd">	post request and saving all list items in the same index</span>
+<span class="sd">	to the database dynamically.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		data (json): json data from the request.</span>
+
+<span class="sd">	Raises: LookupError if a row is not saved to the database.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">user_index</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">dataframe_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+	<span class="n">first_column_values</span> <span class="o">=</span> <span class="n">dataframe_columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">first_column_values</span><span class="p">:</span>
+		<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+		<span class="n">saved_deposits_data</span> <span class="o">=</span> <span class="n">push_withdrawals_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">saved_deposits_data</span><span class="p">:</span>
+			<span class="n">user_index</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s2">&quot;user data not saved in kyc_table.&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="save_loans_data"><a class="viewcode-back" href="../../../myapp.SentData.sentdata_helpers.html#myapp.SentData.sentdata_helpers.save_loans_data">[docs]</a><span class="k">def</span> <span class="nf">save_loans_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Saves the loans data to the db.</span>
+
+<span class="sd">	Extract the first column from the post request, use the</span>
+<span class="sd">	length of the column to loop through every list item in the</span>
+<span class="sd">	post request and saving all list items in the same index</span>
+<span class="sd">	to the database dynamically.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		data (json): json data from the request.</span>
+
+<span class="sd">	Raises: LookupError if a row is not saved to the database.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">user_index</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">dataframe_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+	<span class="n">first_column_values</span> <span class="o">=</span> <span class="n">dataframe_columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">first_column_values</span><span class="p">:</span>
+		<span class="n">borrower_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;borrower_identity&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+		<span class="n">saved_deposits_data</span> <span class="o">=</span> <span class="n">push_loans_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">saved_deposits_data</span><span class="p">:</span>
+			<span class="n">user_index</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s2">&quot;user data not saved in kyc_table.&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="save_installments_data"><a class="viewcode-back" href="../../../myapp.SentData.sentdata_helpers.html#myapp.SentData.sentdata_helpers.save_installments_data">[docs]</a><span class="k">def</span> <span class="nf">save_installments_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Saves the installments data to the db.</span>
+<span class="sd">	</span>
+<span class="sd">	Extract the first column from the post request, use the</span>
+<span class="sd">	length of the column to loop through every list item in the</span>
+<span class="sd">	post request and saving all list items in the same index</span>
+<span class="sd">	to the database dynamically.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">			data (json): json data from the request.</span>
+
+<span class="sd">	Raises: LookupError if a row is not saved to the database.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">user_index</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">dataframe_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+	<span class="n">first_column_values</span> <span class="o">=</span> <span class="n">dataframe_columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">first_column_values</span><span class="p">:</span>
+		<span class="n">installment_loan_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;installment_loan_id&#39;</span><span class="p">][</span><span class="n">user_index</span><span class="p">]</span>
+		<span class="n">saved_deposits_data</span> <span class="o">=</span> <span class="n">push_installments_to_db</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user_index</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">saved_deposits_data</span><span class="p">:</span>
+			<span class="n">user_index</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s2">&quot;user data not saved in kyc_table.&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

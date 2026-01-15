@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Users.admin_checks &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Users.admin_checks</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module Containing Checks</span>
+
+<span class="sd">This file contains endpoints used to make checks.</span>
+<span class="sd">The following endpoints are pressent in this module</span>
+
+<span class="sd">	1.check_super_admin</span>
+<span class="sd">	2.check_info_admin</span>
+<span class="sd">	3.check_client_admin</span>
+<span class="sd">	4.check_client_staff</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">Blueprint</span>
+<span class="kn">from</span> <span class="nn">flask_cors</span> <span class="kn">import</span> <span class="n">cross_origin</span>
+
+
+<span class="kn">from</span> <span class="nn">myapp.Models.model_users</span> <span class="kn">import</span> <span class="n">Authentication</span>
+<span class="kn">from</span> <span class="nn">myapp.Models.checks_n_approvals</span> <span class="kn">import</span> <span class="n">Checks</span>
+
+				   
+
+<span class="n">check_routes</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;check_routes&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="check_super_admin"><a class="viewcode-back" href="../../../myapp.Users.admin_checks.html#myapp.Users.admin_checks.check_super_admin">[docs]</a><span class="nd">@check_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/check_super_admin&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_super_admin</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Used to check super admins.</span>
+
+<span class="sd">	Authenticate the user by checking that their role id is 1 using the</span>
+<span class="sd">	Authentication class that was imported from Models.model_users.</span>
+
+<span class="sd">	The required inputs is a list of inputs required in this endpoint.</span>
+<span class="sd">	in case the required inputs changes, remember to update this list.</span>
+
+<span class="sd">	mydict is a dictionary containing the:</span>
+<span class="sd">		1. checker_id (the admin id of the current user)</span>
+<span class="sd">		2. admin_email (the admin email of the super admin being </span>
+<span class="sd">		    checked).</span>
+<span class="sd">		3. checked_from (the latest status of the user. Remember </span>
+<span class="sd">		   if the current status is checked it will not show checked, </span>
+<span class="sd">		   instead it should show the recent status before checking)</span>
+<span class="sd">		4. checked_to (what status are we approving to?)</span>
+
+<span class="sd">	Using the Cheks class imported from Models.checks_n_approvals</span>
+<span class="sd">	return the appropriate response.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		None</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		A dictionary containing the status and the appropriate </span>
+<span class="sd">		response.</span>
+<span class="sd">	Note:</span>
+<span class="sd">		This endpoint is only accessible to super admins.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+
+	<span class="n">required_inputs</span> <span class="o">=</span> <span class="p">[</span>	<span class="s2">&quot;checker_id&quot;</span><span class="p">,</span> <span class="s2">&quot;admin_email&quot;</span><span class="p">,</span> <span class="s2">&quot;checked_from&quot;</span><span class="p">,</span>
+						<span class="s2">&quot;checked_to&quot;</span><span class="p">]</span>
+	<span class="n">mydict</span> <span class="o">=</span> <span class="p">{</span>	
+				<span class="s2">&quot;checker_id&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">(),</span>
+				<span class="s2">&quot;admin_email&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_admin_email</span><span class="p">,</span>
+				<span class="s2">&quot;checked_from&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_checked_from</span><span class="p">,</span>
+				<span class="s2">&quot;checked_to&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_checked_to</span>
+			 <span class="p">}</span>
+	<span class="n">is_checked</span> <span class="o">=</span> <span class="n">Checks</span><span class="p">(</span><span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span><span class="o">.</span><span class="n">check_admin</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">is_checked</span><span class="p">)</span></div>
+	
+
+
+<div class="viewcode-block" id="check_info_admin"><a class="viewcode-back" href="../../../myapp.Users.admin_checks.html#myapp.Users.admin_checks.check_info_admin">[docs]</a><span class="nd">@check_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/check_info_admin&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_info_admin</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Used to check infotrace staff.</span>
+
+<span class="sd">	Authenticate the user by checking that their role id is 2 or 1</span>
+<span class="sd">	using the Authentication class that was imported from </span>
+<span class="sd">	Models.model_users.</span>
+
+<span class="sd">	The required inputs is a list of inputs required in this endpoint.</span>
+<span class="sd">	in case the required inputs changes, remember to update this list.</span>
+
+<span class="sd">	mydict is a dictionary containing the:</span>
+<span class="sd">		1. checker_id (the admin id of the current user)</span>
+<span class="sd">		2. admin_email (the admin email of the super admin being </span>
+<span class="sd">		    checked).</span>
+<span class="sd">		3. checked_from (the latest status of the user. Remember </span>
+<span class="sd">		   if the current status is checked it will not show checked, </span>
+<span class="sd">		   instead it should show the recent status before checking)</span>
+<span class="sd">		4. checked_to (what status are we approving to?)</span>
+
+<span class="sd">	Using the Cheks class imported from Models.checks_n_approvals</span>
+<span class="sd">	return the appropriate response.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		None</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		A dictionary containing the status and the appropriate </span>
+<span class="sd">		response.</span>
+<span class="sd">	Note:</span>
+<span class="sd">		This endpoint is only accessible to super admins and </span>
+<span class="sd">		infotrace staff.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+
+	<span class="n">required_inputs</span> <span class="o">=</span> <span class="p">[</span>	<span class="s2">&quot;checker_id&quot;</span><span class="p">,</span> <span class="s2">&quot;admin_email&quot;</span><span class="p">,</span> <span class="s2">&quot;checked_from&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;checked_to&quot;</span><span class="p">]</span>
+	<span class="c1"># TODO consider not updating the administrators to checked</span>
+	<span class="n">mydict</span> <span class="o">=</span> <span class="p">{</span>	
+				<span class="s2">&quot;checker_id&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">(),</span>
+				<span class="s2">&quot;admin_email&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_admin_email</span><span class="p">,</span>
+				<span class="s2">&quot;checked_from&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_checked_from</span><span class="p">,</span>
+				<span class="s2">&quot;checked_to&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_checked_to</span>
+			 <span class="p">}</span>
+	<span class="n">is_checked</span> <span class="o">=</span> <span class="n">Checks</span><span class="p">(</span><span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span><span class="o">.</span><span class="n">check_admin</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">is_checked</span><span class="p">)</span></div>
+	
+
+
+<span class="c1"># Accesible to the infotrace and super admin only. checks an infotrace admin</span>
+<div class="viewcode-block" id="check_client_admin"><a class="viewcode-back" href="../../../myapp.Users.admin_checks.html#myapp.Users.admin_checks.check_client_admin">[docs]</a><span class="nd">@check_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/check_client_admin&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_client_admin</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Used to check client_admins.</span>
+
+<span class="sd">	Authenticate the user by checking that their role id is 1 using the</span>
+<span class="sd">	Authentication class that was imported from Models.model_users.</span>
+
+<span class="sd">	The required inputs is a list of inputs required in this endpoint.</span>
+<span class="sd">	in case the required inputs changes, remember to update this list.</span>
+
+<span class="sd">	mydict is a dictionary containing the:</span>
+<span class="sd">		1. checker_id (the admin id of the current user)</span>
+<span class="sd">		2. admin_email (the admin email of the super admin being </span>
+<span class="sd">		    checked).</span>
+<span class="sd">		3. checked_from (the latest status of the user. Remember </span>
+<span class="sd">		   if the current status is checked it will not show checked, </span>
+<span class="sd">		   instead it should show the recent status before checking)</span>
+<span class="sd">		4. checked_to (what status are we approving to?)</span>
+
+<span class="sd">	Using the Cheks class imported from Models.checks_n_approvals</span>
+<span class="sd">	return the appropriate response.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		None</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		A dictionary containing the status and the appropriate </span>
+<span class="sd">		response.</span>
+<span class="sd">	Note:</span>
+<span class="sd">		Note:</span>
+<span class="sd">		This endpoint is only accessible to super admins and </span>
+<span class="sd">		infotrace staff.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+
+	<span class="n">required_inputs</span> <span class="o">=</span> <span class="p">[</span>	<span class="s2">&quot;checker_id&quot;</span><span class="p">,</span> <span class="s2">&quot;admin_email&quot;</span><span class="p">,</span> <span class="s2">&quot;checked_from&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;checked_to&quot;</span><span class="p">]</span>
+	<span class="c1"># TODO consider not updating the administrators to checked</span>
+	<span class="n">mydict</span> <span class="o">=</span> <span class="p">{</span>	
+				<span class="s2">&quot;checker_id&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">(),</span>
+				<span class="s2">&quot;admin_email&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_admin_email</span><span class="p">,</span>
+				<span class="s2">&quot;checked_from&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_checked_from</span><span class="p">,</span>
+				<span class="s2">&quot;checked_to&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_checked_to</span>
+			 <span class="p">}</span>
+	<span class="n">is_checked</span> <span class="o">=</span> <span class="n">Checks</span><span class="p">(</span><span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span><span class="o">.</span><span class="n">check_admin</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">is_checked</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_client_staff"><a class="viewcode-back" href="../../../myapp.Users.admin_checks.html#myapp.Users.admin_checks.check_client_staff">[docs]</a><span class="nd">@check_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/check_client_staff&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_client_staff</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Used to check client staff.</span>
+
+<span class="sd">	Authenticate the user by checking that their role id is 1 using the</span>
+<span class="sd">	Authentication class that was imported from Models.model_users.</span>
+
+<span class="sd">	The required inputs is a list of inputs required in this endpoint.</span>
+<span class="sd">	in case the required inputs changes, remember to update this list.</span>
+
+<span class="sd">	mydict is a dictionary containing the:</span>
+<span class="sd">		1. checker_id (the admin id of the current user)</span>
+<span class="sd">		2. admin_email (the admin email of the super admin being </span>
+<span class="sd">		    checked).</span>
+<span class="sd">		3. checked_from (the latest status of the user. Remember </span>
+<span class="sd">		   if the current status is checked it will not show checked, </span>
+<span class="sd">		   instead it should show the recent status before checking)</span>
+<span class="sd">		4. checked_to (what status are we approving to?)</span>
+
+<span class="sd">	Using the Cheks class imported from Models.checks_n_approvals</span>
+<span class="sd">	return the appropriate response.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		None</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		A dictionary containing the status and the appropriate </span>
+<span class="sd">		response.</span>
+<span class="sd">	Note:</span>
+<span class="sd">		This endpoint is only accessible to super admins.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+	 	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+	
+	<span class="n">required_inputs</span> <span class="o">=</span> <span class="p">[</span>	<span class="s2">&quot;checker_id&quot;</span><span class="p">,</span> <span class="s2">&quot;admin_email&quot;</span><span class="p">,</span> <span class="s2">&quot;checked_from&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;checked_to&quot;</span><span class="p">]</span>
+	
+	<span class="c1"># TODO consider not updating the administrators to checked</span>
+	<span class="n">mydict</span> <span class="o">=</span> <span class="p">{</span>	
+				<span class="s2">&quot;checker_id&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">(),</span>
+				<span class="s2">&quot;admin_email&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_admin_email</span><span class="p">,</span>
+				<span class="s2">&quot;checked_from&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_checked_from</span><span class="p">,</span>
+				<span class="s2">&quot;checked_to&quot;</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">get_checked_to</span>
+			 <span class="p">}</span>
+	<span class="n">is_checked</span> <span class="o">=</span> <span class="n">Checks</span><span class="p">(</span><span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span><span class="o">.</span><span class="n">check_admin</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">is_checked</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

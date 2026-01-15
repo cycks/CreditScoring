@@ -1,0 +1,433 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.ModelBuilding.Behavioural.processphonedata module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.ModelBuilding.Behavioural.processtransdata module" href="myapp.ModelBuilding.Behavioural.processtransdata.html" />
+    <link rel="prev" title="myapp.ModelBuilding.Behavioural.prepare_limit module" href="myapp.ModelBuilding.Behavioural.prepare_limit.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.ModelBuilding.Behavioural.processphonedata">
+<span id="myapp-modelbuilding-behavioural-processphonedata-module"></span><h1>myapp.ModelBuilding.Behavioural.processphonedata module<a class="headerlink" href="#module-myapp.ModelBuilding.Behavioural.processphonedata" title="Permalink to this headline">¶</a></h1>
+<p>Prepares phone data</p>
+<dl class="py class">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.processphonedata.</code><code class="sig-name descname">WrappedPhone</code><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A blueprint for preparing data.</p>
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.count_mpesa_amounts">
+<code class="sig-name descname">count_mpesa_amounts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.count_mpesa_amounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.count_mpesa_amounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of mpesa transactions.</p>
+<p>Extracts the month and year from the time_stamp. Replaces
+the amount spent with the actual amount spent, drop the
+mpesa_id and timesamp, groupby the borrower_id, month,
+and year then find the sum for all the transactions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The mpesa data set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Cleaned dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.impute_missing_columns">
+<code class="sig-name descname">impute_missing_columns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">required_columns</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.impute_missing_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.impute_missing_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts missing columns in a data set.</p>
+<p>Given a dataframe extract and sort columns present in the
+dataframe. Compare it to the required columns and insert
+any columns that is required but missing with default
+values extracted from phone types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – A dataframe</p></li>
+<li><p><strong>required_columns</strong> (<em>list</em>) – A list containing columns that</p></li>
+<li><p><strong>be present in the dataframe</strong> (<em>must</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_images">
+<code class="sig-name descname">prepare_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.prepare_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares images data for prediction</p>
+<p>Remove image/ from the image_file_type column, convert the
+same column to categorical variables using pd.get_dummies,
+drop the corporate_id and remove columns with the string
+missing. Confirm that no columns are missing or addtiional
+unwanted columns are present and retrun the final df.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – the images dataframe</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A prepared dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_messages">
+<code class="sig-name descname">prepare_messages</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.prepare_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare messages for prediction.</p>
+<p>Drop the corporate_id column, convert message_type and the
+message_direction columns to a string, the message_time_stamp
+column to date and do a pd.get dummies on message_type and
+message_direction. Drop the message_INBOX column, extract
+month and year from message_time_stamp, and drop columns
+the string ‘missing’. Remove any additional columns and
+insert any required columns that are missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The images data set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>image summarised dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_mpesa">
+<code class="sig-name descname">prepare_mpesa</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.prepare_mpesa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_mpesa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares mpesa data</p>
+<p>Covnvert columns to their appropirate data types and convert
+categorical variables to dummy variables. Remember when
+fetching data there were columns that were missing. So drop
+any such columns in addition to the corporate_id and
+mpesa_spec_loc. Using the impute_missing_columns method
+defined in this class, repalce missing columns and remove
+unwanted columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The mpesa data set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Cleaned dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_music">
+<code class="sig-name descname">prepare_music</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.prepare_music"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_music" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares music data for prediction</p>
+<p>Remove audio/ from the music_file_type column, convert the
+same column to categorical variables using pd.get_dummies, drop
+the corporate_id and remove columns with the string missing.
+Convert the music_file_type columns to dummy variables and
+confirm that no columns are missing or addtiional unwanted
+columns are present and retrun the final df.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – the music dataframe</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A prepared music dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_videos">
+<code class="sig-name descname">prepare_videos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.prepare_videos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_videos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares video data for prediction</p>
+<p>Remove video/ from the video_file_type column, convert the
+same column to categorical variables using pd.get_dummies, drop
+the corporate_id and remove columns with the string missing.
+Convert the music_file_type columns to dummy variables and
+confirm that no columns are missing or addtiional unwanted
+columns are present and retrun the final df.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – the music dataframe</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A prepared music dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.sum_mpesa_amounts">
+<code class="sig-name descname">sum_mpesa_amounts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.sum_mpesa_amounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.sum_mpesa_amounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sums mpesa transactions.</p>
+<p>Extracts the month and year from the time_stamp. Replaces
+the amount spent with the actual amount spent, drop the
+mpesa_id and timesamp, groupby the borrower_id, month,
+and year then find the sum for all the transactions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The mpesa data set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Cleaned dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_images">
+<code class="sig-name descname">summarize_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.summarize_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sums image sizes.</p>
+<p>Removes any columns with the string ‘missing’. Extracts
+the month name and year from image_date_added. Removes the
+string ‘image/’ form the image_file_type column. calculate
+statistics from the dataset and return the finals dataframe
+as json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The images data set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>image summarised dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_messages">
+<code class="sig-name descname">summarize_messages</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.summarize_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sums messages sizes.</p>
+<p>Removes any columns with the string ‘missing’. Extracts
+the month name and year from message_time_stamp. Calculate
+statistics from the dataset and return the finals dataframe
+as json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The messages data set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>messages summarised dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_mpesa">
+<code class="sig-name descname">summarize_mpesa</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.summarize_mpesa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_mpesa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines mpesa counts and sums.</p>
+<p>Remove any missing columns created when fetching data,
+prepare the data set, call sum and counts methods merge the
+resulting data sets and convert the result to json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – The mpesa data set.</p></li>
+<li><p><strong>borrower_id</strong> (<em>int</em>) – The person seeking the loan</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A json object for the summarised data set.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_music">
+<code class="sig-name descname">summarize_music</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.summarize_music"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_music" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarizes music data.</p>
+<p>Removes any columns with the string ‘missing’. Removes the
+string ‘image/’ form the music_file_type column. Extracts
+the month name and year from music_date_added. calculate
+statistics from the dataset and return the finals dataframe
+as json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The images data set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>image summarised dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_videos">
+<code class="sig-name descname">summarize_videos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processphonedata.html#WrappedPhone.summarize_videos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_videos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sumarizes video data.</p>
+<p>Extracts the month name and year from video_date_added.
+Removes any columns with the string ‘missing’. Removes the
+string ‘video/’ from the image_file_type column. calculate
+statistics from the dataset and return the final dataframe
+as json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The images data set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>image summarised dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a><ul>
+  <li><a href="myapp.ModelBuilding.Behavioural.html">myapp.ModelBuilding.Behavioural package</a><ul>
+      <li>Previous: <a href="myapp.ModelBuilding.Behavioural.prepare_limit.html" title="previous chapter">myapp.ModelBuilding.Behavioural.prepare_limit module</a></li>
+      <li>Next: <a href="myapp.ModelBuilding.Behavioural.processtransdata.html" title="next chapter">myapp.ModelBuilding.Behavioural.processtransdata module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.ModelBuilding.Behavioural.processphonedata.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

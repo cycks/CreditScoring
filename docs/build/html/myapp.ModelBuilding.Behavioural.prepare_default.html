@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.ModelBuilding.Behavioural.prepare_default module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.ModelBuilding.Behavioural.prepare_limit module" href="myapp.ModelBuilding.Behavioural.prepare_limit.html" />
+    <link rel="prev" title="myapp.ModelBuilding.Behavioural.featureengineering module" href="myapp.ModelBuilding.Behavioural.featureengineering.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.ModelBuilding.Behavioural.prepare_default">
+<span id="myapp-modelbuilding-behavioural-prepare-default-module"></span><h1>myapp.ModelBuilding.Behavioural.prepare_default module<a class="headerlink" href="#module-myapp.ModelBuilding.Behavioural.prepare_default" title="Permalink to this headline">¶</a></h1>
+<p>Prepares data for default prediction.</p>
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.prepare_default.check_required_columns">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.prepare_default.</code><code class="sig-name descname">check_required_columns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">required_columns</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/prepare_default.html#check_required_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.prepare_default.check_required_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates columns required for prediction.</p>
+<p>Given a dataframe and the required columns that the dataframe
+must have, extract columns from the dataframe, drop any columns
+that are in the dataframe, but are not required for prediction.
+Find columns that should be in the dataframe but are missing
+and add the missing columns by replacing them with zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – dataframe</p></li>
+<li><p><strong>required_columns</strong> (<em>list</em>) – A list of columns that must be</p></li>
+<li><p><strong>in the dataframe</strong> (<em>present</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe with all the required columns.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df(obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.prepare_default.create_default_df">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.prepare_default.</code><code class="sig-name descname">create_default_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">borrower_id</span></em>, <em class="sig-param"><span class="n">corporate_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/prepare_default.html#create_default_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.prepare_default.create_default_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the Required datasets from the database.</p>
+<p>Fetch the required data sets from the database, prepare the
+datasets, create an entity set from the data sets, add
+relationships to the entity set create additional features
+from the dataframe using feature tools, replace missing and
+required columns from the dataset and return the final
+dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>borrower_id</strong> (<em>int</em>) – The id for the borrower</p></li>
+<li><p><strong>corporate_id</strong> (<em>int</em>) – The corporate id for the organization</p></li>
+<li><p><strong>the dataset.</strong> (<em>seeking</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe ready for prediction.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.prepare_default.grade_probabilities">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.prepare_default.</code><code class="sig-name descname">grade_probabilities</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pdf</span></em>, <em class="sig-param"><span class="n">pdo</span></em>, <em class="sig-param"><span class="n">best_score</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/prepare_default.html#grade_probabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.prepare_default.grade_probabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a scorecard were being scaled where the user wanted
+odds of 10,000:1 at 800 points and wanted the odds to
+double every 20 points (i.e., pdo = 20), the factor and
+offset would be:
+Factor = 20/Ln(2) = 28.85
+Offset = 800- 28.85 * Ln (10,000) = 534.29.
+In our case we want one default 0out of 200.
+To find the odds go back to the test data set,
+find the number of people who defaulted within a given
+probability range and the number of people who paid
+their loans within the same range.  use this to find the odds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pdf</strong> (<em>float</em>) – The predicted probability from the model</p></li>
+<li><p><strong>pdo</strong> (<em>int</em>) – Points to double the odss</p></li>
+<li><p><strong>best_score</strong> – What our best score should be.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.ModelBuilding.Behavioural.prepare_default.predict_default">
+<code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.prepare_default.</code><code class="sig-name descname">predict_default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/prepare_default.html#predict_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.prepare_default.predict_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts defaulters</p>
+<p>open the pickled file from the home directory, load the model
+from the file and close the file. Make the prediction,
+extract the default status and the probability of default and
+the probability of payment from the prediction and return a
+dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>dataframe</em>) – A dataframe prepared for prediction</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with the probability of deffault,
+payment, and the default status.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>probs(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a><ul>
+  <li><a href="myapp.ModelBuilding.Behavioural.html">myapp.ModelBuilding.Behavioural package</a><ul>
+      <li>Previous: <a href="myapp.ModelBuilding.Behavioural.featureengineering.html" title="previous chapter">myapp.ModelBuilding.Behavioural.featureengineering module</a></li>
+      <li>Next: <a href="myapp.ModelBuilding.Behavioural.prepare_limit.html" title="next chapter">myapp.ModelBuilding.Behavioural.prepare_limit module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.ModelBuilding.Behavioural.prepare_default.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

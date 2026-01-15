@@ -1,0 +1,471 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.SentData.send_endpoints &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.SentData.send_endpoints</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains endpoints used to send transactional</span>
+<span class="sd">data to the database. </span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">json</span>
+
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+
+<span class="kn">from</span> <span class="nn">flask_cors</span> <span class="kn">import</span> <span class="n">cross_origin</span>
+
+
+<span class="kn">from</span> <span class="nn">myapp.Helpers.data_helpers</span> <span class="kn">import</span> <span class="p">(</span>
+									<span class="n">value_types</span><span class="p">,</span>
+									<span class="n">DataSent</span><span class="p">,</span>
+									<span class="n">DataTypes</span>
+								<span class="p">)</span>
+						
+					
+<span class="kn">from</span> <span class="nn">myapp.Models.model_users</span> <span class="kn">import</span> <span class="n">Authentication</span>
+<span class="kn">from</span> <span class="nn">myapp.Models.others</span> <span class="kn">import</span> <span class="p">(</span>
+							<span class="n">confirm_registered_borrower</span><span class="p">,</span>
+							<span class="n">confirm_registred_corporates</span>
+						  <span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">myapp.SentData.sentdata_helpers</span> <span class="kn">import</span> <span class="p">(</span>
+								<span class="n">save_kyc_data</span><span class="p">,</span>
+								<span class="n">save_deposits_data</span><span class="p">,</span>
+								<span class="n">save_savings_data</span><span class="p">,</span>
+								<span class="n">save_withdrawals_data</span><span class="p">,</span>
+								<span class="n">save_loans_data</span><span class="p">,</span>
+								<span class="n">save_installments_data</span>
+							  <span class="p">)</span>
+
+
+
+<span class="n">send_data_routes</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;send_data_routes&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="send_kyc_data"><a class="viewcode-back" href="../../../myapp.SentData.send_endpoints.html#myapp.SentData.send_endpoints.send_kyc_data">[docs]</a><span class="nd">@send_data_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/send_kyc_data&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">send_kyc_data</span><span class="p">():</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+	<span class="n">required_columns</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span>	<span class="s2">&quot;corporate_id&quot;</span><span class="p">,</span>	<span class="s2">&quot;borrower_gender&quot;</span><span class="p">,</span>
+						 <span class="s2">&quot;borrower_date_of_birth&quot;</span><span class="p">,</span> <span class="s2">&quot;borrower_county&quot;</span><span class="p">,</span>
+						 <span class="s2">&quot;kyc_default_status&quot;</span><span class="p">,</span> <span class="s2">&quot;borrower_phone_number&quot;</span><span class="p">,</span>
+						 <span class="s2">&quot;kyc_date_created&quot;</span><span class="p">])</span>
+	<span class="n">test_101</span> <span class="o">=</span> <span class="n">DataSent</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span><span class="o">.</span><span class="n">make_responses</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">test_101</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">test_101</span><span class="p">),</span> <span class="mi">422</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+	<span class="n">all_columns</span> <span class="o">=</span> <span class="n">DataTypes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">value_types</span><span class="p">)</span>
+	<span class="n">inapropriate_columns</span> <span class="o">=</span> <span class="n">all_columns</span><span class="o">.</span><span class="n">make_validation</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inapropriate_columns</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;Inapropriate data types in&quot;</span><span class="p">:</span> <span class="n">inapropriate_columns</span>
+						<span class="p">})</span>
+	<span class="c1"># Find unregistred corporates in the data set</span>
+	<span class="n">unregistered_corporates</span> <span class="o">=</span> <span class="n">confirm_registred_corporates</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_corporates</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> 
+						<span class="s2">&quot;corporates in this list are not registered&quot;</span><span class="p">:</span>
+						 <span class="n">unregistered_corporates</span><span class="p">})</span>
+	<span class="c1"># save data to the database</span>
+	<span class="n">is_saved_kyc</span> <span class="o">=</span> <span class="n">save_kyc_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">is_saved_kyc</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Data successfully saved&quot;</span>
+						<span class="p">})</span>
+	<span class="k">if</span> <span class="n">is_saved_kyc</span> <span class="o">==</span> <span class="s2">&quot;invalid phone number&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">is_saved_kyc</span>
+						<span class="p">})</span>
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">is_saved_kyc</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">is_saved_kyc</span>
+						<span class="p">})</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You have brocken my code. Reach out to me&quot;</span>
+					<span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="send_deposit_data"><a class="viewcode-back" href="../../../myapp.SentData.send_endpoints.html#myapp.SentData.send_endpoints.send_deposit_data">[docs]</a><span class="nd">@send_data_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/send_deposit_data&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">send_deposit_data</span><span class="p">():</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+	<span class="n">required_columns</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;corporate_id&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_deposit&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;deposit_channel&#39;</span><span class="p">,</span> <span class="s1">&#39;deposit_amount&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;deposit_description&#39;</span><span class="p">])</span>
+	<span class="n">test_101</span> <span class="o">=</span> <span class="n">DataSent</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span><span class="o">.</span><span class="n">make_responses</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">test_101</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">test_101</span><span class="p">)</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+	<span class="n">all_columns</span> <span class="o">=</span> <span class="n">DataTypes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">value_types</span><span class="p">)</span>
+	<span class="n">inapropriate_columns</span> <span class="o">=</span> <span class="n">all_columns</span><span class="o">.</span><span class="n">make_validation</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inapropriate_columns</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;Inapropriate data types in&quot;</span><span class="p">:</span> <span class="n">inapropriate_columns</span>
+						<span class="p">})</span>
+	<span class="c1"># Confirm that all the borrowers are registrered in the database</span>
+	<span class="n">unregistered_borrowers</span> <span class="o">=</span> <span class="n">confirm_registered_borrower</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_borrowers</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;members in this list are not registered&quot;</span><span class="p">:</span>
+						 <span class="n">unregistered_borrowers</span><span class="p">})</span>
+	<span class="c1"># Find unregistred corporates in the data set</span>
+	<span class="n">unregistered_corporates</span> <span class="o">=</span> <span class="n">confirm_registred_corporates</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_corporates</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;corporates in this list are not registered&quot;</span><span class="p">:</span>
+						 <span class="n">unregistered_corporates</span><span class="p">})</span>
+	<span class="c1"># save data to the database</span>
+	<span class="k">if</span> <span class="n">save_deposits_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Deposits data successfully saved&quot;</span>
+						<span class="p">})</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+					<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span> 
+					<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You have brocken my code. Reach out to me&quot;</span>
+					<span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="send_savings_data"><a class="viewcode-back" href="../../../myapp.SentData.send_endpoints.html#myapp.SentData.send_endpoints.send_savings_data">[docs]</a><span class="nd">@send_data_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/send_savings_data&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">send_savings_data</span><span class="p">():</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+	<span class="n">required_columns</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;corporate_id&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_savings&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;savings_channel&#39;</span><span class="p">,</span> <span class="s1">&#39;savings_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;savings_type&#39;</span><span class="p">])</span>
+	<span class="n">test_101</span> <span class="o">=</span> <span class="n">DataSent</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span><span class="o">.</span><span class="n">make_responses</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">test_101</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">test_101</span><span class="p">)</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+	<span class="n">all_columns</span> <span class="o">=</span> <span class="n">DataTypes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">value_types</span><span class="p">)</span>
+	<span class="n">inapropriate_columns</span> <span class="o">=</span> <span class="n">all_columns</span><span class="o">.</span><span class="n">make_validation</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inapropriate_columns</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;Inapropriate data types in&quot;</span><span class="p">:</span> <span class="n">inapropriate_columns</span>
+						<span class="p">})</span>
+	<span class="c1"># save data to the database</span>
+	<span class="n">unregistered_borrowers</span> <span class="o">=</span> <span class="n">confirm_registered_borrower</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_borrowers</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;members in the list are not registered&quot;</span><span class="p">:</span>
+						 <span class="n">unregistered_borrower</span><span class="p">})</span>
+	<span class="c1"># Find unregistred corporates in the data set</span>
+	<span class="n">unregistered_corporates</span> <span class="o">=</span> <span class="n">confirm_registred_corporates</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_corporates</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;corporates in this list are not registered&quot;</span><span class="p">:</span>
+						<span class="n">unregistered_corporates</span><span class="p">})</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="k">if</span> <span class="n">save_savings_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Savings data successfully saved&quot;</span>
+						<span class="p">})</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+					<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span> 
+					<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You have brocken my code. Reach out to me&quot;</span>
+					<span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="send_withdrawals_data"><a class="viewcode-back" href="../../../myapp.SentData.send_endpoints.html#myapp.SentData.send_endpoints.send_withdrawals_data">[docs]</a><span class="nd">@send_data_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/send_withdrawals_data&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">send_withdrawals_data</span><span class="p">():</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+	<span class="n">required_columns</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;corporate_id&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_withdrawals&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;withdrawals_channel&#39;</span><span class="p">,</span> <span class="s1">&#39;withdrawals_amount&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;withdrawals_description&#39;</span><span class="p">])</span>
+	<span class="n">test_101</span> <span class="o">=</span> <span class="n">DataSent</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span><span class="o">.</span><span class="n">make_responses</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">test_101</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">test_101</span><span class="p">)</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+	<span class="n">all_columns</span> <span class="o">=</span> <span class="n">DataTypes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">value_types</span><span class="p">)</span>
+	<span class="n">inapropriate_columns</span> <span class="o">=</span> <span class="n">all_columns</span><span class="o">.</span><span class="n">make_validation</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inapropriate_columns</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;Inapropriate data types in&quot;</span><span class="p">:</span> <span class="n">inapropriate_columns</span>
+						<span class="p">})</span>
+	<span class="c1"># Find unregistred corporates in the data set</span>
+	<span class="n">unregistered_corporates</span> <span class="o">=</span> <span class="n">confirm_registred_corporates</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_corporates</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;corporates in this list are not registered&quot;</span><span class="p">:</span>
+						 <span class="n">unregistered_corporates</span>
+						<span class="p">})</span>
+	<span class="c1"># Find unregistered borrowers in the data set</span>
+	<span class="n">unregistered_borrowers</span> <span class="o">=</span> <span class="n">confirm_registered_borrower</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_borrowers</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;members in the list are not registered&quot;</span><span class="p">:</span>
+						 <span class="n">unregistered_borrowers</span>
+						<span class="p">})</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="k">if</span> <span class="n">save_withdrawals_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Withrawal data successfully saved&quot;</span>
+						<span class="p">})</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+					<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span> 
+					<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You have brocken my code. Reach out to me&quot;</span>
+					<span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="send_loans_data"><a class="viewcode-back" href="../../../myapp.SentData.send_endpoints.html#myapp.SentData.send_endpoints.send_loans_data">[docs]</a><span class="nd">@send_data_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/send_loan_data&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">send_loans_data</span><span class="p">():</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+	<span class="n">required_columns</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;corporate_id&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;date_of_loans&#39;</span><span class="p">,</span> <span class="s1">&#39;loan_interest&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;loans_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;loan_period&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;loan_installment_frequency&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;date_of_loan_completion&#39;</span><span class="p">])</span>
+	<span class="n">test_101</span> <span class="o">=</span> <span class="n">DataSent</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span><span class="o">.</span><span class="n">make_responses</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">test_101</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">test_101</span><span class="p">)</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+	<span class="n">all_columns</span> <span class="o">=</span> <span class="n">DataTypes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">value_types</span><span class="p">)</span>
+	<span class="n">inapropriate_columns</span> <span class="o">=</span> <span class="n">all_columns</span><span class="o">.</span><span class="n">make_validation</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inapropriate_columns</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;Inapropriate data types in&quot;</span><span class="p">:</span> <span class="n">inapropriate_columns</span>
+						<span class="p">})</span>
+	<span class="c1"># Find unregistered borrowers in the dataset</span>
+	<span class="n">unregistered_borrowers</span> <span class="o">=</span> <span class="n">confirm_registered_borrower</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_borrowers</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;Unregistered are:&quot;</span><span class="p">:</span> <span class="n">unregistered_borrower</span>
+						<span class="p">})</span>
+	<span class="c1"># Find unregistred corporates in the data set</span>
+	<span class="n">unregistered_corporates</span> <span class="o">=</span> <span class="n">confirm_registred_corporates</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_corporates</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;corporates in this list are not registered&quot;</span><span class="p">:</span>
+						 <span class="n">unregistered_corporates</span>
+						<span class="p">})</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="k">if</span> <span class="n">save_loans_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Data successfully saved&quot;</span>
+						<span class="p">})</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span> 
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You have brocken my code. Reach out to me&quot;</span>
+					<span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="send_installments_data"><a class="viewcode-back" href="../../../myapp.SentData.send_endpoints.html#myapp.SentData.send_endpoints.send_installments_data">[docs]</a><span class="nd">@send_data_routes</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/v1/send_installment_data&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@cross_origin</span><span class="p">(</span><span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">send_installments_data</span><span class="p">():</span>
+	<span class="n">details</span> <span class="o">=</span> <span class="n">Authentication</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_data</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Your data is invalid.&quot;</span><span class="p">}),</span> <span class="mi">400</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_token</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first.&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="o">.</span><span class="n">is_valid_role</span><span class="p">():</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You are not Authorised&quot;</span><span class="p">}),</span> <span class="mi">403</span>
+	<span class="n">required_columns</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;installment_loan_id&#39;</span><span class="p">,</span> <span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span>
+						 <span class="s1">&#39;corprate_id&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_installment&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;installment_amount&#39;</span><span class="p">,</span>
+						 <span class="s1">&#39;installment_loan_balance&#39;</span><span class="p">,</span> <span class="s1">&#39;installment_type&#39;</span><span class="p">])</span>
+	<span class="n">test_101</span> <span class="o">=</span> <span class="n">DataSent</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span><span class="o">.</span><span class="n">make_responses</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">test_101</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">test_101</span><span class="p">)</span>
+	<span class="c1"># check that all dictionary values have appropriate data types</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+	<span class="n">all_columns</span> <span class="o">=</span> <span class="n">DataTypes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">value_types</span><span class="p">)</span>
+	<span class="n">inapropriate_columns</span> <span class="o">=</span> <span class="n">all_columns</span><span class="o">.</span><span class="n">make_validation</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inapropriate_columns</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>	
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;Inapropriate data types in&quot;</span><span class="p">:</span> <span class="n">inapropriate_columns</span>
+						<span class="p">})</span>
+	<span class="c1"># Find unregistered borrowers in the dataset</span>
+	<span class="n">unregistered_borrowers</span> <span class="o">=</span> <span class="n">confirm_registered_borrower</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_borrowers</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;Unregistered are:&quot;</span><span class="p">:</span> <span class="n">unregistered_borrower</span>
+						<span class="p">})</span>
+	<span class="c1"># Find unregistred corporates in the data set</span>
+	<span class="n">unregistered_corporates</span> <span class="o">=</span> <span class="n">confirm_registred_corporates</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">unregistered_corporates</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;unregistered corporates are&quot;</span><span class="p">:</span> <span class="n">unregistered_corporates</span>
+						<span class="p">})</span>
+	<span class="k">if</span> <span class="n">save_installments_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Data successfully saved&quot;</span>
+						<span class="p">})</span>
+	<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+					<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+					<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You have brocken my code. Reach out to me&quot;</span>
+					<span class="p">})</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

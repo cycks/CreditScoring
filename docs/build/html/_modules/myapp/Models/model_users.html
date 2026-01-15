@@ -1,0 +1,585 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.model_users &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Models.model_users</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">jwt</span><span class="o">,</span> <span class="nn">os</span>
+
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span>
+
+
+<span class="kn">from</span> <span class="nn">myapp.Helpers.admin_details</span> <span class="kn">import</span> <span class="n">AdminDetails</span>
+<span class="kn">from</span> <span class="nn">myapp.Helpers.input_validators</span> <span class="kn">import</span> <span class="n">ValidInputs</span>
+
+
+<span class="kn">from</span> <span class="nn">myapp.Models.__init__</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">hashing</span>
+<span class="kn">from</span> <span class="nn">myapp.Models.tables</span> <span class="kn">import</span> <span class="p">(</span>
+									<span class="n">Administrators</span><span class="p">,</span>
+									<span class="n">BlacklistedTokens</span><span class="p">,</span>
+									<span class="n">ClientAdmins</span><span class="p">,</span>
+									<span class="n">Corporates</span><span class="p">,</span>
+									<span class="n">LoggedAdmins</span><span class="p">,</span>
+									<span class="n">LoggedClients</span><span class="p">,</span>
+									<span class="n">Users</span><span class="p">,</span>
+								<span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="generate_jwt_token"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.generate_jwt_token">[docs]</a><span class="k">def</span> <span class="nf">generate_jwt_token</span><span class="p">(</span><span class="n">admin_role</span><span class="p">,</span> <span class="n">admin_status</span><span class="p">,</span> <span class="n">admin_id</span><span class="p">,</span> <span class="n">corporate_id</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Generates a jwt authentication token.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		admin_role (int): The first parameter.</span>
+<span class="sd">		admin_status (int): The second parameter. A user&#39;s</span>
+<span class="sd">							registration status</span>
+<span class="sd">		admin_id (int): The database id for the user</span>
+<span class="sd">		corporate_id (int): The corporate_id for the user</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		A token(str)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">secret</span> <span class="o">=</span> <span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+	<span class="n">expiration</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+	<span class="n">user_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+								<span class="p">{</span>	
+									<span class="s1">&#39;admin_role&#39;</span><span class="p">:</span><span class="n">admin_role</span><span class="p">,</span>
+									<span class="s1">&#39;admin_status&#39;</span><span class="p">:</span><span class="n">admin_status</span><span class="p">,</span>
+									<span class="s1">&#39;admin_id&#39;</span><span class="p">:</span> <span class="n">admin_id</span><span class="p">,</span>
+									<span class="s1">&#39;corporate_id&#39;</span><span class="p">:</span> <span class="n">corporate_id</span><span class="p">,</span>
+									<span class="s1">&#39;exp&#39;</span><span class="p">:</span> <span class="n">expiration</span>
+								<span class="p">},</span>
+									<span class="n">secret</span>
+							<span class="p">)</span>
+	<span class="k">return</span> <span class="n">user_token</span></div>
+
+
+<div class="viewcode-block" id="Authentication"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.Authentication">[docs]</a><span class="k">class</span> <span class="nc">Authentication</span><span class="p">(</span><span class="n">AdminDetails</span><span class="p">):</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">required_role</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">required_role</span> <span class="o">=</span> <span class="n">required_role</span>
+		<span class="n">AdminDetails</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Authentication.is_valid_data"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.Authentication.is_valid_data">[docs]</a>	<span class="k">def</span> <span class="nf">is_valid_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Try to extract data from the request object. If the body is empty then</span>
+<span class="sd">		check for cases where data is sent using variable rules. If that fails</span>
+<span class="sd">		check to see whether there is a token in the request. Return False if</span>
+<span class="sd">		all this checks fail.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+			<span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">view_args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">view_args</span>
+					<span class="k">return</span> <span class="kc">True</span>
+				<span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_token&quot;</span><span class="p">):</span>
+					<span class="k">return</span> <span class="kc">True</span>	
+			<span class="k">return</span> <span class="kc">True</span>	
+		<span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Authentication.is_logged_in"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.Authentication.is_logged_in">[docs]</a>	<span class="k">def</span> <span class="nf">is_logged_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">logged_in_admin</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_admin_id</span>
+		<span class="k">if</span> <span class="n">logged_in_admin</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">logged_in_admin</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Authentication.is_valid_token"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.Authentication.is_valid_token">[docs]</a>	<span class="k">def</span> <span class="nf">is_valid_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">admin_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">()</span>
+		<span class="n">token</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_user_token</span>
+		<span class="n">checked_token</span> <span class="o">=</span> <span class="n">BlacklistedTokens</span><span class="p">()</span><span class="o">.</span><span class="n">get_by_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">admin_id</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="n">checked_token</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Authentication.is_valid_role"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.Authentication.is_valid_role">[docs]</a>	<span class="k">def</span> <span class="nf">is_valid_role</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Make all other validations then check if the required role</span>
+<span class="sd">		is less than or equal to the current role.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">admin_role</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_admin_role</span>
+		<span class="k">if</span> <span class="n">admin_role</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_role</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">admin_role</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div></div>
+
+
+	<span class="c1"># def make_validation(self):</span>
+	<span class="c1"># 	all_validations = True</span>
+	<span class="c1"># 	validate_data = self.is_valid_data()</span>
+	<span class="c1"># 	if validate_data == False:</span>
+	<span class="c1"># 		return {&quot;status&quot;: False, &quot;message&quot;: &quot;The data is invalid.&quot;}</span>
+	<span class="c1"># 	check_log_status = self.is_logged_in()</span>
+	<span class="c1"># 	elif check_log_status == False:</span>
+	<span class="c1"># 		return {&quot;status&quot;: False, &quot;message&quot;: &quot;Log in first.&quot;}</span>
+	<span class="c1"># 	check_valid_token = self.is_valid_token()</span>
+	<span class="c1"># 	elif check_valid_token == False:</span>
+	<span class="c1"># 		return {&quot;status&quot;: False, &quot;message&quot;: &quot;Invalid token. Log in first.&quot;}</span>
+	<span class="c1"># 	validate_role = self.is_valid_role()</span>
+	<span class="c1"># 	elif validate_role == False:</span>
+	<span class="c1"># 		return {&quot;status&quot;: False, &quot;message&quot;: &quot;Unauthorised.&quot;}</span>
+	<span class="c1"># 	return True</span>
+
+
+
+<div class="viewcode-block" id="CreatedUsers"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.CreatedUsers">[docs]</a><span class="k">class</span> <span class="nc">CreatedUsers</span><span class="p">(</span><span class="n">ValidInputs</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for CreatedUsers&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">):</span>
+		<span class="n">ValidInputs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mydict</span> <span class="o">=</span> <span class="n">mydict</span>
+
+
+<div class="viewcode-block" id="CreatedUsers.is_correct_details"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.CreatedUsers.is_correct_details">[docs]</a>	<span class="k">def</span> <span class="nf">is_correct_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreatedUsers.is_registered_corporate"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.CreatedUsers.is_registered_corporate">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_corporate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">Corporates</span><span class="p">()</span><span class="o">.</span><span class="n">get_corp_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="CreatedUsers.is_registered_user"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.CreatedUsers.is_registered_user">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">Users</span><span class="p">()</span><span class="o">.</span><span class="n">get_by_user_identity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;user_identity&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="CreatedUsers.register_user"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.CreatedUsers.register_user">[docs]</a>	<span class="k">def</span> <span class="nf">register_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">ed_user</span> <span class="o">=</span> <span class="n">Users</span><span class="p">(</span>
+							<span class="n">user_identity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;user_identity&quot;</span><span class="p">],</span>
+							<span class="n">user_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_names&quot;</span><span class="p">]</span>
+						<span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_user</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span></div>
+		
+<div class="viewcode-block" id="CreatedUsers.register_admin"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.CreatedUsers.register_admin">[docs]</a>	<span class="k">def</span> <span class="nf">register_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">admin_role</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">secret</span><span class="p">):</span>
+		<span class="c1"># TODO: Check for duplicate emails</span>
+		<span class="n">email</span> <span class="o">=</span> <span class="n">Administrators</span><span class="p">()</span><span class="o">.</span><span class="n">get_admin_by_email</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span>
+		<span class="n">corp</span> <span class="o">=</span> <span class="n">Corporates</span><span class="p">()</span><span class="o">.</span><span class="n">get_corp_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span>
+		<span class="k">if</span> <span class="n">email</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;email taken&quot;</span>
+					<span class="p">}</span>
+		<span class="k">if</span> <span class="n">corp</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Company provided is unregistered.&quot;</span>
+					<span class="p">}</span>
+		<span class="n">hashed</span> <span class="o">=</span> <span class="n">hashing</span><span class="o">.</span><span class="n">hash_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_password&quot;</span><span class="p">],</span> <span class="n">salt</span><span class="o">=</span><span class="n">secret</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">admin_role</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Wrong role provided.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">elif</span> <span class="n">admin_role</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="n">ed_user</span> <span class="o">=</span> <span class="n">Administrators</span><span class="p">(</span>
+										<span class="n">admin_email</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">],</span>
+										<span class="n">admin_password</span><span class="o">=</span><span class="n">hashed</span><span class="p">,</span>
+										<span class="n">role_id</span> <span class="o">=</span> <span class="n">admin_role</span><span class="p">,</span>
+										<span class="n">status_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+										<span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+									<span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_user</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;administrator registered.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="CreatedUsers.register_client"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.CreatedUsers.register_client">[docs]</a>	<span class="k">def</span> <span class="nf">register_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">admin_role</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">secret</span><span class="p">):</span>
+		<span class="n">email</span> <span class="o">=</span> <span class="n">ClientAdmins</span><span class="p">()</span><span class="o">.</span><span class="n">get_client_by_email</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span>
+		<span class="n">corp</span> <span class="o">=</span> <span class="n">Corporates</span><span class="p">()</span><span class="o">.</span><span class="n">get_corp_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">])</span>
+		<span class="k">if</span> <span class="n">email</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;email taken&quot;</span>
+					<span class="p">}</span>
+		<span class="k">if</span> <span class="n">corp</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Company provided is unregistered.&quot;</span>
+					<span class="p">}</span>
+		<span class="n">hashed</span> <span class="o">=</span> <span class="n">hashing</span><span class="o">.</span><span class="n">hash_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_password&quot;</span><span class="p">],</span> <span class="n">salt</span><span class="o">=</span><span class="n">secret</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">admin_role</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Wrong role provided should be a client role.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">elif</span> <span class="n">admin_role</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">:</span>
+			<span class="n">ed_user</span> <span class="o">=</span> <span class="n">ClientAdmins</span><span class="p">(</span>
+									<span class="n">client_email</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">],</span>
+									<span class="n">client_password</span><span class="o">=</span><span class="n">hashed</span><span class="p">,</span>
+									<span class="n">role_id</span> <span class="o">=</span> <span class="n">admin_role</span><span class="p">,</span>
+									<span class="n">status_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+									<span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span><span class="p">,</span>
+									<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">corp</span><span class="o">.</span><span class="n">corporate_id</span>
+								 <span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_user</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;client registered.&quot;</span>
+					<span class="p">}</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="CreatedUsers.make_registration"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.CreatedUsers.make_registration">[docs]</a>	<span class="k">def</span> <span class="nf">make_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">secret</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_correct_details</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_correct_details</span><span class="p">()</span>
+		<span class="c1"># check if is_registered_corporate is none and return message</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_corporate</span><span class="p">()</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;unregistered company.&quot;</span>
+					<span class="p">}</span>
+		<span class="c1"># check if user is in Users table and register if none</span>
+		<span class="n">is_registered_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_user</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">is_registered_user</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">register_user</span><span class="p">()</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		If none in the db the first time above fetch again after registration</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">is_registered_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_user</span><span class="p">()</span>
+		<span class="n">admin_role</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_role_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_role&quot;</span><span class="p">])</span>
+		<span class="c1"># extract user id from the users table</span>
+		<span class="n">user_id</span> <span class="o">=</span> <span class="n">is_registered_user</span><span class="o">.</span><span class="n">user_id</span>
+		<span class="k">if</span> <span class="n">admin_role</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">admin_role</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="n">reg_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_admin</span><span class="p">(</span><span class="n">admin_role</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">reg_status</span>
+		<span class="k">if</span> <span class="n">admin_role</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">admin_role</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+			<span class="n">reg_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_client</span><span class="p">(</span><span class="n">admin_role</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">reg_status</span></div></div>
+
+
+<div class="viewcode-block" id="save_admins"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.save_admins">[docs]</a><span class="k">def</span> <span class="nf">save_admins</span><span class="p">(</span><span class="n">mydict</span><span class="p">,</span> <span class="n">secret</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Saves a user into the user table, administrators, or clientadmins tables.</span>
+
+<span class="sd">	Using the CreatedUsers class to register a user, then an admin, then</span>
+<span class="sd">	a client admin.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">required_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;user_identity&quot;</span><span class="p">,</span> <span class="s2">&quot;admin_names&quot;</span><span class="p">,</span> <span class="s2">&quot;admin_email&quot;</span><span class="p">,</span> 
+						<span class="s2">&quot;admin_password&quot;</span><span class="p">,</span> <span class="s2">&quot;admin_role&quot;</span><span class="p">,</span> <span class="s2">&quot;corporate_name&quot;</span><span class="p">]</span>
+
+	<span class="n">registration</span> <span class="o">=</span> <span class="n">CreatedUsers</span><span class="p">(</span><span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span>
+	<span class="n">registration_status</span> <span class="o">=</span> <span class="n">registration</span><span class="o">.</span><span class="n">make_registration</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">registration_status</span></div>
+
+
+<div class="viewcode-block" id="LoggedUsers"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers">[docs]</a><span class="k">class</span> <span class="nc">LoggedUsers</span><span class="p">(</span><span class="n">ValidInputs</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;docstring for CreatedUsers&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mydict</span><span class="p">,</span> <span class="n">required_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="n">ValidInputs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">required_inputs</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mydict</span> <span class="o">=</span> <span class="n">mydict</span>
+
+<div class="viewcode-block" id="LoggedUsers.is_correct_details"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.is_correct_details">[docs]</a>	<span class="k">def</span> <span class="nf">is_correct_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.is_registered_admin"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.is_registered_admin">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">Administrators</span><span class="p">()</span><span class="o">.</span><span class="n">get_admin_by_email</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_email&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.is_registered_client"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.is_registered_client">[docs]</a>	<span class="k">def</span> <span class="nf">is_registered_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">ClientAdmins</span><span class="p">()</span><span class="o">.</span><span class="n">get_client_by_email</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.is_correct_password"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.is_correct_password">[docs]</a>	<span class="k">def</span> <span class="nf">is_correct_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_password</span><span class="p">):</span>
+		<span class="n">recieved_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;password1&quot;</span><span class="p">]</span>
+		<span class="n">check_password</span> <span class="o">=</span> <span class="n">hashing</span><span class="o">.</span><span class="n">check_value</span><span class="p">(</span>
+												<span class="n">db_password</span><span class="p">,</span>
+												<span class="n">recieved_password</span><span class="p">,</span>
+												<span class="n">salt</span><span class="o">=</span><span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+											<span class="p">)</span>
+		<span class="k">return</span> <span class="n">check_password</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.generate_token"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.generate_token">[docs]</a>	<span class="k">def</span> <span class="nf">generate_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">):</span>
+		<span class="n">user_token</span> <span class="o">=</span>  <span class="n">generate_jwt_token</span><span class="p">(</span>
+											<span class="n">sql_query</span><span class="o">.</span><span class="n">role_id</span><span class="p">,</span>
+											<span class="n">sql_query</span><span class="o">.</span><span class="n">status_id</span><span class="p">,</span>
+											<span class="n">sql_query</span><span class="o">.</span><span class="n">admin_id</span><span class="p">,</span>
+											<span class="n">sql_query</span><span class="o">.</span><span class="n">corporate_id</span>
+										<span class="p">)</span>
+		<span class="k">return</span> <span class="n">user_token</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.insert_logged_admin"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.insert_logged_admin">[docs]</a>	<span class="k">def</span> <span class="nf">insert_logged_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">admin_id</span><span class="p">):</span>
+		<span class="n">ed_user</span> <span class="o">=</span> <span class="n">LoggedAdmins</span><span class="p">(</span><span class="n">admin_id</span><span class="o">=</span><span class="n">admin_id</span><span class="p">)</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_user</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.log_in_admin"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.log_in_admin">[docs]</a>	<span class="k">def</span> <span class="nf">log_in_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">is_valid_inputs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">is_valid_inputs</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">is_valid_inputs</span>
+					<span class="p">}</span>
+
+		<span class="c1"># TODO consider checking if the generated token is in the blacklist</span>
+		<span class="n">reg_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_admin</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">reg_status</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;unregistered email&quot;</span>
+					<span class="p">}</span>
+
+		<span class="n">db_password</span> <span class="o">=</span> <span class="n">reg_status</span><span class="o">.</span><span class="n">admin_password</span>
+		<span class="n">is_correct_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_correct_password</span><span class="p">(</span><span class="n">db_password</span><span class="p">)</span>
+		<span class="n">admin_id</span> <span class="o">=</span> <span class="n">reg_status</span><span class="o">.</span><span class="n">admin_id</span>
+
+		<span class="k">if</span> <span class="n">is_correct_password</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;incorrect password provided&quot;</span>
+					<span class="p">}</span>
+
+		<span class="n">is_approved_admin</span> <span class="o">=</span> <span class="n">reg_status</span><span class="o">.</span><span class="n">status_id</span>
+		<span class="k">if</span> <span class="n">is_approved_admin</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;Contact your immediate supervisor</span>
+<span class="s2">									for approval&quot;&quot;&quot;</span>
+					<span class="p">}</span>
+
+
+		<span class="n">user_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">reg_status</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_logged_admin</span><span class="p">(</span><span class="n">admin_id</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>	
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> 
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;login successful&quot;</span><span class="p">,</span>
+						<span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="n">user_token</span><span class="p">,</span>
+						<span class="s2">&quot;role_id&quot;</span><span class="p">:</span> <span class="n">reg_status</span><span class="o">.</span><span class="n">role_id</span>
+					<span class="p">}</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_logged_admin</span><span class="p">(</span><span class="n">admin_id</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">return</span>  <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> 
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Error on login&quot;</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.insert_logged_client"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.insert_logged_client">[docs]</a>	<span class="k">def</span> <span class="nf">insert_logged_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">):</span>
+		<span class="n">ed_user</span> <span class="o">=</span> <span class="n">LoggedClients</span><span class="p">(</span><span class="n">client_id</span><span class="o">=</span><span class="n">client_id</span><span class="p">)</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_user</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.log_in_client"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.log_in_client">[docs]</a>	<span class="k">def</span> <span class="nf">log_in_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">is_valid_inputs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">is_valid_inputs</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="n">is_valid_inputs</span>
+					<span class="p">}</span>
+		<span class="c1"># TODO consider checking if the generated token is in the blacklist</span>
+		<span class="n">reg_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_registered_client</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">reg_status</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;unregistered email&quot;</span>
+					<span class="p">}</span>
+
+		<span class="n">db_password</span> <span class="o">=</span> <span class="n">reg_status</span><span class="o">.</span><span class="n">admin_password</span>
+		<span class="n">is_correct_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_correct_password</span><span class="p">(</span><span class="n">db_password</span><span class="p">)</span>
+		<span class="n">admin_id</span> <span class="o">=</span> <span class="n">reg_status</span><span class="o">.</span><span class="n">admin_id</span>
+
+		<span class="k">if</span> <span class="n">is_correct_password</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;incorrect password provided&quot;</span>
+					<span class="p">}</span>
+
+		<span class="n">is_approved_admin</span> <span class="o">=</span> <span class="n">reg_status</span><span class="o">.</span><span class="n">status_id</span>
+		<span class="k">if</span> <span class="n">is_approved_admin</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> 
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Contact your supervisor for approval&quot;</span>
+					<span class="p">}</span>
+
+		<span class="n">user_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">reg_status</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_logged_client</span><span class="p">(</span><span class="n">admin_id</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+						<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> 
+						<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;login successful.&quot;</span><span class="p">,</span>
+						<span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="n">user_token</span><span class="p">,</span>
+						<span class="s2">&quot;role_id&quot;</span><span class="p">:</span> <span class="n">reg_status</span><span class="o">.</span><span class="n">role_id</span>
+					<span class="p">}</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_logged_client</span><span class="p">(</span><span class="n">admin_id</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Error on login&quot;</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.blacklist_token"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.blacklist_token">[docs]</a>	<span class="k">def</span> <span class="nf">blacklist_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		used to blacklist tokens that have not expired but are still valid.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">ed_user</span> <span class="o">=</span> <span class="n">BlacklistedTokens</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ed_user</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.update_logs"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.update_logs">[docs]</a>	<span class="k">def</span> <span class="nf">update_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_id</span><span class="p">,</span> <span class="n">admin_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">admin_id</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">role_id</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="n">login</span> <span class="o">=</span> <span class="p">(</span>
+					  <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">LoggedAdmins</span><span class="p">)</span><span class="o">.</span>
+					  <span class="nb">filter</span><span class="p">(</span><span class="n">LoggedAdmins</span><span class="o">.</span><span class="n">admin_id</span> <span class="o">==</span> <span class="n">admin_id</span><span class="p">)</span><span class="o">.</span>				
+					  <span class="n">order_by</span><span class="p">(</span><span class="n">LoggedAdmins</span><span class="o">.</span><span class="n">admin_id</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+					<span class="p">)</span>
+		<span class="k">elif</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">role_id</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+			<span class="n">login</span> <span class="o">=</span> <span class="p">(</span>
+					  <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">LoggedClients</span><span class="p">)</span><span class="o">.</span>
+					  <span class="nb">filter</span><span class="p">(</span><span class="n">LoggedClients</span><span class="o">.</span><span class="n">admin_id</span> <span class="o">==</span> <span class="n">admin_id</span><span class="p">)</span><span class="o">.</span>				
+					  <span class="n">order_by</span><span class="p">(</span><span class="n">LoggedClients</span><span class="o">.</span><span class="n">admin_id</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+					<span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">login</span><span class="o">.</span><span class="n">logoutDate</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error_message</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="LoggedUsers.logout"><a class="viewcode-back" href="../../../myapp.Models.model_users.html#myapp.Models.model_users.LoggedUsers.logout">[docs]</a>	<span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		On loguout update the LoggedAdmins and the LoggedClients</span>
+<span class="sd">		column (logout date to the current time.) If the token is still valid</span>
+<span class="sd">		insert the token in blacklisted tokens.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># TODO check if the token is in the blacklisted table</span>
+		
+		<span class="n">login_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_logs</span><span class="p">(</span>
+											<span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;role_id&quot;</span><span class="p">],</span>
+											<span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;admin_id&quot;</span><span class="p">]</span>
+										<span class="p">)</span>
+		<span class="k">if</span> <span class="n">login_status</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">secret</span> <span class="o">=</span> <span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+				<span class="n">decoded_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;user_token&quot;</span><span class="p">],</span> <span class="n">secret</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">blacklist_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydict</span><span class="p">[</span><span class="s2">&quot;user_token&quot;</span><span class="p">])</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+							<span class="s2">&quot;messge&quot;</span><span class="p">:</span> <span class="s2">&quot;Logged out successfully.&quot;</span>
+						<span class="p">}</span>
+			<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ExpiredSignatureError</span><span class="p">:</span>
+				<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;expired session.&quot;</span>
+						<span class="p">}</span>
+		<span class="k">elif</span> <span class="n">login_status</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span>
+							<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+							<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;You were not logged in.&quot;</span>
+						<span class="p">}</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

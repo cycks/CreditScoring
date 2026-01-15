@@ -1,0 +1,1815 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.tables module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.SentData package" href="myapp.SentData.html" />
+    <link rel="prev" title="myapp.Models.payments module" href="myapp.Models.payments.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Models.tables">
+<span id="myapp-models-tables-module"></span><h1>myapp.Models.tables module<a class="headerlink" href="#module-myapp.Models.tables" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="myapp.Models.tables.AdminApprovals">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">AdminApprovals</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#AdminApprovals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.AdminApprovals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>This table tells us whether or not a user has been approved and
+who made the approval.</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminApprovals.admin_being_approved">
+<code class="sig-name descname">admin_being_approved</code><a class="headerlink" href="#myapp.Models.tables.AdminApprovals.admin_being_approved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Who is doing the approval</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminApprovals.approval_date_created">
+<code class="sig-name descname">approval_date_created</code><a class="headerlink" href="#myapp.Models.tables.AdminApprovals.approval_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminApprovals.approval_id">
+<code class="sig-name descname">approval_id</code><a class="headerlink" href="#myapp.Models.tables.AdminApprovals.approval_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminApprovals.approved_from">
+<code class="sig-name descname">approved_from</code><a class="headerlink" href="#myapp.Models.tables.AdminApprovals.approved_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminApprovals.approved_to">
+<code class="sig-name descname">approved_to</code><a class="headerlink" href="#myapp.Models.tables.AdminApprovals.approved_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminApprovals.approver_id">
+<code class="sig-name descname">approver_id</code><a class="headerlink" href="#myapp.Models.tables.AdminApprovals.approver_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminApprovals.status_approved_from">
+<code class="sig-name descname">status_approved_from</code><a class="headerlink" href="#myapp.Models.tables.AdminApprovals.status_approved_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminApprovals.status_approved_to">
+<code class="sig-name descname">status_approved_to</code><a class="headerlink" href="#myapp.Models.tables.AdminApprovals.status_approved_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.AdminChecks">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">AdminChecks</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#AdminChecks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.AdminChecks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>This table tells us whether an admin has been checked by an infotrace
+employee and who did the checking. A detail is moved to this table
+only after the user is checked.</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminChecks.check_id">
+<code class="sig-name descname">check_id</code><a class="headerlink" href="#myapp.Models.tables.AdminChecks.check_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminChecks.checked_date_created">
+<code class="sig-name descname">checked_date_created</code><a class="headerlink" href="#myapp.Models.tables.AdminChecks.checked_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminChecks.checked_from">
+<code class="sig-name descname">checked_from</code><a class="headerlink" href="#myapp.Models.tables.AdminChecks.checked_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminChecks.checked_to">
+<code class="sig-name descname">checked_to</code><a class="headerlink" href="#myapp.Models.tables.AdminChecks.checked_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminChecks.checker_id">
+<code class="sig-name descname">checker_id</code><a class="headerlink" href="#myapp.Models.tables.AdminChecks.checker_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminChecks.client_being_checked">
+<code class="sig-name descname">client_being_checked</code><a class="headerlink" href="#myapp.Models.tables.AdminChecks.client_being_checked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminChecks.status_checked_from">
+<code class="sig-name descname">status_checked_from</code><a class="headerlink" href="#myapp.Models.tables.AdminChecks.status_checked_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.AdminChecks.status_checked_to">
+<code class="sig-name descname">status_checked_to</code><a class="headerlink" href="#myapp.Models.tables.AdminChecks.status_checked_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.Administrators">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">Administrators</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Administrators"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Administrators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.Roles">
+<code class="sig-name descname">Roles</code><a class="headerlink" href="#myapp.Models.tables.Administrators.Roles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.Status">
+<code class="sig-name descname">Status</code><a class="headerlink" href="#myapp.Models.tables.Administrators.Status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.Users">
+<code class="sig-name descname">Users</code><a class="headerlink" href="#myapp.Models.tables.Administrators.Users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.admin_date_created">
+<code class="sig-name descname">admin_date_created</code><a class="headerlink" href="#myapp.Models.tables.Administrators.admin_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.admin_email">
+<code class="sig-name descname">admin_email</code><a class="headerlink" href="#myapp.Models.tables.Administrators.admin_email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.admin_id">
+<code class="sig-name descname">admin_id</code><a class="headerlink" href="#myapp.Models.tables.Administrators.admin_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.admin_password">
+<code class="sig-name descname">admin_password</code><a class="headerlink" href="#myapp.Models.tables.Administrators.admin_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.admins_logged_relation">
+<code class="sig-name descname">admins_logged_relation</code><a class="headerlink" href="#myapp.Models.tables.Administrators.admins_logged_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.Administrators.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.Administrators.get_admin_by_email">
+<em class="property">classmethod </em><code class="sig-name descname">get_admin_by_email</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">admin_email</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Administrators.get_admin_by_email"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Administrators.get_admin_by_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the Administrators by their email address</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.Administrators.get_admin_by_id">
+<em class="property">classmethod </em><code class="sig-name descname">get_admin_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">admin_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Administrators.get_admin_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Administrators.get_admin_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query user by their user_id</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.role_id">
+<code class="sig-name descname">role_id</code><a class="headerlink" href="#myapp.Models.tables.Administrators.role_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.status_id">
+<code class="sig-name descname">status_id</code><a class="headerlink" href="#myapp.Models.tables.Administrators.status_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Administrators.user_id">
+<code class="sig-name descname">user_id</code><a class="headerlink" href="#myapp.Models.tables.Administrators.user_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.BlacklistedTokens">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">BlacklistedTokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#BlacklistedTokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.BlacklistedTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py method">
+<dt id="myapp.Models.tables.BlacklistedTokens.get_by_token">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_token</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#BlacklistedTokens.get_by_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.BlacklistedTokens.get_by_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query table by token</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.BlacklistedTokens.time_blacklisted">
+<code class="sig-name descname">time_blacklisted</code><a class="headerlink" href="#myapp.Models.tables.BlacklistedTokens.time_blacklisted" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.BlacklistedTokens.token">
+<code class="sig-name descname">token</code><a class="headerlink" href="#myapp.Models.tables.BlacklistedTokens.token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.BlacklistedTokens.token_id">
+<code class="sig-name descname">token_id</code><a class="headerlink" href="#myapp.Models.tables.BlacklistedTokens.token_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.Borrowers">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">Borrowers</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Borrowers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_deposits_relation">
+<code class="sig-name descname">bor_deposits_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_deposits_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_image_relation">
+<code class="sig-name descname">bor_image_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_image_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_instals_relation">
+<code class="sig-name descname">bor_instals_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_instals_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_kyc_relation">
+<code class="sig-name descname">bor_kyc_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_kyc_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_loans_relation">
+<code class="sig-name descname">bor_loans_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_loans_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_message_relation">
+<code class="sig-name descname">bor_message_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_message_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_mpesa_relation">
+<code class="sig-name descname">bor_mpesa_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_mpesa_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_music_relation">
+<code class="sig-name descname">bor_music_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_music_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_savings_relation">
+<code class="sig-name descname">bor_savings_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_savings_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_score_relation">
+<code class="sig-name descname">bor_score_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_score_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_video_relation">
+<code class="sig-name descname">bor_video_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_video_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.bor_withdrawals_relation">
+<code class="sig-name descname">bor_withdrawals_relation</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.bor_withdrawals_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.Borrowers.borrower_by_identity">
+<em class="property">classmethod </em><code class="sig-name descname">borrower_by_identity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">borrower_identity</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Borrowers.borrower_by_identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Borrowers.borrower_by_identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the Adminostrators by their email address</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.borrower_county">
+<code class="sig-name descname">borrower_county</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.borrower_county" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.borrower_date_created">
+<code class="sig-name descname">borrower_date_created</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.borrower_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.borrower_date_of_birth">
+<code class="sig-name descname">borrower_date_of_birth</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.borrower_date_of_birth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.borrower_gender">
+<code class="sig-name descname">borrower_gender</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.borrower_gender" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Borrowers.borrower_identity">
+<code class="sig-name descname">borrower_identity</code><a class="headerlink" href="#myapp.Models.tables.Borrowers.borrower_identity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.ClientAdmins">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">ClientAdmins</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ClientAdmins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ClientAdmins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>We cannot add a checked by and an approved by columns to this table
+because we need those columns to be related with the admin_id, which
+is in this table.</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.Users">
+<code class="sig-name descname">Users</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.Users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.client_date_created">
+<code class="sig-name descname">client_date_created</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.client_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.client_email">
+<code class="sig-name descname">client_email</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.client_email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.client_id">
+<code class="sig-name descname">client_id</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.client_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.client_logs_relation">
+<code class="sig-name descname">client_logs_relation</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.client_logs_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.client_password">
+<code class="sig-name descname">client_password</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.client_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.corp_client">
+<code class="sig-name descname">corp_client</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.corp_client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.ClientAdmins.get_client_by_email">
+<em class="property">classmethod </em><code class="sig-name descname">get_client_by_email</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client_email</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ClientAdmins.get_client_by_email"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.get_client_by_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the Adminostrators by their email address</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.ClientAdmins.get_client_by_id">
+<em class="property">classmethod </em><code class="sig-name descname">get_client_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ClientAdmins.get_client_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.get_client_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query user by their corporate_pin</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.role_id">
+<code class="sig-name descname">role_id</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.role_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.status_id">
+<code class="sig-name descname">status_id</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.status_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientAdmins.user_id">
+<code class="sig-name descname">user_id</code><a class="headerlink" href="#myapp.Models.tables.ClientAdmins.user_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.ClientDeductions">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">ClientDeductions</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ClientDeductions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ClientDeductions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>Table contianing all deductions.</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.ScoreTypes">
+<code class="sig-name descname">ScoreTypes</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.ScoreTypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.amount_after_deduction">
+<code class="sig-name descname">amount_after_deduction</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.amount_after_deduction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.amount_b4_deduction">
+<code class="sig-name descname">amount_b4_deduction</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.amount_b4_deduction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.amount_deducted">
+<code class="sig-name descname">amount_deducted</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.amount_deducted" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.deduction_date_created">
+<code class="sig-name descname">deduction_date_created</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.deduction_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.deduction_id">
+<code class="sig-name descname">deduction_id</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.deduction_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientDeductions.service_id">
+<code class="sig-name descname">service_id</code><a class="headerlink" href="#myapp.Models.tables.ClientDeductions.service_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.ClientPayments">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">ClientPayments</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ClientPayments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ClientPayments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>Table contianing all payments.</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientPayments.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.ClientPayments.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientPayments.aproved_by">
+<code class="sig-name descname">aproved_by</code><a class="headerlink" href="#myapp.Models.tables.ClientPayments.aproved_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientPayments.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.ClientPayments.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientPayments.payment_amount">
+<code class="sig-name descname">payment_amount</code><a class="headerlink" href="#myapp.Models.tables.ClientPayments.payment_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientPayments.payment_date_approved">
+<code class="sig-name descname">payment_date_approved</code><a class="headerlink" href="#myapp.Models.tables.ClientPayments.payment_date_approved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientPayments.payment_date_created">
+<code class="sig-name descname">payment_date_created</code><a class="headerlink" href="#myapp.Models.tables.ClientPayments.payment_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientPayments.payment_id">
+<code class="sig-name descname">payment_id</code><a class="headerlink" href="#myapp.Models.tables.ClientPayments.payment_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientPayments.uploaded_by">
+<code class="sig-name descname">uploaded_by</code><a class="headerlink" href="#myapp.Models.tables.ClientPayments.uploaded_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.ClientWallet">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">ClientWallet</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ClientWallet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ClientWallet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientWallet.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.ClientWallet.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientWallet.amount_date_created">
+<code class="sig-name descname">amount_date_created</code><a class="headerlink" href="#myapp.Models.tables.ClientWallet.amount_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientWallet.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.ClientWallet.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientWallet.current_amount">
+<code class="sig-name descname">current_amount</code><a class="headerlink" href="#myapp.Models.tables.ClientWallet.current_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ClientWallet.wallet_id">
+<code class="sig-name descname">wallet_id</code><a class="headerlink" href="#myapp.Models.tables.ClientWallet.wallet_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.CorporateApprovals">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">CorporateApprovals</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#CorporateApprovals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>This table tells us whether or not a user has been approved and
+who made the approval.</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateApprovals.approval_date_created">
+<code class="sig-name descname">approval_date_created</code><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.approval_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateApprovals.approval_id">
+<code class="sig-name descname">approval_id</code><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.approval_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateApprovals.approved_from">
+<code class="sig-name descname">approved_from</code><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.approved_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateApprovals.approved_to">
+<code class="sig-name descname">approved_to</code><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.approved_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateApprovals.approver_id">
+<code class="sig-name descname">approver_id</code><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.approver_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateApprovals.corp_being_approved">
+<code class="sig-name descname">corp_being_approved</code><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.corp_being_approved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.CorporateApprovals.get_by_corp_id">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_corp_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corp_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#CorporateApprovals.get_by_corp_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.get_by_corp_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the Adminostrators by their email address</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateApprovals.status_approved_from">
+<code class="sig-name descname">status_approved_from</code><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.status_approved_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateApprovals.status_approved_to">
+<code class="sig-name descname">status_approved_to</code><a class="headerlink" href="#myapp.Models.tables.CorporateApprovals.status_approved_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.CorporateChecks">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">CorporateChecks</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#CorporateChecks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.CorporateChecks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>This table tells us whether an admin has been checked by an infotrace
+employee and who did the checking. A detail is moved to this table
+only after the user is checked.</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateChecks.check_id">
+<code class="sig-name descname">check_id</code><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.check_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateChecks.checked_date_created">
+<code class="sig-name descname">checked_date_created</code><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.checked_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateChecks.checked_from">
+<code class="sig-name descname">checked_from</code><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.checked_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateChecks.checked_to">
+<code class="sig-name descname">checked_to</code><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.checked_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateChecks.checker_id">
+<code class="sig-name descname">checker_id</code><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.checker_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateChecks.corp_being_checked">
+<code class="sig-name descname">corp_being_checked</code><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.corp_being_checked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.CorporateChecks.get_by_corp_id">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_corp_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corp_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#CorporateChecks.get_by_corp_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.get_by_corp_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the Adminostrators by their email address</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateChecks.status_checked_from">
+<code class="sig-name descname">status_checked_from</code><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.status_checked_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CorporateChecks.status_checked_to">
+<code class="sig-name descname">status_checked_to</code><a class="headerlink" href="#myapp.Models.tables.CorporateChecks.status_checked_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.Corporates">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">Corporates</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Corporates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>Null indicates that a corporate has not been checked or approved.
+After being checked or approved the column is updated with
+the id for the admin who did the cehcking and approval.</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.Status">
+<code class="sig-name descname">Status</code><a class="headerlink" href="#myapp.Models.tables.Corporates.Status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_deduction_relation">
+<code class="sig-name descname">corp_deduction_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_deduction_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_deposits_relation">
+<code class="sig-name descname">corp_deposits_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_deposits_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_image_relation">
+<code class="sig-name descname">corp_image_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_image_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_installments_relation">
+<code class="sig-name descname">corp_installments_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_installments_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_kyc_relation">
+<code class="sig-name descname">corp_kyc_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_kyc_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_loans_relation">
+<code class="sig-name descname">corp_loans_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_loans_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_message_relation">
+<code class="sig-name descname">corp_message_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_message_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_mpesa_relation">
+<code class="sig-name descname">corp_mpesa_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_mpesa_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_music_relation">
+<code class="sig-name descname">corp_music_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_music_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_payment_relation">
+<code class="sig-name descname">corp_payment_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_payment_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_savings_relation">
+<code class="sig-name descname">corp_savings_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_savings_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_score_relation">
+<code class="sig-name descname">corp_score_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_score_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_video_relation">
+<code class="sig-name descname">corp_video_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_video_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_wallet_relation">
+<code class="sig-name descname">corp_wallet_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_wallet_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corp_withdrawals_relation">
+<code class="sig-name descname">corp_withdrawals_relation</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corp_withdrawals_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corporate_date_created">
+<code class="sig-name descname">corporate_date_created</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corporate_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corporate_name">
+<code class="sig-name descname">corporate_name</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corporate_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.corporate_pin">
+<code class="sig-name descname">corporate_pin</code><a class="headerlink" href="#myapp.Models.tables.Corporates.corporate_pin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.created_by">
+<code class="sig-name descname">created_by</code><a class="headerlink" href="#myapp.Models.tables.Corporates.created_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.Corporates.get_corp_by_id">
+<em class="property">classmethod </em><code class="sig-name descname">get_corp_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corporate_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Corporates.get_corp_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Corporates.get_corp_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query user by their corporate_pin</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.Corporates.get_corp_by_name">
+<em class="property">classmethod </em><code class="sig-name descname">get_corp_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corporate_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Corporates.get_corp_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Corporates.get_corp_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the Adminostrators by their email address</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.Corporates.get_corporate_by_pin">
+<em class="property">classmethod </em><code class="sig-name descname">get_corporate_by_pin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corporate_pin</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Corporates.get_corporate_by_pin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Corporates.get_corporate_by_pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query user by their corporate_pin</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Corporates.status_id">
+<code class="sig-name descname">status_id</code><a class="headerlink" href="#myapp.Models.tables.Corporates.status_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.CreditScores">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">CreditScores</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#CreditScores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.CreditScores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for CreditScores</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.admin_id">
+<code class="sig-name descname">admin_id</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.admin_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.credit_limit">
+<code class="sig-name descname">credit_limit</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.credit_limit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.credit_score">
+<code class="sig-name descname">credit_score</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.credit_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.score_date_created">
+<code class="sig-name descname">score_date_created</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.score_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.score_id">
+<code class="sig-name descname">score_id</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.score_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.CreditScores.score_name">
+<code class="sig-name descname">score_name</code><a class="headerlink" href="#myapp.Models.tables.CreditScores.score_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.DepositsData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">DepositsData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#DepositsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.DepositsData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for KycData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.date_of_deposit">
+<code class="sig-name descname">date_of_deposit</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.date_of_deposit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.deposit_amount">
+<code class="sig-name descname">deposit_amount</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.deposit_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.deposit_channel">
+<code class="sig-name descname">deposit_channel</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.deposit_channel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.deposit_date_created">
+<code class="sig-name descname">deposit_date_created</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.deposit_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.deposit_description">
+<code class="sig-name descname">deposit_description</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.deposit_description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.DepositsData.deposit_id">
+<code class="sig-name descname">deposit_id</code><a class="headerlink" href="#myapp.Models.tables.DepositsData.deposit_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.ImageData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">ImageData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ImageData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ImageData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for ImageData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.ImageData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.ImageData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.ImageData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.ImageData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.image_date_added">
+<code class="sig-name descname">image_date_added</code><a class="headerlink" href="#myapp.Models.tables.ImageData.image_date_added" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.image_date_created">
+<code class="sig-name descname">image_date_created</code><a class="headerlink" href="#myapp.Models.tables.ImageData.image_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.image_file_type">
+<code class="sig-name descname">image_file_type</code><a class="headerlink" href="#myapp.Models.tables.ImageData.image_file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.image_id">
+<code class="sig-name descname">image_id</code><a class="headerlink" href="#myapp.Models.tables.ImageData.image_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ImageData.image_size">
+<code class="sig-name descname">image_size</code><a class="headerlink" href="#myapp.Models.tables.ImageData.image_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.InstallmentsData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">InstallmentsData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#InstallmentsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.InstallmentsData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for KycData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.LoansData">
+<code class="sig-name descname">LoansData</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.LoansData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.date_of_installment">
+<code class="sig-name descname">date_of_installment</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.date_of_installment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.installment_amount">
+<code class="sig-name descname">installment_amount</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.installment_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.installment_date_created">
+<code class="sig-name descname">installment_date_created</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.installment_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.installment_id">
+<code class="sig-name descname">installment_id</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.installment_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.installment_loan_balance">
+<code class="sig-name descname">installment_loan_balance</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.installment_loan_balance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.installment_loan_id">
+<code class="sig-name descname">installment_loan_id</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.installment_loan_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.InstallmentsData.installment_type">
+<code class="sig-name descname">installment_type</code><a class="headerlink" href="#myapp.Models.tables.InstallmentsData.installment_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.KycData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">KycData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#KycData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.KycData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for KycData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.KycData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.KycData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.KycData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.KycData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.KycData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.KycData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.KycData.borrower_phone_number">
+<code class="sig-name descname">borrower_phone_number</code><a class="headerlink" href="#myapp.Models.tables.KycData.borrower_phone_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.KycData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.KycData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.KycData.get_by_borrower_identity">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_borrower_identity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">borrower_identity</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#KycData.get_by_borrower_identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.KycData.get_by_borrower_identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches all data belonging to a borrower from the Kyc table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>borrower_identity</strong> (<em>int</em>) – The national id of the borrower.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an sqlalchemy obejct.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sql_querry</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.KycData.kyc_date_created">
+<code class="sig-name descname">kyc_date_created</code><a class="headerlink" href="#myapp.Models.tables.KycData.kyc_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.KycData.kyc_default_status">
+<code class="sig-name descname">kyc_default_status</code><a class="headerlink" href="#myapp.Models.tables.KycData.kyc_default_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.KycData.kyc_id">
+<code class="sig-name descname">kyc_id</code><a class="headerlink" href="#myapp.Models.tables.KycData.kyc_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.LoansData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">LoansData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#LoansData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.LoansData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for KycData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.LoansData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.LoansData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.LoansData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.LoansData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.date_of_loan">
+<code class="sig-name descname">date_of_loan</code><a class="headerlink" href="#myapp.Models.tables.LoansData.date_of_loan" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.date_of_loan_completion">
+<code class="sig-name descname">date_of_loan_completion</code><a class="headerlink" href="#myapp.Models.tables.LoansData.date_of_loan_completion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.loan_amount">
+<code class="sig-name descname">loan_amount</code><a class="headerlink" href="#myapp.Models.tables.LoansData.loan_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.loan_date_created">
+<code class="sig-name descname">loan_date_created</code><a class="headerlink" href="#myapp.Models.tables.LoansData.loan_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.loan_id">
+<code class="sig-name descname">loan_id</code><a class="headerlink" href="#myapp.Models.tables.LoansData.loan_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.loan_installment_frequency">
+<code class="sig-name descname">loan_installment_frequency</code><a class="headerlink" href="#myapp.Models.tables.LoansData.loan_installment_frequency" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.loan_installments_relation">
+<code class="sig-name descname">loan_installments_relation</code><a class="headerlink" href="#myapp.Models.tables.LoansData.loan_installments_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.loan_interest">
+<code class="sig-name descname">loan_interest</code><a class="headerlink" href="#myapp.Models.tables.LoansData.loan_interest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoansData.loan_period">
+<code class="sig-name descname">loan_period</code><a class="headerlink" href="#myapp.Models.tables.LoansData.loan_period" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.LoggedAdmins">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">LoggedAdmins</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#LoggedAdmins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.LoggedAdmins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedAdmins.Administrators">
+<code class="sig-name descname">Administrators</code><a class="headerlink" href="#myapp.Models.tables.LoggedAdmins.Administrators" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedAdmins.admin_id">
+<code class="sig-name descname">admin_id</code><a class="headerlink" href="#myapp.Models.tables.LoggedAdmins.admin_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedAdmins.logInDate">
+<code class="sig-name descname">logInDate</code><a class="headerlink" href="#myapp.Models.tables.LoggedAdmins.logInDate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedAdmins.loggedId">
+<code class="sig-name descname">loggedId</code><a class="headerlink" href="#myapp.Models.tables.LoggedAdmins.loggedId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedAdmins.logoutDate">
+<code class="sig-name descname">logoutDate</code><a class="headerlink" href="#myapp.Models.tables.LoggedAdmins.logoutDate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.LoggedClients">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">LoggedClients</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#LoggedClients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.LoggedClients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedClients.ClientAdmins">
+<code class="sig-name descname">ClientAdmins</code><a class="headerlink" href="#myapp.Models.tables.LoggedClients.ClientAdmins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedClients.client_id">
+<code class="sig-name descname">client_id</code><a class="headerlink" href="#myapp.Models.tables.LoggedClients.client_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedClients.logInDate">
+<code class="sig-name descname">logInDate</code><a class="headerlink" href="#myapp.Models.tables.LoggedClients.logInDate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedClients.loggedId">
+<code class="sig-name descname">loggedId</code><a class="headerlink" href="#myapp.Models.tables.LoggedClients.loggedId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.LoggedClients.logoutDate">
+<code class="sig-name descname">logoutDate</code><a class="headerlink" href="#myapp.Models.tables.LoggedClients.logoutDate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.MessageData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">MessageData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#MessageData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.MessageData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for ImageData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.MessageData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.MessageData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.MessageData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.MessageData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.message_date_created">
+<code class="sig-name descname">message_date_created</code><a class="headerlink" href="#myapp.Models.tables.MessageData.message_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.message_direction">
+<code class="sig-name descname">message_direction</code><a class="headerlink" href="#myapp.Models.tables.MessageData.message_direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.message_id">
+<code class="sig-name descname">message_id</code><a class="headerlink" href="#myapp.Models.tables.MessageData.message_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.message_length">
+<code class="sig-name descname">message_length</code><a class="headerlink" href="#myapp.Models.tables.MessageData.message_length" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.message_time_stamp">
+<code class="sig-name descname">message_time_stamp</code><a class="headerlink" href="#myapp.Models.tables.MessageData.message_time_stamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MessageData.message_type">
+<code class="sig-name descname">message_type</code><a class="headerlink" href="#myapp.Models.tables.MessageData.message_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.MpesaData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">MpesaData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#MpesaData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.MpesaData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for KycData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.mpesa_amount">
+<code class="sig-name descname">mpesa_amount</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.mpesa_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.mpesa_date_created">
+<code class="sig-name descname">mpesa_date_created</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.mpesa_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.mpesa_id">
+<code class="sig-name descname">mpesa_id</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.mpesa_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.mpesa_spec_loc">
+<code class="sig-name descname">mpesa_spec_loc</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.mpesa_spec_loc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.mpesa_time_stamp">
+<code class="sig-name descname">mpesa_time_stamp</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.mpesa_time_stamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MpesaData.mpesa_type">
+<code class="sig-name descname">mpesa_type</code><a class="headerlink" href="#myapp.Models.tables.MpesaData.mpesa_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.MusicData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">MusicData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#MusicData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.MusicData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for ImageData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.MusicData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.MusicData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.MusicData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.MusicData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.music_date_added">
+<code class="sig-name descname">music_date_added</code><a class="headerlink" href="#myapp.Models.tables.MusicData.music_date_added" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.music_date_created">
+<code class="sig-name descname">music_date_created</code><a class="headerlink" href="#myapp.Models.tables.MusicData.music_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.music_file_type">
+<code class="sig-name descname">music_file_type</code><a class="headerlink" href="#myapp.Models.tables.MusicData.music_file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.music_id">
+<code class="sig-name descname">music_id</code><a class="headerlink" href="#myapp.Models.tables.MusicData.music_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.MusicData.music_size">
+<code class="sig-name descname">music_size</code><a class="headerlink" href="#myapp.Models.tables.MusicData.music_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.Roles">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">Roles</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Roles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Roles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>This table stores all the roles in the database</p>
+<dl class="py method">
+<dt id="myapp.Models.tables.Roles.get_by_role_id">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_role_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">role_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Roles.get_by_role_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Roles.get_by_role_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query user by their user_id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>role_id</strong> (<em>int</em>) – The role id from this table</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An sqlalchemy query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Roles.role_admins_relation">
+<code class="sig-name descname">role_admins_relation</code><a class="headerlink" href="#myapp.Models.tables.Roles.role_admins_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Roles.role_date_created">
+<code class="sig-name descname">role_date_created</code><a class="headerlink" href="#myapp.Models.tables.Roles.role_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Roles.role_id">
+<code class="sig-name descname">role_id</code><a class="headerlink" href="#myapp.Models.tables.Roles.role_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Roles.role_name">
+<code class="sig-name descname">role_name</code><a class="headerlink" href="#myapp.Models.tables.Roles.role_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.SavingsData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">SavingsData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#SavingsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.SavingsData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for KycData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.date_of_savings">
+<code class="sig-name descname">date_of_savings</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.date_of_savings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.savings_amount">
+<code class="sig-name descname">savings_amount</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.savings_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.savings_channel">
+<code class="sig-name descname">savings_channel</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.savings_channel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.savings_date_created">
+<code class="sig-name descname">savings_date_created</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.savings_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.savings_id">
+<code class="sig-name descname">savings_id</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.savings_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.SavingsData.savings_type">
+<code class="sig-name descname">savings_type</code><a class="headerlink" href="#myapp.Models.tables.SavingsData.savings_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.ScoreTypes">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">ScoreTypes</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ScoreTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ScoreTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ScoreTypes.cost_of_score">
+<code class="sig-name descname">cost_of_score</code><a class="headerlink" href="#myapp.Models.tables.ScoreTypes.cost_of_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.ScoreTypes.get_by_score_name">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_score_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#ScoreTypes.get_by_score_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.ScoreTypes.get_by_score_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query user by their user_id</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ScoreTypes.score_date_created">
+<code class="sig-name descname">score_date_created</code><a class="headerlink" href="#myapp.Models.tables.ScoreTypes.score_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ScoreTypes.score_deductions_rel">
+<code class="sig-name descname">score_deductions_rel</code><a class="headerlink" href="#myapp.Models.tables.ScoreTypes.score_deductions_rel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ScoreTypes.score_name">
+<code class="sig-name descname">score_name</code><a class="headerlink" href="#myapp.Models.tables.ScoreTypes.score_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.ScoreTypes.service_id">
+<code class="sig-name descname">service_id</code><a class="headerlink" href="#myapp.Models.tables.ScoreTypes.service_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.Status">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">Status</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>The status id for the application</p>
+<dl class="py method">
+<dt id="myapp.Models.tables.Status.get_by_status_id">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_status_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">status_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Status.get_by_status_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Status.get_by_status_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query user by their user_id.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Status.status_admins_relation">
+<code class="sig-name descname">status_admins_relation</code><a class="headerlink" href="#myapp.Models.tables.Status.status_admins_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Status.status_corp_relation">
+<code class="sig-name descname">status_corp_relation</code><a class="headerlink" href="#myapp.Models.tables.Status.status_corp_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Status.status_date_created">
+<code class="sig-name descname">status_date_created</code><a class="headerlink" href="#myapp.Models.tables.Status.status_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Status.status_id">
+<code class="sig-name descname">status_id</code><a class="headerlink" href="#myapp.Models.tables.Status.status_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Status.status_name">
+<code class="sig-name descname">status_name</code><a class="headerlink" href="#myapp.Models.tables.Status.status_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.Users">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">Users</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>Stores unique details for every db user administrators and clients.</p>
+<dl class="py method">
+<dt id="myapp.Models.tables.Users.get_by_user_id">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_user_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Users.get_by_user_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Users.get_by_user_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query user by their user_id</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.tables.Users.get_by_user_identity">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_user_identity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_identity</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#Users.get_by_user_identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.Users.get_by_user_identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Querry the user by their identity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Users.user_admin_relation">
+<code class="sig-name descname">user_admin_relation</code><a class="headerlink" href="#myapp.Models.tables.Users.user_admin_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Users.user_client_relation">
+<code class="sig-name descname">user_client_relation</code><a class="headerlink" href="#myapp.Models.tables.Users.user_client_relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Users.user_date_created">
+<code class="sig-name descname">user_date_created</code><a class="headerlink" href="#myapp.Models.tables.Users.user_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Users.user_id">
+<code class="sig-name descname">user_id</code><a class="headerlink" href="#myapp.Models.tables.Users.user_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Users.user_identity">
+<code class="sig-name descname">user_identity</code><a class="headerlink" href="#myapp.Models.tables.Users.user_identity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.Users.user_names">
+<code class="sig-name descname">user_names</code><a class="headerlink" href="#myapp.Models.tables.Users.user_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.VideoData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">VideoData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#VideoData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.VideoData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for ImageData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.VideoData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.VideoData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.VideoData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.VideoData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.video_date_added">
+<code class="sig-name descname">video_date_added</code><a class="headerlink" href="#myapp.Models.tables.VideoData.video_date_added" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.video_date_created">
+<code class="sig-name descname">video_date_created</code><a class="headerlink" href="#myapp.Models.tables.VideoData.video_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.video_file_type">
+<code class="sig-name descname">video_file_type</code><a class="headerlink" href="#myapp.Models.tables.VideoData.video_file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.video_id">
+<code class="sig-name descname">video_id</code><a class="headerlink" href="#myapp.Models.tables.VideoData.video_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.VideoData.video_size">
+<code class="sig-name descname">video_size</code><a class="headerlink" href="#myapp.Models.tables.VideoData.video_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.tables.WithdrawalsData">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.tables.</code><code class="sig-name descname">WithdrawalsData</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/tables.html#WithdrawalsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>docstring for KycData</p>
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.Borrowers">
+<code class="sig-name descname">Borrowers</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.Borrowers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.Corporates">
+<code class="sig-name descname">Corporates</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.Corporates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.borrower_id">
+<code class="sig-name descname">borrower_id</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.borrower_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.corporate_id">
+<code class="sig-name descname">corporate_id</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.corporate_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.date_of_withdrawals">
+<code class="sig-name descname">date_of_withdrawals</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.date_of_withdrawals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.withdrawals_amount">
+<code class="sig-name descname">withdrawals_amount</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.withdrawals_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.withdrawals_channel">
+<code class="sig-name descname">withdrawals_channel</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.withdrawals_channel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.withdrawals_date_created">
+<code class="sig-name descname">withdrawals_date_created</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.withdrawals_date_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.withdrawals_description">
+<code class="sig-name descname">withdrawals_description</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.withdrawals_description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="myapp.Models.tables.WithdrawalsData.withdrawals_id">
+<code class="sig-name descname">withdrawals_id</code><a class="headerlink" href="#myapp.Models.tables.WithdrawalsData.withdrawals_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Models.html">myapp.Models package</a><ul>
+      <li>Previous: <a href="myapp.Models.payments.html" title="previous chapter">myapp.Models.payments module</a></li>
+      <li>Next: <a href="myapp.SentData.html" title="next chapter">myapp.SentData package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Models.tables.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

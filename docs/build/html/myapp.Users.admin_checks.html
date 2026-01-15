@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Users.admin_checks module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Users.show_status module" href="myapp.Users.show_status.html" />
+    <link rel="prev" title="myapp.Users.admin_approvals module" href="myapp.Users.admin_approvals.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Users.admin_checks">
+<span id="myapp-users-admin-checks-module"></span><h1>myapp.Users.admin_checks module<a class="headerlink" href="#module-myapp.Users.admin_checks" title="Permalink to this headline">¶</a></h1>
+<p>Module Containing Checks</p>
+<p>This file contains endpoints used to make checks.
+The following endpoints are pressent in this module</p>
+<blockquote>
+<div><p>1.check_super_admin
+2.check_info_admin
+3.check_client_admin
+4.check_client_staff</p>
+</div></blockquote>
+<dl class="py function">
+<dt id="myapp.Users.admin_checks.check_client_admin">
+<code class="sig-prename descclassname">myapp.Users.admin_checks.</code><code class="sig-name descname">check_client_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Users/admin_checks.html#check_client_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Users.admin_checks.check_client_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to check client_admins.</p>
+<p>Authenticate the user by checking that their role id is 1 using the
+Authentication class that was imported from Models.model_users.</p>
+<p>The required inputs is a list of inputs required in this endpoint.
+in case the required inputs changes, remember to update this list.</p>
+<dl class="simple">
+<dt>mydict is a dictionary containing the:</dt><dd><ol class="arabic simple">
+<li><p>checker_id (the admin id of the current user)</p></li>
+<li><dl class="simple">
+<dt>admin_email (the admin email of the super admin being</dt><dd><p>checked).</p>
+</dd>
+</dl>
+</li>
+<li><p>checked_from (the latest status of the user. Remember
+if the current status is checked it will not show checked,
+instead it should show the recent status before checking)</p></li>
+<li><p>checked_to (what status are we approving to?)</p></li>
+</ol>
+</dd>
+</dl>
+<p>Using the Cheks class imported from Models.checks_n_approvals
+return the appropriate response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing the status and the appropriate
+response.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note:
+This endpoint is only accessible to super admins and
+infotrace staff.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Users.admin_checks.check_client_staff">
+<code class="sig-prename descclassname">myapp.Users.admin_checks.</code><code class="sig-name descname">check_client_staff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Users/admin_checks.html#check_client_staff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Users.admin_checks.check_client_staff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to check client staff.</p>
+<p>Authenticate the user by checking that their role id is 1 using the
+Authentication class that was imported from Models.model_users.</p>
+<p>The required inputs is a list of inputs required in this endpoint.
+in case the required inputs changes, remember to update this list.</p>
+<dl class="simple">
+<dt>mydict is a dictionary containing the:</dt><dd><ol class="arabic simple">
+<li><p>checker_id (the admin id of the current user)</p></li>
+<li><dl class="simple">
+<dt>admin_email (the admin email of the super admin being</dt><dd><p>checked).</p>
+</dd>
+</dl>
+</li>
+<li><p>checked_from (the latest status of the user. Remember
+if the current status is checked it will not show checked,
+instead it should show the recent status before checking)</p></li>
+<li><p>checked_to (what status are we approving to?)</p></li>
+</ol>
+</dd>
+</dl>
+<p>Using the Cheks class imported from Models.checks_n_approvals
+return the appropriate response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing the status and the appropriate
+response.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This endpoint is only accessible to super admins.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Users.admin_checks.check_info_admin">
+<code class="sig-prename descclassname">myapp.Users.admin_checks.</code><code class="sig-name descname">check_info_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Users/admin_checks.html#check_info_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Users.admin_checks.check_info_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to check infotrace staff.</p>
+<p>Authenticate the user by checking that their role id is 2 or 1
+using the Authentication class that was imported from
+Models.model_users.</p>
+<p>The required inputs is a list of inputs required in this endpoint.
+in case the required inputs changes, remember to update this list.</p>
+<dl class="simple">
+<dt>mydict is a dictionary containing the:</dt><dd><ol class="arabic simple">
+<li><p>checker_id (the admin id of the current user)</p></li>
+<li><dl class="simple">
+<dt>admin_email (the admin email of the super admin being</dt><dd><p>checked).</p>
+</dd>
+</dl>
+</li>
+<li><p>checked_from (the latest status of the user. Remember
+if the current status is checked it will not show checked,
+instead it should show the recent status before checking)</p></li>
+<li><p>checked_to (what status are we approving to?)</p></li>
+</ol>
+</dd>
+</dl>
+<p>Using the Cheks class imported from Models.checks_n_approvals
+return the appropriate response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing the status and the appropriate
+response.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This endpoint is only accessible to super admins and
+infotrace staff.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Users.admin_checks.check_super_admin">
+<code class="sig-prename descclassname">myapp.Users.admin_checks.</code><code class="sig-name descname">check_super_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Users/admin_checks.html#check_super_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Users.admin_checks.check_super_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to check super admins.</p>
+<p>Authenticate the user by checking that their role id is 1 using the
+Authentication class that was imported from Models.model_users.</p>
+<p>The required inputs is a list of inputs required in this endpoint.
+in case the required inputs changes, remember to update this list.</p>
+<dl class="simple">
+<dt>mydict is a dictionary containing the:</dt><dd><ol class="arabic simple">
+<li><p>checker_id (the admin id of the current user)</p></li>
+<li><dl class="simple">
+<dt>admin_email (the admin email of the super admin being</dt><dd><p>checked).</p>
+</dd>
+</dl>
+</li>
+<li><p>checked_from (the latest status of the user. Remember
+if the current status is checked it will not show checked,
+instead it should show the recent status before checking)</p></li>
+<li><p>checked_to (what status are we approving to?)</p></li>
+</ol>
+</dd>
+</dl>
+<p>Using the Cheks class imported from Models.checks_n_approvals
+return the appropriate response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing the status and the appropriate
+response.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This endpoint is only accessible to super admins.</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Users.html">myapp.Users package</a><ul>
+      <li>Previous: <a href="myapp.Users.admin_approvals.html" title="previous chapter">myapp.Users.admin_approvals module</a></li>
+      <li>Next: <a href="myapp.Users.show_status.html" title="next chapter">myapp.Users.show_status module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Users.admin_checks.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

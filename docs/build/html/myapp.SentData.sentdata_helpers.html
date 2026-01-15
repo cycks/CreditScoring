@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.SentData.sentdata_helpers module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Users package" href="myapp.Users.html" />
+    <link rel="prev" title="myapp.SentData.send_endpoints module" href="myapp.SentData.send_endpoints.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.SentData.sentdata_helpers">
+<span id="myapp-sentdata-sentdata-helpers-module"></span><h1>myapp.SentData.sentdata_helpers module<a class="headerlink" href="#module-myapp.SentData.sentdata_helpers" title="Permalink to this headline">¶</a></h1>
+<p>Used in the send_endpoints module to save data in the
+database.</p>
+<p>Uses functions defined in myapp.Models.our_data module
+to persist data in the db.</p>
+<dl class="py function">
+<dt id="myapp.SentData.sentdata_helpers.save_deposits_data">
+<code class="sig-prename descclassname">myapp.SentData.sentdata_helpers.</code><code class="sig-name descname">save_deposits_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/SentData/sentdata_helpers.html#save_deposits_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.SentData.sentdata_helpers.save_deposits_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the deposits data to the db</p>
+<p>Extract the first column from the post request, use the
+length of the column to loop through every list item in the
+post request and saving all list items in the same index
+to the database dynamically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>json</em>) – json data from the request.</p>
+</dd>
+</dl>
+<p>Raises: LookupError if a row is not saved to the database.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.SentData.sentdata_helpers.save_installments_data">
+<code class="sig-prename descclassname">myapp.SentData.sentdata_helpers.</code><code class="sig-name descname">save_installments_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/SentData/sentdata_helpers.html#save_installments_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.SentData.sentdata_helpers.save_installments_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the installments data to the db.</p>
+<p>Extract the first column from the post request, use the
+length of the column to loop through every list item in the
+post request and saving all list items in the same index
+to the database dynamically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>json</em>) – json data from the request.</p>
+</dd>
+</dl>
+<p>Raises: LookupError if a row is not saved to the database.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.SentData.sentdata_helpers.save_kyc_data">
+<code class="sig-prename descclassname">myapp.SentData.sentdata_helpers.</code><code class="sig-name descname">save_kyc_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/SentData/sentdata_helpers.html#save_kyc_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.SentData.sentdata_helpers.save_kyc_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves kyc data tot the db</p>
+<p>Extract the first column from the post request, use the
+length of the column to loop through every list item in the
+post request and saving all list items in the same index
+to the database dynamically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>json</em>) – json data from the request.</p>
+</dd>
+</dl>
+<p>Raises: LookupError if a row is not saved to the database.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.SentData.sentdata_helpers.save_loans_data">
+<code class="sig-prename descclassname">myapp.SentData.sentdata_helpers.</code><code class="sig-name descname">save_loans_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/SentData/sentdata_helpers.html#save_loans_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.SentData.sentdata_helpers.save_loans_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the loans data to the db.</p>
+<p>Extract the first column from the post request, use the
+length of the column to loop through every list item in the
+post request and saving all list items in the same index
+to the database dynamically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>json</em>) – json data from the request.</p>
+</dd>
+</dl>
+<p>Raises: LookupError if a row is not saved to the database.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.SentData.sentdata_helpers.save_savings_data">
+<code class="sig-prename descclassname">myapp.SentData.sentdata_helpers.</code><code class="sig-name descname">save_savings_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/SentData/sentdata_helpers.html#save_savings_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.SentData.sentdata_helpers.save_savings_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the savings data to the database</p>
+<p>Extract the first column from the post request, use the
+length of the column to loop through every list item in the
+post request and saving all list items in the same index
+to the database dynamically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>json</em>) – json data from the request.</p>
+</dd>
+</dl>
+<p>Raises: LookupError if a row is not saved to the database.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.SentData.sentdata_helpers.save_withdrawals_data">
+<code class="sig-prename descclassname">myapp.SentData.sentdata_helpers.</code><code class="sig-name descname">save_withdrawals_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/SentData/sentdata_helpers.html#save_withdrawals_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.SentData.sentdata_helpers.save_withdrawals_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves withdrawals data to the db</p>
+<p>Extract the first column from the post request, use the
+length of the column to loop through every list item in the
+post request and saving all list items in the same index
+to the database dynamically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>json</em>) – json data from the request.</p>
+</dd>
+</dl>
+<p>Raises: LookupError if a row is not saved to the database.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.SentData.sentdata_helpers.validate_phone_number">
+<code class="sig-prename descclassname">myapp.SentData.sentdata_helpers.</code><code class="sig-name descname">validate_phone_number</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">my_number</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/SentData/sentdata_helpers.html#validate_phone_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.SentData.sentdata_helpers.validate_phone_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.SentData.html">myapp.SentData package</a><ul>
+      <li>Previous: <a href="myapp.SentData.send_endpoints.html" title="previous chapter">myapp.SentData.send_endpoints module</a></li>
+      <li>Next: <a href="myapp.Users.html" title="next chapter">myapp.Users package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.SentData.sentdata_helpers.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Companies.corporate_approvals module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Helpers package" href="myapp.Helpers.html" />
+    <link rel="prev" title="myapp.Companies package" href="myapp.Companies.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Companies.corporate_approvals">
+<span id="myapp-companies-corporate-approvals-module"></span><h1>myapp.Companies.corporate_approvals module<a class="headerlink" href="#module-myapp.Companies.corporate_approvals" title="Permalink to this headline">¶</a></h1>
+<p>Contains</p>
+<ol class="arabic simple">
+<li><p>Corporate registration endpoints.</p></li>
+<li><p>Corporate Checks endpoints.</p></li>
+<li><p>Corporate approvals endpoints.</p></li>
+</ol>
+<p>The admin_status dictionary must always remain as it is because
+it contains ids as they are in the database.</p>
+<dl class="py function">
+<dt id="myapp.Companies.corporate_approvals.approve_company">
+<code class="sig-prename descclassname">myapp.Companies.corporate_approvals.</code><code class="sig-name descname">approve_company</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Companies/corporate_approvals.html#approve_company"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Companies.corporate_approvals.approve_company" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes Corporate Approval</p>
+<p>Authenticates the user and confirms that the user has a role id 1.
+mydict contains information that is required to make an approval.
+The required_inputs is used to check against data sent from the
+request to ensure that the enpoint recieves all the required
+inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with status True and an appropriate message
+if the checking is successful.
+A dictionary with status False and an approproate message if
+checking is unsucessful.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Companies.corporate_approvals.check_company">
+<code class="sig-prename descclassname">myapp.Companies.corporate_approvals.</code><code class="sig-name descname">check_company</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Companies/corporate_approvals.html#check_company"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Companies.corporate_approvals.check_company" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the company status.</p>
+<p>This endpoint is used to check registered companies. It confirms
+that the person doing the checking has a role id 2 or 1 using the
+Authentication class. mydict contains the information required to
+register the company. The required_inputs is used to check against
+data sent from the request to ensure that the enpoint recieves all
+the required inputs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with status True and an appropriate message
+if the checking is successful.
+A dictionary with status False and an approproate message if
+checking is unsucessful.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Companies.corporate_approvals.register_company">
+<code class="sig-prename descclassname">myapp.Companies.corporate_approvals.</code><code class="sig-name descname">register_company</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Companies/corporate_approvals.html#register_company"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Companies.corporate_approvals.register_company" title="Permalink to this definition">¶</a></dt>
+<dd><p>Company registration endpoint.</p>
+<p>This endpoint is used to register corporates. authenticate the user
+check that the user has role_id 2 or 1 using the Authentication class,
+and register the organization. The mydict contains details that are
+sent to the backend for registration,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with status True and an appropriate message
+if the registration is successful.
+A dictionary with status False and an approproate message if
+registration is unsucessful.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Companies.html">myapp.Companies package</a><ul>
+      <li>Previous: <a href="myapp.Companies.html" title="previous chapter">myapp.Companies package</a></li>
+      <li>Next: <a href="myapp.Helpers.html" title="next chapter">myapp.Helpers package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Companies.corporate_approvals.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

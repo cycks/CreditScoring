@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Models.model_users module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Models.others module" href="myapp.Models.others.html" />
+    <link rel="prev" title="myapp.Models.displays module" href="myapp.Models.displays.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Models.model_users">
+<span id="myapp-models-model-users-module"></span><h1>myapp.Models.model_users module<a class="headerlink" href="#module-myapp.Models.model_users" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="myapp.Models.model_users.Authentication">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.model_users.</code><code class="sig-name descname">Authentication</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">required_role</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#Authentication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.Authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="myapp.Helpers.admin_details.html#myapp.Helpers.admin_details.AdminDetails" title="myapp.Helpers.admin_details.AdminDetails"><code class="xref py py-class docutils literal notranslate"><span class="pre">myapp.Helpers.admin_details.AdminDetails</span></code></a></p>
+<dl class="py method">
+<dt id="myapp.Models.model_users.Authentication.is_logged_in">
+<code class="sig-name descname">is_logged_in</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#Authentication.is_logged_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.Authentication.is_logged_in" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.Authentication.is_valid_data">
+<code class="sig-name descname">is_valid_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#Authentication.is_valid_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.Authentication.is_valid_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to extract data from the request object. If the body is empty then
+check for cases where data is sent using variable rules. If that fails
+check to see whether there is a token in the request. Return False if
+all this checks fail.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.Authentication.is_valid_role">
+<code class="sig-name descname">is_valid_role</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#Authentication.is_valid_role"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.Authentication.is_valid_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make all other validations then check if the required role
+is less than or equal to the current role.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.Authentication.is_valid_token">
+<code class="sig-name descname">is_valid_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#Authentication.is_valid_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.Authentication.is_valid_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.model_users.CreatedUsers">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.model_users.</code><code class="sig-name descname">CreatedUsers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mydict</span></em>, <em class="sig-param"><span class="n">required_inputs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#CreatedUsers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.CreatedUsers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="myapp.Helpers.input_validators.html#myapp.Helpers.input_validators.ValidInputs" title="myapp.Helpers.input_validators.ValidInputs"><code class="xref py py-class docutils literal notranslate"><span class="pre">myapp.Helpers.input_validators.ValidInputs</span></code></a></p>
+<p>docstring for CreatedUsers</p>
+<dl class="py method">
+<dt id="myapp.Models.model_users.CreatedUsers.is_correct_details">
+<code class="sig-name descname">is_correct_details</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#CreatedUsers.is_correct_details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.CreatedUsers.is_correct_details" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.CreatedUsers.is_registered_corporate">
+<code class="sig-name descname">is_registered_corporate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#CreatedUsers.is_registered_corporate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.CreatedUsers.is_registered_corporate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.CreatedUsers.is_registered_user">
+<code class="sig-name descname">is_registered_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#CreatedUsers.is_registered_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.CreatedUsers.is_registered_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.CreatedUsers.make_registration">
+<code class="sig-name descname">make_registration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">secret</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#CreatedUsers.make_registration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.CreatedUsers.make_registration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.CreatedUsers.register_admin">
+<code class="sig-name descname">register_admin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">admin_role</span></em>, <em class="sig-param"><span class="n">user_id</span></em>, <em class="sig-param"><span class="n">secret</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#CreatedUsers.register_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.CreatedUsers.register_admin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.CreatedUsers.register_client">
+<code class="sig-name descname">register_client</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">admin_role</span></em>, <em class="sig-param"><span class="n">user_id</span></em>, <em class="sig-param"><span class="n">secret</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#CreatedUsers.register_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.CreatedUsers.register_client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.CreatedUsers.register_user">
+<code class="sig-name descname">register_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#CreatedUsers.register_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.CreatedUsers.register_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Models.model_users.LoggedUsers">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Models.model_users.</code><code class="sig-name descname">LoggedUsers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mydict</span></em>, <em class="sig-param"><span class="n">required_inputs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="myapp.Helpers.input_validators.html#myapp.Helpers.input_validators.ValidInputs" title="myapp.Helpers.input_validators.ValidInputs"><code class="xref py py-class docutils literal notranslate"><span class="pre">myapp.Helpers.input_validators.ValidInputs</span></code></a></p>
+<p>docstring for CreatedUsers</p>
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.blacklist_token">
+<code class="sig-name descname">blacklist_token</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.blacklist_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.blacklist_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>used to blacklist tokens that have not expired but are still valid.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.generate_token">
+<code class="sig-name descname">generate_token</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.generate_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.generate_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.insert_logged_admin">
+<code class="sig-name descname">insert_logged_admin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">admin_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.insert_logged_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.insert_logged_admin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.insert_logged_client">
+<code class="sig-name descname">insert_logged_client</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.insert_logged_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.insert_logged_client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.is_correct_details">
+<code class="sig-name descname">is_correct_details</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.is_correct_details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.is_correct_details" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.is_correct_password">
+<code class="sig-name descname">is_correct_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_password</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.is_correct_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.is_correct_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.is_registered_admin">
+<code class="sig-name descname">is_registered_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.is_registered_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.is_registered_admin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.is_registered_client">
+<code class="sig-name descname">is_registered_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.is_registered_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.is_registered_client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.log_in_admin">
+<code class="sig-name descname">log_in_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.log_in_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.log_in_admin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.log_in_client">
+<code class="sig-name descname">log_in_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.log_in_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.log_in_client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.logout">
+<code class="sig-name descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>On loguout update the LoggedAdmins and the LoggedClients
+column (logout date to the current time.) If the token is still valid
+insert the token in blacklisted tokens.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Models.model_users.LoggedUsers.update_logs">
+<code class="sig-name descname">update_logs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">role_id</span></em>, <em class="sig-param"><span class="n">admin_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#LoggedUsers.update_logs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.LoggedUsers.update_logs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.model_users.generate_jwt_token">
+<code class="sig-prename descclassname">myapp.Models.model_users.</code><code class="sig-name descname">generate_jwt_token</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">admin_role</span></em>, <em class="sig-param"><span class="n">admin_status</span></em>, <em class="sig-param"><span class="n">admin_id</span></em>, <em class="sig-param"><span class="n">corporate_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#generate_jwt_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.generate_jwt_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a jwt authentication token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>admin_role</strong> (<em>int</em>) – The first parameter.</p></li>
+<li><p><strong>admin_status</strong> (<em>int</em>) – The second parameter. A user’s
+registration status</p></li>
+<li><p><strong>admin_id</strong> (<em>int</em>) – The database id for the user</p></li>
+<li><p><strong>corporate_id</strong> (<em>int</em>) – The corporate_id for the user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A token(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="myapp.Models.model_users.save_admins">
+<code class="sig-prename descclassname">myapp.Models.model_users.</code><code class="sig-name descname">save_admins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mydict</span></em>, <em class="sig-param"><span class="n">secret</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Models/model_users.html#save_admins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Models.model_users.save_admins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a user into the user table, administrators, or clientadmins tables.</p>
+<p>Using the CreatedUsers class to register a user, then an admin, then
+a client admin.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Models.html">myapp.Models package</a><ul>
+      <li>Previous: <a href="myapp.Models.displays.html" title="previous chapter">myapp.Models.displays module</a></li>
+      <li>Next: <a href="myapp.Models.others.html" title="next chapter">myapp.Models.others module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Models.model_users.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

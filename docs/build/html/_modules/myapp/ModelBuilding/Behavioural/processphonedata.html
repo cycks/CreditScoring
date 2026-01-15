@@ -1,0 +1,690 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.ModelBuilding.Behavioural.processphonedata &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.ModelBuilding.Behavioural.processphonedata</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Prepares phone data</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Phone types is used in validating the correct type of data in </span>
+<span class="sd">every column. In case the data changes remember to update it.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">phone_types</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s1">&#39;borrower_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_amount&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;month&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> 
+				<span class="s1">&#39;mpesa_airtime&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_banking&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_fuliza&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_gambling&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_incoming&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_loans&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_outgoing_sent_to&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> 
+				<span class="s1">&#39;mpesa_utilities&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;mpesa_withdrawal&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_date_added&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_size&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_gif&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_heic&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_jpeg&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_jpg&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_png&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_webp&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;image_x-ms-bmp&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;message_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;message_length&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;message_time_stamp&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;message_INCOMING&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;message_OUTGOING&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> 
+				<span class="s1">&#39;music_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_date_added&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_size&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_3gpp&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_aac&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_aac-adts&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_adpcm&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> 
+				<span class="s1">&#39;music_amr&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_amr-wb&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_application/aac&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_application/ogg&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_flac&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_m4a&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_mp3&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_mp4&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_mpeg&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_ogg&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_quicktime&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_wav&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_x-matroska&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_x-ms-wma&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;music_x-wav&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_id&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_date_added&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_size&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_3gpp&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_avi&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_mp2ts&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_mp4&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_mpeg&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_quicktime&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_webm&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+				<span class="s1">&#39;video_x-matroska&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span>
+				<span class="p">}</span>
+
+<div class="viewcode-block" id="WrappedPhone"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone">[docs]</a><span class="k">class</span> <span class="nc">WrappedPhone</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A blueprint for preparing data.</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WrappedPhone.impute_missing_columns"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.impute_missing_columns">[docs]</a>	<span class="k">def</span> <span class="nf">impute_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Inserts missing columns in a data set.</span>
+
+<span class="sd">		Given a dataframe extract and sort columns present in the</span>
+<span class="sd">		dataframe. Compare it to the required columns and insert</span>
+<span class="sd">		any columns that is required but missing with default</span>
+<span class="sd">		values extracted from phone types.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df(obj): A dataframe</span>
+<span class="sd">			required_columns (list): A list containing columns that</span>
+<span class="sd">			must be present in the dataframe:</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			obj: A dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">columns_present</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">columns_present</span> <span class="o">!=</span> <span class="n">required_columns</span><span class="p">:</span>
+			<span class="n">missing_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns_present</span><span class="p">))</span>
+			<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">missing_columns</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">phone_types</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">==</span> <span class="s1">&#39;int&#39;</span> <span class="ow">and</span> <span class="n">item</span> <span class="o">!=</span> <span class="s1">&#39;year&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">if</span> <span class="n">phone_types</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">==</span> <span class="s1">&#39;float&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">if</span> <span class="n">phone_types</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">==</span> <span class="s1">&#39;datetime&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+				<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;month&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">month</span>
+				<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;year&#39;</span><span class="p">:</span>
+					<span class="n">df</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="WrappedPhone.prepare_mpesa"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_mpesa">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_mpesa</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares mpesa data</span>
+
+<span class="sd">		Covnvert columns to their appropirate data types and convert</span>
+<span class="sd">		categorical variables to dummy variables. Remember when </span>
+<span class="sd">		fetching data there were columns that were missing. So drop</span>
+<span class="sd">		any such columns in addition to the corporate_id and</span>
+<span class="sd">		mpesa_spec_loc. Using the impute_missing_columns method</span>
+<span class="sd">		defined in this class, repalce missing columns and remove</span>
+<span class="sd">		unwanted columns.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The mpesa data set</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): Cleaned dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">mpesa</span> <span class="o">=</span> <span class="n">df</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">mpesa</span><span class="p">[</span><span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">])</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s1">&#39;mpesa_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mpesa</span><span class="p">[</span><span class="s1">&#39;mpesa_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;str&#39;</span><span class="p">)</span>
+		<span class="n">mpesa</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">mpesa</span><span class="p">,</span>  <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mpesa_type&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;mpesa&#39;</span><span class="p">)</span>
+		<span class="n">mpesa</span> <span class="o">=</span> <span class="n">mpesa</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">,</span> <span class="s1">&#39;mpesa_spec_loc&#39;</span><span class="p">])</span>
+		<span class="c1"># drop columns that contain the word missing</span>
+		<span class="n">mpesa</span> <span class="o">=</span> <span class="n">mpesa</span><span class="p">[</span><span class="n">mpesa</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;mpesa_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;mpesa_airtime&#39;</span><span class="p">,</span> <span class="s1">&#39;mpesa_banking&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;mpesa_fuliza&#39;</span><span class="p">,</span> <span class="s1">&#39;mpesa_gambling&#39;</span><span class="p">,</span> <span class="s1">&#39;mpesa_incoming&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;mpesa_loans&#39;</span><span class="p">,</span> <span class="s1">&#39;mpesa_outgoing_sent_to&#39;</span><span class="p">,</span> 
+							<span class="s1">&#39;mpesa_utilities&#39;</span><span class="p">,</span> <span class="s1">&#39;mpesa_withdrawal&#39;</span><span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>                   
+		<span class="n">mpesa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">mpesa</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">mpesa</span> </div>
+
+
+<div class="viewcode-block" id="WrappedPhone.sum_mpesa_amounts"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.sum_mpesa_amounts">[docs]</a>	<span class="k">def</span> <span class="nf">sum_mpesa_amounts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Sums mpesa transactions.</span>
+
+<span class="sd">		Extracts the month and year from the time_stamp. Replaces</span>
+<span class="sd">		the amount spent with the actual amount spent, drop the </span>
+<span class="sd">		mpesa_id and timesamp, groupby the borrower_id, month,</span>
+<span class="sd">		and year then find the sum for all the transactions.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The mpesa data set</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): Cleaned dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">mpesa</span> <span class="o">=</span> <span class="n">df</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+							<span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">mpesa</span><span class="p">[</span><span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">])</span><span class="o">.</span>
+							<span class="n">month_name</span><span class="p">()</span>
+						 <span class="p">)</span>
+
+		<span class="n">mpesa</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">mpesa</span><span class="p">[</span><span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_airtime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_airtime&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_amount&quot;</span><span class="p">]</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_fuliza&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_fuliza&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_amount&quot;</span><span class="p">]</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_gambling&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+									<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_gambling&quot;</span><span class="p">]</span> <span class="o">*</span> 
+									<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_amount&quot;</span><span class="p">]</span>
+								   <span class="p">)</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_incoming&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+										<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_incoming&quot;</span><span class="p">]</span> <span class="o">*</span> 
+										<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_amount&quot;</span><span class="p">]</span>
+									<span class="p">)</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_outgoing_sent_to&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+											<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_outgoing_sent_to&quot;</span><span class="p">]</span> <span class="o">*</span>
+											 <span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_amount&quot;</span><span class="p">]</span>
+											<span class="p">)</span>
+		<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_utilities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+										<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_utilities&quot;</span><span class="p">]</span> <span class="o">*</span> 
+										<span class="n">mpesa</span><span class="p">[</span><span class="s2">&quot;mpesa_amount&quot;</span><span class="p">]</span>
+									<span class="p">)</span>
+		<span class="n">mpesa</span> <span class="o">=</span> <span class="n">mpesa</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mpesa_id&quot;</span><span class="p">,</span> <span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">])</span>
+		<span class="n">mpesa_sums</span> <span class="o">=</span> <span class="n">mpesa</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;mpesa_airtime&#39;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> 
+									<span class="s1">&#39;mpesa_fuliza&#39;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+									<span class="s2">&quot;mpesa_gambling&quot;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> 
+									<span class="s2">&quot;mpesa_incoming&quot;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+									<span class="s1">&#39;mpesa_outgoing_sent_to&#39;</span><span class="p">:</span> <span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+									<span class="s2">&quot;mpesa_utilities&quot;</span><span class="p">:</span><span class="s2">&quot;sum&quot;</span><span class="p">}</span>
+								 <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+		<span class="n">mpesa_sums</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+					 <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mpesa_airtime&#39;</span><span class="p">:</span><span class="s1">&#39;mpesa_airtime_sum&#39;</span><span class="p">,</span> 
+							  <span class="s2">&quot;mpesa_fuliza&quot;</span><span class="p">:</span><span class="s1">&#39;mpesa_fuliza_sum&#39;</span><span class="p">,</span>
+							  <span class="s2">&quot;mpesa_gambling&quot;</span><span class="p">:</span><span class="s2">&quot;mpesa_gambling_sum&quot;</span><span class="p">,</span>
+							  <span class="s2">&quot;mpesa_loans&quot;</span><span class="p">:</span><span class="s2">&quot;mpesa_loans_sum&quot;</span><span class="p">,</span>
+							  <span class="s2">&quot;mpesa_incoming&quot;</span><span class="p">:</span> <span class="s2">&quot;mpesa_incoming_sum&quot;</span><span class="p">,</span>
+							  <span class="s2">&quot;mpesa_outgoing_sent_to&quot;</span><span class="p">:</span><span class="s2">&quot;outgoing_sent_to_sum&quot;</span><span class="p">,</span>
+							  <span class="s2">&quot;mpesa_utilities&quot;</span><span class="p">:</span><span class="s2">&quot;mpesa_utilities_sum&quot;</span><span class="p">},</span>
+							  <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">mpesa_sums</span></div>
+
+
+<div class="viewcode-block" id="WrappedPhone.count_mpesa_amounts"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.count_mpesa_amounts">[docs]</a>	<span class="k">def</span> <span class="nf">count_mpesa_amounts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Counts the number of mpesa transactions.</span>
+
+<span class="sd">		Extracts the month and year from the time_stamp. Replaces</span>
+<span class="sd">		the amount spent with the actual amount spent, drop the </span>
+<span class="sd">		mpesa_id and timesamp, groupby the borrower_id, month,</span>
+<span class="sd">		and year then find the sum for all the transactions.</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The mpesa data set</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): Cleaned dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mpesa_id&quot;</span><span class="p">,</span> <span class="s1">&#39;mpesa_time_stamp&#39;</span><span class="p">])</span>
+		<span class="n">df1_counts</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">])</span><span class="o">.</span>
+								<span class="n">agg</span><span class="p">({</span><span class="s1">&#39;mpesa_airtime&#39;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> 
+								 <span class="s2">&quot;mpesa_fuliza&quot;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s2">&quot;mpesa_gambling&quot;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+								 <span class="s1">&#39;mpesa_incoming&#39;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+								 <span class="s2">&quot;mpesa_outgoing_sent_to&quot;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+								 <span class="s2">&quot;mpesa_utilities&quot;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+								  <span class="s2">&quot;mpesa_withdrawal&quot;</span><span class="p">:</span><span class="s1">&#39;sum&#39;</span><span class="p">}</span>
+								 <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">())</span>
+		<span class="n">df1_counts</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+					 <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mpesa_airtime&#39;</span><span class="p">:</span><span class="s1">&#39;mpesa_airtime_count&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;mpesa_fuliza&#39;</span><span class="p">:</span> <span class="s1">&#39;mpesa_fuliza_count&#39;</span><span class="p">,</span> 
+							  <span class="s1">&#39;mpesa_gambling&#39;</span><span class="p">:</span> <span class="s1">&#39;mpesa_gambling_count&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;mpesa_incoming&#39;</span><span class="p">:</span><span class="s1">&#39;mpesa_incoming_count&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;mpesa_outgoing_sent_to&#39;</span><span class="p">:</span><span class="s1">&#39;outgoing_sent_to_count&#39;</span><span class="p">,</span>
+							  <span class="s1">&#39;mpesa_utilities&#39;</span><span class="p">:</span> <span class="s1">&#39;mpesa_utilities_count&#39;</span><span class="p">},</span>
+							  <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df1_counts</span></div>
+
+
+<div class="viewcode-block" id="WrappedPhone.summarize_mpesa"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_mpesa">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_mpesa</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Combines mpesa counts and sums.</span>
+
+<span class="sd">		Remove any missing columns created when fetching data,</span>
+<span class="sd">		prepare the data set, call sum and counts methods merge the</span>
+<span class="sd">		resulting data sets and convert the result to json.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The mpesa data set.</span>
+<span class="sd">			borrower_id (int): The person seeking the loan</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			json: A json object for the summarised data set.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">borrower_id</span><span class="p">]</span>
+		<span class="n">df1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_mpesa</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+		<span class="n">df_sums</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_mpesa_amounts</span><span class="p">(</span><span class="n">df1</span><span class="p">)</span>
+		<span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_mpesa</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+		<span class="n">df_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_mpesa_amounts</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+		<span class="n">df3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+							<span class="n">df_sums</span><span class="p">,</span> <span class="n">df_counts</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span>
+							<span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">]</span>
+						<span class="p">)</span>
+		<span class="n">df_tojson</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;},{&#39;</span><span class="p">,</span> <span class="s1">&#39;} {&#39;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df_tojson</span></div>
+
+
+<div class="viewcode-block" id="WrappedPhone.prepare_images"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_images">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares images data for prediction</span>
+
+<span class="sd">		Remove image/ from the image_file_type column, convert the </span>
+<span class="sd">		same column to categorical variables using pd.get_dummies,</span>
+<span class="sd">		drop the corporate_id and remove columns with the string</span>
+<span class="sd">		missing. Confirm that no columns are missing or addtiional</span>
+<span class="sd">		unwanted columns are present and retrun the final df.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): the images dataframe</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): A prepared dataframe</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">images</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;image_file_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;image/*&#39;</span><span class="p">]</span>
+		<span class="n">images</span><span class="p">[</span><span class="s1">&#39;image_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="s1">&#39;image_file_type&#39;</span><span class="p">]</span><span class="o">.</span>
+										<span class="nb">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;image/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+		<span class="n">images</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">images</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;image_file_type&#39;</span><span class="p">],</span>
+									<span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;image&#39;</span>
+								<span class="p">)</span>
+		<span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">images</span> <span class="o">=</span> <span class="p">(</span>
+					<span class="n">images</span><span class="p">[</span><span class="n">images</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span>
+					<span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+				 <span class="p">)</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;image_id&#39;</span><span class="p">,</span> <span class="s1">&#39;image_date_added&#39;</span><span class="p">,</span> <span class="s1">&#39;image_size&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;image_gif&#39;</span><span class="p">,</span> <span class="s1">&#39;image_heic&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;image_jpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;image_jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;image_png&#39;</span><span class="p">,</span> 
+							<span class="s1">&#39;image_webp&#39;</span><span class="p">,</span> <span class="s1">&#39;image_x-ms-bmp&#39;</span><span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">images</span></div>
+
+<div class="viewcode-block" id="WrappedPhone.summarize_images"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_images">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Sums image sizes.</span>
+
+<span class="sd">		Removes any columns with the string &#39;missing&#39;. Extracts</span>
+<span class="sd">		the month name and year from image_date_added. Removes the</span>
+<span class="sd">		string &#39;image/&#39; form the image_file_type column. calculate</span>
+<span class="sd">		statistics from the dataset and return the finals dataframe</span>
+<span class="sd">		as json.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The images data set</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): image summarised dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_date_added&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_date_added&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;image_file_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;image/*&#39;</span><span class="p">]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">borrower_id</span><span class="p">]</span> <span class="c1"># filter for member_id</span>
+		<span class="c1"># Agregate and find</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;image_file_type&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">],</span>
+								<span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;image_size&#39;</span><span class="p">:[</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">]}))</span>
+		<span class="n">lastdf</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">)</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="c1"># convert to json</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;},{&#39;</span><span class="p">,</span> <span class="s1">&#39;} {&#39;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">lastdf</span></div>
+
+<div class="viewcode-block" id="WrappedPhone.prepare_messages"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_messages">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepare messages for prediction.</span>
+
+<span class="sd">		Drop the corporate_id column, convert message_type and the</span>
+<span class="sd">		message_direction columns to a string, the message_time_stamp</span>
+<span class="sd">		column to date and do a pd.get dummies on message_type and </span>
+<span class="sd">		message_direction. Drop the message_INBOX column, extract</span>
+<span class="sd">		month and year from message_time_stamp, and drop columns </span>
+<span class="sd">		the string &#39;missing&#39;. Remove any additional columns and </span>
+<span class="sd">		insert any required columns that are missing.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The images data set</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): image summarised dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;str&#39;</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_direction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_direction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;str&#39;</span><span class="p">)</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_time_stamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_time_stamp&#39;</span><span class="p">])</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+								<span class="n">df</span><span class="p">,</span>
+								<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;message_type&#39;</span><span class="p">,</span> <span class="s2">&quot;message_direction&quot;</span><span class="p">],</span>
+								<span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;message&#39;</span>
+							<span class="p">)</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;message_INBOX&quot;</span><span class="p">])</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">pass</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_time_stamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_time_stamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;missing&#39;</span><span class="p">)]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span>
+								<span class="s1">&#39;message_id&#39;</span><span class="p">,</span> <span class="s1">&#39;message_length&#39;</span><span class="p">,</span>
+							 	<span class="s1">&#39;message_time_stamp&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;message_INCOMING&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;message_OUTGOING&#39;</span>
+							<span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="WrappedPhone.summarize_messages"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_messages">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Sums messages sizes.</span>
+
+<span class="sd">		Removes any columns with the string &#39;missing&#39;. Extracts</span>
+<span class="sd">		the month name and year from message_time_stamp. Calculate</span>
+<span class="sd">		statistics from the dataset and return the finals dataframe</span>
+<span class="sd">		as json.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The messages data set</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): messages summarised dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">member_id</span><span class="p">]</span> <span class="c1"># filter for member_id</span>
+		<span class="c1"># Agregate and find</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_time_stamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;message_time_stamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;message_direction&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">],</span>
+								<span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span>
+								<span class="n">agg</span><span class="p">({</span><span class="s1">&#39;message_length&#39;</span><span class="p">:[</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">]}))</span>
+		<span class="n">lastdf</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">)</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="c1"># convert to json</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;},{&#39;</span><span class="p">,</span> <span class="s1">&#39;} {&#39;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">lastdf</span></div>
+
+<div class="viewcode-block" id="WrappedPhone.prepare_music"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_music">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_music</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares music data for prediction</span>
+
+<span class="sd">		Remove audio/ from the music_file_type column, convert the </span>
+<span class="sd">		same column to categorical variables using pd.get_dummies, drop</span>
+<span class="sd">		the corporate_id and remove columns with the string missing.</span>
+<span class="sd">		Convert the music_file_type columns to dummy variables and </span>
+<span class="sd">		confirm that no columns are missing or addtiional unwanted </span>
+<span class="sd">		columns are present and retrun the final df.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): the music dataframe</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): A prepared music dataframe</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">music</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;music_file_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;audio/*&#39;</span><span class="p">]</span>
+		<span class="n">music</span><span class="p">[</span><span class="s1">&#39;music_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+										<span class="n">music</span><span class="p">[</span><span class="s1">&#39;music_file_type&#39;</span><span class="p">]</span><span class="o">.</span>
+										<span class="nb">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;audio/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+									<span class="p">)</span>
+		<span class="n">music</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+								<span class="n">music</span><span class="p">,</span> 
+								<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;music_file_type&#39;</span><span class="p">],</span>
+								<span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;music&#39;</span>
+							  <span class="p">)</span>
+		<span class="n">music</span> <span class="o">=</span> <span class="n">music</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">music</span> <span class="o">=</span> <span class="n">music</span><span class="p">[</span><span class="n">music</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">music</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">music</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+							<span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">music</span><span class="p">[</span><span class="s1">&#39;music_date_added&#39;</span><span class="p">])</span><span class="o">.</span>
+							<span class="n">month_name</span><span class="p">()</span>
+						<span class="p">)</span>
+		<span class="n">music</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">music</span><span class="p">[</span><span class="s1">&#39;music_date_added&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;music_id&#39;</span><span class="p">,</span> <span class="s1">&#39;music_date_added&#39;</span><span class="p">,</span> <span class="s1">&#39;music_size&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;music_3gpp&#39;</span><span class="p">,</span> <span class="s1">&#39;music_aac&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;music_aac-adts&#39;</span><span class="p">,</span> <span class="s1">&#39;music_adpcm&#39;</span><span class="p">,</span> <span class="s1">&#39;music_amr&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;music_amr-wb&#39;</span><span class="p">,</span> <span class="s1">&#39;music_application/aac&#39;</span><span class="p">,</span> 
+							<span class="s1">&#39;music_application/ogg&#39;</span><span class="p">,</span> <span class="s1">&#39;music_flac&#39;</span><span class="p">,</span> <span class="s1">&#39;music_m4a&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;music_mp3&#39;</span><span class="p">,</span> <span class="s1">&#39;music_mp4&#39;</span><span class="p">,</span> <span class="s1">&#39;music_mpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;music_ogg&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;music_quicktime&#39;</span><span class="p">,</span> <span class="s1">&#39;music_wav&#39;</span><span class="p">,</span> <span class="s1">&#39;music_x-matroska&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;music_x-ms-wma&#39;</span><span class="p">,</span> <span class="s1">&#39;music_x-wav&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">music</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">music</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">music</span></div>
+
+<div class="viewcode-block" id="WrappedPhone.summarize_music"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_music">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_music</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Summarizes music data.</span>
+
+<span class="sd">		Removes any columns with the string &#39;missing&#39;. Removes the</span>
+<span class="sd">		string &#39;image/&#39; form the music_file_type column. Extracts</span>
+<span class="sd">		the month name and year from music_date_added. calculate</span>
+<span class="sd">		statistics from the dataset and return the finals dataframe</span>
+<span class="sd">		as json.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The images data set</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): image summarised dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">borrower_id</span><span class="p">]</span> <span class="c1"># filter for </span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_file_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;audio/&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1"># Agregate and find</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_date_added&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;music_date_added&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+								<span class="p">[</span><span class="s1">&#39;music_file_type&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">],</span>
+								<span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span>
+								<span class="n">agg</span><span class="p">({</span><span class="s1">&#39;music_size&#39;</span><span class="p">:[</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">]})</span>
+					<span class="p">)</span>
+		<span class="n">lastdf</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">)</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="c1"># convert to json</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;},{&#39;</span><span class="p">,</span> <span class="s1">&#39;} {&#39;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">lastdf</span></div>
+
+
+<div class="viewcode-block" id="WrappedPhone.prepare_videos"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.prepare_videos">[docs]</a>	<span class="k">def</span> <span class="nf">prepare_videos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prepares video data for prediction</span>
+
+<span class="sd">		Remove video/ from the video_file_type column, convert the </span>
+<span class="sd">		same column to categorical variables using pd.get_dummies, drop</span>
+<span class="sd">		the corporate_id and remove columns with the string missing.</span>
+<span class="sd">		Convert the music_file_type columns to dummy variables and </span>
+<span class="sd">		confirm that no columns are missing or addtiional unwanted </span>
+<span class="sd">		columns are present and retrun the final df.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): the music dataframe</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): A prepared music dataframe</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">videos</span> <span class="o">=</span> <span class="n">df</span>
+		<span class="n">videos</span><span class="p">[</span><span class="s1">&#39;video_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+										<span class="n">videos</span><span class="p">[</span><span class="s1">&#39;video_file_type&#39;</span><span class="p">]</span><span class="o">.</span>
+										<span class="nb">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;video/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+									<span class="p">)</span>
+		<span class="n">videos</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span>
+									<span class="n">videos</span><span class="p">,</span>
+									<span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;video_file_type&#39;</span><span class="p">],</span>
+									<span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;video&#39;</span>
+								<span class="p">)</span>
+		<span class="n">videos</span> <span class="o">=</span> <span class="n">videos</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">])</span>
+		<span class="n">videos</span> <span class="o">=</span> <span class="n">videos</span><span class="p">[</span>
+							<span class="n">videos</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+								<span class="nb">list</span><span class="p">(</span><span class="n">videos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">))</span>
+								<span class="p">)</span>
+						<span class="p">]</span>
+		<span class="n">videos</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+							<span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">videos</span><span class="p">[</span><span class="s1">&#39;video_date_added&#39;</span><span class="p">])</span><span class="o">.</span>
+							<span class="n">month_name</span><span class="p">()</span>
+						  <span class="p">)</span>
+		<span class="n">videos</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">videos</span><span class="p">[</span><span class="s1">&#39;video_date_added&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;video_id&#39;</span><span class="p">,</span> <span class="s1">&#39;video_date_added&#39;</span><span class="p">,</span> <span class="s1">&#39;video_size&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;borrower_id&#39;</span><span class="p">,</span> <span class="s1">&#39;video_3gpp&#39;</span><span class="p">,</span> <span class="s1">&#39;video_avi&#39;</span><span class="p">,</span> 
+							<span class="s1">&#39;video_mp2ts&#39;</span><span class="p">,</span> <span class="s1">&#39;video_mp4&#39;</span><span class="p">,</span> <span class="s1">&#39;video_mpeg&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;video_quicktime&#39;</span><span class="p">,</span> <span class="s1">&#39;video_webm&#39;</span><span class="p">,</span>
+							<span class="s1">&#39;video_x-matroska&#39;</span><span class="p">]</span>
+		<span class="n">required_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+		<span class="n">videos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impute_missing_columns</span><span class="p">(</span><span class="n">videos</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">videos</span></div>
+
+
+<div class="viewcode-block" id="WrappedPhone.summarize_videos"><a class="viewcode-back" href="../../../../myapp.ModelBuilding.Behavioural.processphonedata.html#myapp.ModelBuilding.Behavioural.processphonedata.WrappedPhone.summarize_videos">[docs]</a>	<span class="k">def</span> <span class="nf">summarize_videos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">borrower_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Sumarizes video data.</span>
+
+<span class="sd">		Extracts the month name and year from video_date_added. </span>
+<span class="sd">		Removes any columns with the string &#39;missing&#39;. Removes the</span>
+<span class="sd">		string &#39;video/&#39; from the image_file_type column. calculate</span>
+<span class="sd">		statistics from the dataset and return the final dataframe</span>
+<span class="sd">		as json.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (obj): The images data set</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			df (obj): image summarised dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;borrower_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">borrower_id</span><span class="p">]</span> <span class="c1"># filter for member_id</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_date_added&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">month_name</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_date_added&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)))]</span>
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;video_file_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;video/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+		<span class="c1"># Agregate and find</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;video_file_type&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">],</span>
+								<span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;video_size&#39;</span><span class="p">:[</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+								<span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">]})</span>
+		<span class="n">lastdf</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">)</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="c1"># convert to json</span>
+		<span class="n">lastdf</span> <span class="o">=</span> <span class="n">lastdf</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;},{&#39;</span><span class="p">,</span> <span class="s1">&#39;} {&#39;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">lastdf</span></div></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

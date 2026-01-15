@@ -1,0 +1,546 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Helpers.admin_details &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for myapp.Helpers.admin_details</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">jwt</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+
+
+<div class="viewcode-block" id="AdminDetails"><a class="viewcode-back" href="../../../myapp.Helpers.admin_details.html#myapp.Helpers.admin_details.AdminDetails">[docs]</a><span class="k">class</span> <span class="nc">AdminDetails</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extract data from a request.</span>
+<span class="sd">	</span>
+<span class="sd">	A class used to extract user details from a request</span>
+<span class="sd">	If any input is added to the api, then 	this class </span>
+<span class="sd">	should be updated.</span>
+
+<span class="sd">	TODO: consider a situation where the key is None</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Check if the request contains data in the body</span>
+<span class="sd">		if not then set the body of the data as an </span>
+<span class="sd">		empty dictionary. If the body is not empty</span>
+<span class="sd">		then convert the body to a json object. </span>
+
+<span class="sd">		If the json.decoder.JSONDecodeError is raised</span>
+<span class="sd">		then the data sent is not valid.</span>
+
+<span class="sd">		TODO: Consider adding filetypes if the </span>
+<span class="sd">		application grows.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+		<span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">None</span>
+
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_corporate_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Extracts corporate name from the request</span>
+<span class="sd">		</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			Corporate name(string) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;corporate_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+	
+
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_admin_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts admin names from the request.</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The admin names (str) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_names&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+	
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_admin_email</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Used to extract user&#39;s email,</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The admin email(str) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_email&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_password1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Used to extract user&#39;s password1</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The password(str) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password1&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_user_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Used to extract user&#39;s username.</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The user name(str) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_corporate_pin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Used to extract user&#39;s username.</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The corporate_pin(str) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;corporate_pin&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_approved_from</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Extracts the approved_from from the request</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The approved_from (str) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approved_from&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_approved_to</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts the approved_to from the request</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The approved_to (str) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approved_to&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_checked_from</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts the checked_from from the request</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The chcked_from (str) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;checked_from&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_checked_to</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Used to extract checked_to from the request.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The check_to(string) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;checked_to&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_score_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Used to extract score_name from the request.</span>
+<span class="sd">		</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Return:</span>
+<span class="sd">			The name of the score(string) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_borrower_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts borrower_id from the request.</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The borrower_id(int) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># TODO: compare to get_user_identity</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;borrower_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_amount_uploaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts the amount uploaded from the request.</span>
+
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			amount_uploaded or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;amount_uploaded&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+	
+<div class="viewcode-block" id="AdminDetails.check_valid_email"><a class="viewcode-back" href="../../../myapp.Helpers.admin_details.html#myapp.Helpers.admin_details.AdminDetails.check_valid_email">[docs]</a>	<span class="k">def</span> <span class="nf">check_valid_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">admin_email</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Check that an email is valid format</span>
+<span class="sd">		</span>
+<span class="sd">		Args:</span>
+<span class="sd">			email</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			Bool: True or False</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">regex</span> <span class="o">=</span> <span class="s1">&#39;^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$&#39;</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span><span class="n">admin_email</span><span class="p">)):</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_user_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts The User_identity</span>
+<span class="sd">		</span>
+<span class="sd">		Check if the request has a corporate id in</span>
+<span class="sd">		the body and return it. If the corporate </span>
+<span class="sd">		id is not in the body check that the id is</span>
+<span class="sd">		in the header and return it if present. </span>
+<span class="sd">		Else return False.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			user_identity or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_identity&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_borrower_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts The User_identity</span>
+<span class="sd">		</span>
+<span class="sd">		Check if the request has a corporate id in</span>
+<span class="sd">		the body and return it. If the corporate </span>
+<span class="sd">		id is not in the body check that the id is</span>
+<span class="sd">		in the header and return it if present. </span>
+<span class="sd">		Else return False.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			user_identity or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;borrower_identity&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_loan_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extract the loan_period from the request.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The loan period (int) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loan_period&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_loan_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extract the loan frequency from the request</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			Thr loan frequency(int) or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loan_frequency&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_user_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Extract the user_token from the request.</span>
+<span class="sd">		</span>
+
+<span class="sd">		Check if the token is present, if the token is</span>
+<span class="sd">		present and valid, return the user_token. If </span>
+<span class="sd">		the token is expired or missing </span>
+<span class="sd">		return the string &#39;expired token&#39;.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">user_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+			<span class="n">secret</span> <span class="o">=</span> <span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+			<span class="k">return</span> <span class="n">user_token</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ExpiredSignatureError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;expired token&quot;</span>
+	
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_corporate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extract a corporate_id from the request.</span>
+
+<span class="sd">		Check if the request has a corporate id in the</span>
+<span class="sd">		body and return it. If the corporate id is not</span>
+<span class="sd">		in the body check that the id is in the </span>
+<span class="sd">		user_token and return it if present.</span>
+<span class="sd">		Else return False.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">corporate_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;corporate_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">corporate_id</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">corporate_id</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">user_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_token&quot;</span><span class="p">)</span>
+				<span class="n">secret</span> <span class="o">=</span> <span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+				<span class="n">decoded_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">user_token</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
+				<span class="n">corporate_id</span> <span class="o">=</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s1">&#39;corporate_id&#39;</span><span class="p">]</span>		  
+				<span class="k">return</span> <span class="n">corporate_id</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">DecodeError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ExpiredSignatureError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+			
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_admin_role</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts an admin_role from the request.</span>
+
+<span class="sd">		Check if the request has an admin_role in the </span>
+<span class="sd">		body and return it. If the admin_role is not </span>
+<span class="sd">		in the body check that the id is in the </span>
+<span class="sd">		user_token and return it if present. Else return</span>
+<span class="sd">		False. if the admin role is not in the dictionary</span>
+<span class="sd">		called admin roles return invalid admin_role.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">admin_roles</span> <span class="o">=</span> 	<span class="p">{</span>
+								<span class="s2">&quot;client_staff&quot;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;client_admin&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> 
+								<span class="s2">&quot;infotrace_admin&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;super_admin&quot;</span><span class="p">:</span><span class="mi">1</span>
+							<span class="p">}</span>					
+			<span class="n">admin_role</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_role&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">admin_role</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">admin_role</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">admin_roles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+					<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown admin role&quot;</span><span class="p">})</span>
+				<span class="k">return</span> <span class="n">admin_role</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">user_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+				<span class="c1"># use python-decouple to get secret key</span>
+				<span class="n">secret</span> <span class="o">=</span> <span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+				<span class="n">decoded_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">user_token</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
+				<span class="n">role</span> <span class="o">=</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s1">&#39;admin_role&#39;</span><span class="p">]</span>
+				<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">role</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">admin_roles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+					<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown admin role&quot;</span><span class="p">})</span>
+				<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">role</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">admin_roles</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+					<span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown admin role&quot;</span><span class="p">})</span>	  
+				<span class="k">return</span> <span class="n">role</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">DecodeError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ExpiredSignatureError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_admin_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		Extracts an admin_id from the request.</span>
+<span class="sd">		</span>
+<span class="sd">		Check if the request has an admin_id in the </span>
+<span class="sd">		body and return it. If the corporate id is not</span>
+<span class="sd">		in the body check that the id is in the </span>
+<span class="sd">		user_token and return it if present. Else return</span>
+<span class="sd">		False.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The admin_id(int) or False</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">admin_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">admin_id</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">admin_id</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">user_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+				<span class="n">secret</span> <span class="o">=</span> <span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+				<span class="n">decoded_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">user_token</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
+				<span class="n">admin_id</span> <span class="o">=</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s1">&#39;admin_id&#39;</span><span class="p">]</span>
+				<span class="k">return</span> <span class="n">admin_id</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">DecodeError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ExpiredSignatureError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">get_admin_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts an admin_status from the request.</span>
+<span class="sd">		</span>
+<span class="sd">		Check if the request has an admin_status in the </span>
+<span class="sd">		body and return it. If the corporate id is not </span>
+<span class="sd">		in the body check that the id is in the header </span>
+<span class="sd">		and return it if present. Else return False.</span>
+<span class="sd">		Args:</span>
+<span class="sd">			None</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			The status_id(str) if extracted from the body</span>
+<span class="sd">			status_id(int) if extracted from the header</span>
+<span class="sd">			False if the token is not valid or missing</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">admin_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_status&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">admin_status</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">admin_status</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">user_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+				<span class="c1"># use python-decouple to get secret key</span>
+				<span class="n">secret</span> <span class="o">=</span> <span class="s2">&quot;ruiherf238429-4-23r-RT=&quot;</span>
+				<span class="n">decoded_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">user_token</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
+				<span class="n">admin_status</span> <span class="o">=</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s1">&#39;admin_status&#39;</span><span class="p">]</span>		  
+				<span class="k">return</span> <span class="n">admin_status</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">DecodeError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ExpiredSignatureError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../myapp.html">myapp</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

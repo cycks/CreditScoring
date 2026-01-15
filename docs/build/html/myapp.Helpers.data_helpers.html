@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.Helpers.data_helpers module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.Helpers.email_helpers module" href="myapp.Helpers.email_helpers.html" />
+    <link rel="prev" title="myapp.Helpers.admin_details module" href="myapp.Helpers.admin_details.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.Helpers.data_helpers">
+<span id="myapp-helpers-data-helpers-module"></span><h1>myapp.Helpers.data_helpers module<a class="headerlink" href="#module-myapp.Helpers.data_helpers" title="Permalink to this headline">¶</a></h1>
+<p>Validates data sent to the backend</p>
+<p>Contains value_types variable
+Contains the DataTypes class
+Contains the DataSent class</p>
+<dl class="py class">
+<dt id="myapp.Helpers.data_helpers.DataSent">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Helpers.data_helpers.</code><code class="sig-name descname">DataSent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">required_columns</span></em>, <em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Checks Column Names and Equal Column Lengths.</p>
+<p>This class must be instantiated using the args
+provided.
+1. It checks that the data provided has the
+required columns.
+2. It also checks that any unrequired columns are
+not present.
+3. Ensures all columns have equal lengths
+4. Checks that the json data provided has column
+values as lists.
+5. Uses the DataTypes class above to the data
+types provided.
+Remember it does not inherit from Datatypes. I
+don’t know why I did this.I will check later.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>required_columns</strong> – A list of required columns</p></li>
+<li><p><strong>data</strong> – json data recieved in an endpoint.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataSent.check_columns_length">
+<code class="sig-name descname">check_columns_length</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent.check_columns_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent.check_columns_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that all columns are eqaul in length</p>
+<p>Extracts the first value from data, compares the
+length of the first value to all other values in
+the dictionary. If all values in the dictionary
+have equal lengths it returns true otherwise
+returns false.</p>
+<p>Find columns present in the data recieved, extract
+the first column from the data, compare the length
+of the extracted column to all other columns in the
+data. If any of the length is present return True</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The data recieved from a request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns True if any of the columns is not
+equal to the first column and False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataSent.check_dictionary_values">
+<code class="sig-name descname">check_dictionary_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent.check_dictionary_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent.check_dictionary_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check Columns are Lists.</p>
+<p>Ensures that all values are lists. Returns an
+empty list if all values are lists and returns a
+list of keys for values that are not lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An empty list if all values are lists
+A list of dictionary values that are not
+lists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataSent.convert_unicode_string">
+<code class="sig-name descname">convert_unicode_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent.convert_unicode_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent.convert_unicode_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a unicode string from bytes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataSent.make_responses">
+<code class="sig-name descname">make_responses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent.make_responses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent.make_responses" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Mother of All Methods in This Class</p>
+<p>This function uses other methods in this class to
+check for missing columns, additional columns,
+checks that all values in the json object are
+lists, compares length of lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with the mistake as the value of
+the dictionary if any of the validations fail.
+bool: None if the data is ok.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataSent.validate_dict_length">
+<code class="sig-name descname">validate_dict_length</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent.validate_dict_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent.validate_dict_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks length of columns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>False if all columns are equal
+True if any column has a different length</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataSent.validate_dictionary_values">
+<code class="sig-name descname">validate_dictionary_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent.validate_dictionary_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent.validate_dictionary_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks Length of Columns</p>
+<p>Checks that all dictionary values have appropriate
+data types. Uses the make_validation from the
+DataTypes class defined above.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of columns with inapropriate data
+types</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataSent.validate_unwanted_columns">
+<code class="sig-name descname">validate_unwanted_columns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent.validate_unwanted_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent.validate_unwanted_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that urequired columns are not present.</p>
+<p>Checks that columns_present is the same as
+required_columns. If not returns the aditional
+columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of columns that must be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataSent.validate_wanted_columns">
+<code class="sig-name descname">validate_wanted_columns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataSent.validate_wanted_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataSent.validate_wanted_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that no required column is missing.</p>
+<p>Converts columns_present(from the __init__ method)
+to a list, and checks that columns_present is the
+same as required_columns. If not returns the
+missing columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of required columns.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="myapp.Helpers.data_helpers.DataTypes">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.Helpers.data_helpers.</code><code class="sig-name descname">DataTypes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">value_types</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validates Data and Used in SentData Package</p>
+<p>A class used to validate Transactional data sent
+by the client. The class must be instantiated by
+providing the value_types and data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – A json object</p></li>
+<li><p><strong>value_types</strong> – A dictionar defining the data type
+of each column</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="myapp.Helpers.data_helpers.DataTypes.dirty_columns">
+<code class="sig-name descname">dirty_columns</code><em class="property"> = []</em><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes.dirty_columns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataTypes.make_validation">
+<code class="sig-name descname">make_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataTypes.make_validation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes.make_validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to triger data validation.</p>
+<p>Given data, runs all the type validations in this
+class. If any of the methods returs False,
+it appends the column name to dirty columns
+declared before the __init__ method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – A dictionary containing data to be</p></li>
+<li><p><strong>validated.</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An empty list if all the data is ok
+Returns a list of columns with invalid data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataTypes.to_camelcase">
+<code class="sig-name descname">to_camelcase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataTypes.to_camelcase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes.to_camelcase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to convert words to title case</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string</strong> – a string to be converted to camelcase</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>A string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataTypes.validate_dates">
+<code class="sig-name descname">validate_dates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataTypes.validate_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes.validate_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates date columns</p>
+<p>Checks a column to ensure all variables can be
+converted to dates.</p>
+<dl class="simple">
+<dt>arg1<span class="classifier">list</span></dt><dd><p>A list containing date_list</p>
+</dd>
+<dt>Returns</dt><dd><p>False if any of the date columns cannot be
+converted to dates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataTypes.validate_float">
+<code class="sig-name descname">validate_float</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">float_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataTypes.validate_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes.validate_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates float columns</p>
+<p>Checks the data sent to ensure all values in
+float_list are floats or can be converted to
+float.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>float_list</strong> – list</p></li>
+<li><p><strong>list containing floats</strong> (<em>A</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>False if any of the value in the float_list
+cannot be converted to float.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataTypes.validate_integer">
+<code class="sig-name descname">validate_integer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">integer_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataTypes.validate_integer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes.validate_integer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates integer columns</p>
+<p>Checks columns that must be integers to ensure
+that all values in the column are integers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>containing integers</strong> (<em>List</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>False if any value in the list is not an int.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataTypes.validate_options">
+<code class="sig-name descname">validate_options</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">options_list</span></em>, <em class="sig-param"><span class="n">options</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataTypes.validate_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes.validate_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to validate options.</p>
+<p>Checks that a list of options provided are all
+required. For Example the Installment_type can
+only be interest, debtcollection, or principal</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options_list</strong> – A list from the data provided</p></li>
+<li><p><strong>options</strong> – The default values allowed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if all items in options_list are in
+the default options
+bool: False if any of the items in options_list
+are in options.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.Helpers.data_helpers.DataTypes.validate_string">
+<code class="sig-name descname">validate_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/Helpers/data_helpers.html#DataTypes.validate_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.Helpers.data_helpers.DataTypes.validate_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates string columns</p>
+<p>Checks the data sent to ensure all values in
+string_list are string or can be converted to
+strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string_list</strong> – A list containing strings</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>False if any of the values are strings</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.Helpers.html">myapp.Helpers package</a><ul>
+      <li>Previous: <a href="myapp.Helpers.admin_details.html" title="previous chapter">myapp.Helpers.admin_details module</a></li>
+      <li>Next: <a href="myapp.Helpers.email_helpers.html" title="next chapter">myapp.Helpers.email_helpers module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.Helpers.data_helpers.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

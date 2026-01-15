@@ -1,0 +1,569 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.ModelBuilding.Behavioural.processtransdata module &#8212; Credit Score 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="myapp.ModelBuilding.Behavioural.required_default module" href="myapp.ModelBuilding.Behavioural.required_default.html" />
+    <link rel="prev" title="myapp.ModelBuilding.Behavioural.processphonedata module" href="myapp.ModelBuilding.Behavioural.processphonedata.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-myapp.ModelBuilding.Behavioural.processtransdata">
+<span id="myapp-modelbuilding-behavioural-processtransdata-module"></span><h1>myapp.ModelBuilding.Behavioural.processtransdata module<a class="headerlink" href="#module-myapp.ModelBuilding.Behavioural.processtransdata" title="Permalink to this headline">¶</a></h1>
+<p>Prepares Transactional data</p>
+<p>The tra</p>
+<dl class="py class">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional">
+<em class="property">class </em><code class="sig-prename descclassname">myapp.ModelBuilding.Behavioural.processtransdata.</code><code class="sig-name descname">WrappedTransactional</code><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_deposit_amounts">
+<code class="sig-name descname">count_deposit_amounts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.count_deposit_amounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_deposit_amounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group by year, month, and borrower_id and find counts.</p>
+<p>Extract month and year from date of deposit, count the
+occurrence of each dummy column by summing them up.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The deposits dataframe.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>counts deposits data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_savings_amounts">
+<code class="sig-name descname">count_savings_amounts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.count_savings_amounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_savings_amounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group by year, month, and borrower_id and find counts.</p>
+<p>Extract month and year from date of savings, count the
+occurrence of each dummy column by summing them up.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The savings dataframe.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>counts svings data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_withdrawal_amounts">
+<code class="sig-name descname">count_withdrawal_amounts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.count_withdrawal_amounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.count_withdrawal_amounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group by year, month, and borrower_id and find counts.</p>
+<p>Extract month and year from date of withdrawal, count the
+occurrence of each dummy column by summing them up.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The deposits dataframe.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>counts deposits data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.create_target_df">
+<code class="sig-name descname">create_target_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em>, <em class="sig-param"><span class="n">target_column</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.create_target_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.create_target_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a df with the predictor variable and an id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – A dataframe.</p></li>
+<li><p><strong>borrower_id</strong> (<em>int</em>) – Self explanatory</p></li>
+<li><p><strong>target_column</strong> (<em>str</em>) – The response variable.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.impute_missing_columns">
+<code class="sig-name descname">impute_missing_columns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">required_columns</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.impute_missing_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.impute_missing_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles missing and unawanted columns.</p>
+<p>Check columns present in the dataframe sort it and
+compare it to a sorted list of required columns.
+If any of the required columns are missing replace them
+with default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – A dataframe</p></li>
+<li><p><strong>required_columns</strong> (<em>list</em>) – A list containing columns that</p></li>
+<li><p><strong>be present in the dataframe</strong> (<em>must</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_borrower_data">
+<code class="sig-name descname">prepare_borrower_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.prepare_borrower_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_borrower_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares borrower data.</p>
+<p>Given a dataframe convert date columns to appropriate types
+then convert counties to their respective provinces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – A dataframe preferable the borrower df.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A cleaned borrower data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_deposits">
+<code class="sig-name descname">prepare_deposits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.prepare_deposits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_deposits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the deposit data.</p>
+<p>Create dummy variables form the deposit channel column, convert
+the data_of_deposit to datetime, drop the corporate_id and any
+columns containing the ‘missing’. Confirm that no required
+columns are missing or any unwanted columns are present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The deposits data frame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The prepared deposits dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_installments">
+<code class="sig-name descname">prepare_installments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.prepare_installments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_installments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the installments data.</p>
+<p>Create dummy variables form the installments channel
+and types column,       convert the date_of_installment to
+datetime, drop the      corporate_id and any columns containing
+the string ‘missing’. Confirm that no required columns are
+missing or any unwanted columns are present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The deposits data frame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The prepared deposits dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_kyc_data">
+<code class="sig-name descname">prepare_kyc_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.prepare_kyc_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_kyc_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the kyc_data</p>
+<p>Given a borrower_df prepare it using the method using the
+prepare_borrower_data defined in this class. Cleaning in
+this method is self explanatory easily readable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – Kyc dataframe</p></li>
+<li><p><strong>borrower_df</strong> (<em>df</em>) – The borrower dataframe.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A prepared dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_loan_4_classification">
+<code class="sig-name descname">prepare_loan_4_classification</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.prepare_loan_4_classification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_loan_4_classification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the loan data for classification.</p>
+<p>Create dummy variables from the loan_period column and the
+loan_installment_frequency columns, convert the date_of_loan
+and the date_of_loan_completion to datetime, drop the
+corporate_id and any columns containing the string
+‘missing’. Confirm that no required columns are missing or
+any unwanted columns are present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The loan data frame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The prepared loan dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_loan_4_regression">
+<code class="sig-name descname">prepare_loan_4_regression</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.prepare_loan_4_regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_loan_4_regression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the loan data for regression.</p>
+<p>Create dummy variables from the loan_period column and the
+loan_installment_frequency columns, convert the date_of_loan
+and the date_of_loan_completion to datetime, drop the
+corporate_id, is_defaulted_loan, loan_id and any columns
+containing the string  ‘missing’. Confirm that no
+required columns are missing or  any unwanted columns are
+present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The loan data frame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The prepared loan dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_savings">
+<code class="sig-name descname">prepare_savings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.prepare_savings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_savings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the savings data.</p>
+<p>Create dummy variables form the withdrawal channel column, convert
+the date_of_withdrawal to datetime, drop the corporate_id and any
+columns containing the string ‘missing’. Confirm that no required
+columns are missing or any unwanted columns are present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The deposits data frame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The prepared deposits dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_withdrawals">
+<code class="sig-name descname">prepare_withdrawals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.prepare_withdrawals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.prepare_withdrawals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the withdrawals data.</p>
+<p>Create dummy variables form the withdrawal channel column, convert
+the date_of_withdrawal to datetime, drop the corporate_id and any
+columns containing the string ‘missing’. Confirm that no required
+columns are missing or any unwanted columns are present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The deposits data frame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The prepared deposits dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_deposit_amounts">
+<code class="sig-name descname">sum_deposit_amounts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.sum_deposit_amounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_deposit_amounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group by month, year, and id and find sum</p>
+<p>Extract month and year from date of deposit, and add amounts
+to the repective columns by multiplying the amount by the
+dummy variables. Group by month, year and borrower_id, find
+the sum and rename the final columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The deposits dataframe.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>summarised deposits data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_savings_amounts">
+<code class="sig-name descname">sum_savings_amounts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.sum_savings_amounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_savings_amounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group by month, year, and id and find sum</p>
+<p>Extract month and year from date of savings, add amounts
+to the repective columns by multiplying the amount by the
+dummy variables. Group by month, year and borrower_id, find
+the sum and rename the final columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The savings dataframe.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>summarised savings data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_withdrawal_amounts">
+<code class="sig-name descname">sum_withdrawal_amounts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.sum_withdrawal_amounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.sum_withdrawal_amounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group by month, year, and id and find sum</p>
+<p>Extract month and year from date of withdrawal, add amounts
+to the repective columns by multiplying the amount by the
+dummy variables. Group by month, year and borrower_id, find
+the sum and rename the final columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>obj</em>) – The deposits dataframe.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>summarised deposits data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_deposits">
+<code class="sig-name descname">summarize_deposits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.summarize_deposits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_deposits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarize the counts and sums in deposit data.</p>
+<p>Given a dataframe find the sums and counts from the
+data frame, join the resulting dataframes and convert the
+final dataframe to json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – The deposits dataframe.</p></li>
+<li><p><strong>borrower_id</strong> (<em>int</em>) – The borrower_id for the loan seeker</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A json object from the final dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (json)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_kyc">
+<code class="sig-name descname">summarize_kyc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.summarize_kyc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_kyc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarizes the kyc df.</p>
+<p>Given a dataframe, prepare it. No idea of the logic
+used here for now. Will need to check later</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – The kyc dataframe</p></li>
+<li><p><strong>borrower_df</strong> (<em>obj</em>) – The borrower df</p></li>
+<li><p><strong>borrower_id</strong> (<em>int</em>) – The borrowers id</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A summarized dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (obj)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_savings">
+<code class="sig-name descname">summarize_savings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.summarize_savings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_savings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarize the counts and sums in svings data.</p>
+<p>Given a dataframe find the sums and counts from the
+data frame, join the resulting dataframes and convert the
+final dataframe to json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – The savings dataframe.</p></li>
+<li><p><strong>borrower_id</strong> (<em>int</em>) – The borrower_id for the loan seeker</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A json object from the final dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (json)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_withdrawals">
+<code class="sig-name descname">summarize_withdrawals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">borrower_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/myapp/ModelBuilding/Behavioural/processtransdata.html#WrappedTransactional.summarize_withdrawals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#myapp.ModelBuilding.Behavioural.processtransdata.WrappedTransactional.summarize_withdrawals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarize the counts and sums in withdrawals data.</p>
+<p>Given a dataframe find the sums and counts from the
+data frame, join the resulting dataframes and convert the
+final dataframe to json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>obj</em>) – The withdrawals dataframe.</p></li>
+<li><p><strong>borrower_id</strong> (<em>int</em>) – The borrower_id for the loan seeker</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A json object from the final dataframe.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (json)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Credit Score</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">myapp</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="myapp.html">myapp package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myapp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="myapp.Companies.html">myapp.Companies package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Helpers.html">myapp.Helpers package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Models.html">myapp.Models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.SentData.html">myapp.SentData package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="myapp.Users.html">myapp.Users package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="myapp.html#module-myapp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">myapp</a><ul>
+  <li><a href="myapp.html">myapp package</a><ul>
+  <li><a href="myapp.ModelBuilding.html">myapp.ModelBuilding package</a><ul>
+  <li><a href="myapp.ModelBuilding.Behavioural.html">myapp.ModelBuilding.Behavioural package</a><ul>
+      <li>Previous: <a href="myapp.ModelBuilding.Behavioural.processphonedata.html" title="previous chapter">myapp.ModelBuilding.Behavioural.processphonedata module</a></li>
+      <li>Next: <a href="myapp.ModelBuilding.Behavioural.required_default.html" title="next chapter">myapp.ModelBuilding.Behavioural.required_default module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Wycliffe.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/myapp.ModelBuilding.Behavioural.processtransdata.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
