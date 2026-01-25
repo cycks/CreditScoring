@@ -40,8 +40,8 @@ migrate = Migrate(app, db)
 
 def create_app():
 	app = Flask(__name__)
-	app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqlconnector://cycks:*cycks@Mysql.1899@localhost/development"
-	app.config['SECRET_KEY'] = "ruiherf238429-4-23r-RT="
+	app.config['SQLALCHEMY_DATABASE_URI'] = = os.getenv('DATABASE_URL')
+	app.config['SECRET_KEY'] = "ruiherf238429-4-23r-RT=" os.getenv('SECRET_KEY')
 	app.config['DEBUG'] = False
 	app.config['TESTING'] = False
 	app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
