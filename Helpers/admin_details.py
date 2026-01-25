@@ -252,7 +252,7 @@ class AdminDetails:
 				return user_identity
 			else:
 				user_token = request.headers.get("user_token")
-				secret = "ruiherf238429-4-23r-RT="
+				secret = os.getenv('SECRET_KEY')
 				decoded_token = jwt.decode(user_token, secret)
 				user_identity = decoded_token['user_identity']		  
 				return user_identity
@@ -318,7 +318,7 @@ class AdminDetails:
 		"""
 		try:
 			user_token = request.headers.get("user_token", None)
-			secret = "ruiherf238429-4-23r-RT="
+			secret = os.getenv('SECRET_KEY')
 			return user_token
 		except jwt.exceptions.ExpiredSignatureError:
 			return "expired token"
@@ -341,7 +341,7 @@ class AdminDetails:
 				return corporate_id
 			else:
 				user_token = request.headers.get("user_token")
-				secret = "ruiherf238429-4-23r-RT="
+				secret = os.getenv('SECRET_KEY')
 				decoded_token = jwt.decode(user_token, secret)
 				corporate_id = decoded_token['corporate_id']		  
 				return corporate_id
@@ -376,7 +376,7 @@ class AdminDetails:
 			else:
 				user_token = request.headers.get("user_token", None)
 				# use python-decouple to get secret key
-				secret = "ruiherf238429-4-23r-RT="
+				secret = os.getenv('SECRET_KEY')
 				decoded_token = jwt.decode(user_token, secret)
 				role = decoded_token['admin_role']
 				if isinstance(role, str) and not role in admin_roles.keys():
@@ -412,7 +412,7 @@ class AdminDetails:
 				return admin_id
 			else:
 				user_token = request.headers.get("user_token", None)
-				secret = "ruiherf238429-4-23r-RT="
+				secret = os.getenv('SECRET_KEY')
 				decoded_token = jwt.decode(user_token, secret)
 				admin_id = decoded_token['admin_id']
 				return admin_id
@@ -445,7 +445,7 @@ class AdminDetails:
 			else:
 				user_token = request.headers.get("user_token", None)
 				# use python-decouple to get secret key
-				secret = "ruiherf238429-4-23r-RT="
+				secret = os.getenv('SECRET_KEY')
 				decoded_token = jwt.decode(user_token, secret)
 				admin_status = decoded_token['admin_status']		  
 				return admin_status

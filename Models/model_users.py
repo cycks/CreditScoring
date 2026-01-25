@@ -37,7 +37,7 @@ def generate_jwt_token(admin_role, admin_status, admin_id, corporate_id):
 	Returns:
 		A token(str)
 	"""
-	secret = "ruiherf238429-4-23r-RT="
+	secret = os.getenv('SECRET_KEY')
 	expiration = datetime.datetime.now() + timedelta(minutes=200)
 	user_token = jwt.encode(
 								{	
@@ -289,7 +289,7 @@ class LoggedUsers(ValidInputs):
 		check_password = hashing.check_value(
 												db_password,
 												recieved_password,
-												salt="ruiherf238429-4-23r-RT="
+												salt=os.getenv('SECRET_KEY')
 											)
 		return check_password
 
@@ -462,7 +462,7 @@ class LoggedUsers(ValidInputs):
 										)
 		if login_status == True:
 			try:
-				secret = "ruiherf238429-4-23r-RT="
+				secret = os.getenv('SECRET_KEY')
 				decoded_token = jwt.decode(self.mydict["user_token"], secret)
 				self.blacklist_token(self.mydict["user_token"])
 				return {

@@ -72,7 +72,7 @@ def register_super_admin():
 	# check if the email is valid
 	if details.check_valid_email(details.get_admin_email) is True:
 		# use saved_status from models to save user to db
-		secret = "ruiherf238429-4-23r-RT="
+		secret = os.getenv('SECRET_KEY')
 		saved_status = save_admins(mydict, secret)
 		return jsonify(saved_status)
 	else:

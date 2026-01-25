@@ -308,7 +308,7 @@ def populate_admin():
 	"""
 	password = hashing.hash_value(
 									"password", 
-									salt="ruiherf238429-4-23r-RT="
+									salt=os.getenv('SECRET_KEY')
 								 )
 	admin_names = "Wycliffe Sikolia"
 	admin_email = "sikolia.wycliffe100@gmail.com"

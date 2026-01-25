@@ -25,8 +25,8 @@ def generate_confirmation_token(email):
 	Returns:
 		token: A string generated.
 	"""
-	serializer = URLSafeTimedSerializer("ruiherf238429-4-23r-RT=")
-	return serializer.dumps(email, salt="ruiherf238429-4-23r-RT=")
+	serializer = URLSafeTimedSerializer(os.getenv('SECRET_KEY'))
+	return serializer.dumps(email, salt=os.getenv('SECRET_KEY'))
 
 
 def confirm_token(token, expiration=3600):
@@ -43,11 +43,11 @@ def confirm_token(token, expiration=3600):
 		False: if the token is expired or wrong
 		An email(str) if the token is valid	
 	"""
-	serializer = URLSafeTimedSerializer("ruiherf238429-4-23r-RT=")
+	serializer = URLSafeTimedSerializer(os.getenv('SECRET_KEY'))
 	try:
 		email = serializer.loads(
 			token,
-			salt="ruiherf238429-4-23r-RT=",
+			salt=os.getenv('SECRET_KEY'),
 			max_age=expiration
 		)
 	except:
